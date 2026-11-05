@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/screen_padding"
+        android:paddingBottom="@dimen/space_xxl">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_s"
+            android:gravity="center"
+            android:text="@string/sos_subtitle"
+            android:textAppearance="@style/TextAppearance.RideAlong.BodyLarge"
+            android:textColor="@color/ra_text_secondary" />
+
+        <FrameLayout
+            android:id="@+id/sos_button"
+            android:layout_width="@dimen/sos_button"
+            android:layout_height="@dimen/sos_button"
+            android:layout_marginTop="@dimen/space_xl"
+            android:background="@drawable/bg_sos_button"
+            android:clickable="true"
+            android:contentDescription="@string/sos_button"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/sos_button"
+                android:textColor="@color/ra_white"
+                android:textSize="44sp"
+                android:textStyle="bold" />
+        </FrameLayout>
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/progress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_l"
+            android:indeterminate="true"
+            android:visibility="gone"
+            app:indicatorColor="@color/ra_error" />
+
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_s"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.RideAlong.Body"
+            android:visibility="gone" />
+
+        <!-- Steps (after confirmation + location) -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/steps_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_l"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/space_l">
+
+                <TextView
+                    android:id="@+id/location_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="@dimen/space_s"
+                    android:gravity="center_vertical"
+                    android:textAppearance="@style/TextAppearance.RideAlong.Caption"
+                    app:drawableStartCompat="@drawable/ic_place"
+                    app:drawableTint="@color/ra_error" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/step_dial"
+                    style="@style/Widget.RideAlong.Button.Danger"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_m"
+                    android:text="@string/sos_step_dial"
+                    app:icon="@drawable/ic_call" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/step_sms"
+                    style="@style/Widget.RideAlong.Button.Outlined"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_s"
+                    android:text="@string/sos_step_sms"
+                    android:textColor="@color/ra_error"
+                    app:icon="@drawable/ic_sms"
+                    app:iconTint="@color/ra_error" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_m"
+                    android:text="@string/sos_not_sent_note"
+                    android:textAppearance="@style/TextAppearance.RideAlong.Caption" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- 999 notice: always visible -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_l"
+            app:cardBackgroundColor="@color/ra_warning_container"
+            app:strokeWidth="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="@dimen/space_l">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/sos_999_note"
+                    android:textAppearance="@style/TextAppearance.RideAlong.Body"
+                    android:textColor="@color/ra_text" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/call_999"
+                    style="@style/Widget.RideAlong.Button.Tonal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_m"
+                    android:text="@string/action_call_999"
+                    app:icon="@drawable/ic_call" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xl"
+            android:text="@string/sos_history"
+            android:textAppearance="@style/TextAppearance.RideAlong.Overline" />
+
+        <LinearLayout
+            android:id="@+id/history"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_s"
+            android:orientation="vertical" />
+
+        <TextView
+            android:id="@+id/history_empty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/sos_history_empty"
+            android:textAppearance="@style/TextAppearance.RideAlong.Body"
+            android:visibility="gone" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

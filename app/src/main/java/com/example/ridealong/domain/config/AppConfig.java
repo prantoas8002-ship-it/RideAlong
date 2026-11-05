@@ -41,6 +41,9 @@ public final class AppConfig {
     public int notificationPageSize = 100;
     public int historyPageSize = 100;
 
+    // Emergency: national emergency number in Bangladesh (police, fire, ambulance).
+    public String emergencyNumber = "999";
+
     // Profile
     public int avatarSizePx = 256;
     public int avatarMaxBytes = 100 * 1024;

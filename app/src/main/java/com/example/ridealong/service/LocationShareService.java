@@ -152,6 +152,7 @@ public class LocationShareService extends LifecycleService {
                     }
                     ride = snap.toObject(Ride.class);
                     if (ride == null || ride.statusEnum().isTerminal() || !ride.isMember(uid)) {
+                        GeofenceManager.unregister(this, snap.getId());
                         stopSharing(); // auto-stop on COMPLETED / CANCELLED / removed
                     }
                 });
