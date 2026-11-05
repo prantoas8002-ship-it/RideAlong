@@ -1,0 +1,15 @@
+# Copy to local.properties (Android Studio creates sdk.dir automatically).
+sdk.dir=/path/to/Android/Sdk
+
+# ---- Optional ----
+# Google Maps SDK key. Only used if you switch "Map provider" to Google in Settings.
+# Leave empty: the app uses OpenStreetMap (osmdroid) which needs no key.
+MAPS_API_KEY=
+# OpenRouteService free key (https://openrouteservice.org/dev/#/signup). Empty = public OSRM server.
+ORS_API_KEY=
+
+# ---- Development ----
+# true = connect Auth + Firestore to the Firebase Emulator Suite (see SETUP_GUIDE.md)
+USE_FIREBASE_EMULATOR=false
+# 10.0.2.2 reaches the host machine from the Android emulator. Use your PC's LAN IP for a real device.
+FIREBASE_EMULATOR_HOST=10.0.2.2

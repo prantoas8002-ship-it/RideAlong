@@ -1,0 +1,31 @@
+# Build output
+*.iml
+.gradle/
+/build/
+/app/build/
+/captures
+.externalNativeBuild
+.cxx
+*.apk
+*.aab
+
+# IDE
+.idea/
+.vscode/
+.DS_Store
+
+# Secrets / machine-specific config (NEVER commit these)
+local.properties
+google-services.json
+app/google-services.json
+*.jks
+*.keystore
+keystore.properties
+
+# Firebase emulator / node
+firestore-tests/node_modules/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+.firebase/
+emulator-data/
