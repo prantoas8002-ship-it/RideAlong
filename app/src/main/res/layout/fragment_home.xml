@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/refresh"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/space_xxl">
+
+            <!-- Hero -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/screen_padding"
+                android:layout_marginTop="@dimen/space_xs"
+                android:background="@drawable/bg_header_gradient"
+                android:orientation="vertical"
+                android:padding="@dimen/space_xl">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/greeting"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.RideAlong.Headline"
+                            android:textColor="@color/ra_white" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/space_xxs"
+                            android:text="@string/home_where_to"
+                            android:textAppearance="@style/TextAppearance.RideAlong.Body"
+                            android:textColor="#E6FFFFFF" />
+                    </LinearLayout>
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/avatar"
+                        style="@style/Widget.RideAlong.Avatar"
+                        android:layout_width="@dimen/avatar_m"
+                        android:layout_height="@dimen/avatar_m"
+                        android:contentDescription="@string/cd_avatar"
+                        app:strokeColor="@color/ra_white"
+                        app:strokeWidth="2dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_l"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/find"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/home_find_ride"
+                        android:textColor="@color/ra_primary"
+                        app:backgroundTint="@color/ra_white"
+                        app:icon="@drawable/ic_search"
+                        app:iconTint="@color/ra_primary" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/offer"
+                        style="@style/Widget.RideAlong.Button.Outlined"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/space_s"
+                        android:layout_weight="1"
+                        android:text="@string/home_offer_ride"
+                        android:textColor="@color/ra_white"
+                        app:icon="@drawable/ic_add"
+                        app:iconTint="@color/ra_white"
+                        app:strokeColor="#99FFFFFF" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Quick actions -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/screen_padding"
+                android:layout_marginTop="@dimen/space_l"
+                android:orientation="horizontal">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/quick_sos"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:cardBackgroundColor="@color/ra_error_container"
+                    app:strokeWidth="0dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawablePadding="@dimen/space_s"
+                        android:gravity="center_vertical"
+                        android:padding="@dimen/space_l"
+                        android:text="@string/home_sos"
+                        android:textAppearance="@style/TextAppearance.RideAlong.TitleMedium"
+                        android:textColor="@color/ra_error"
+                        app:drawableStartCompat="@drawable/ic_warning"
+                        app:drawableTint="@color/ra_error" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/quick_history"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_s"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawablePadding="@dimen/space_s"
+                        android:gravity="center_vertical"
+                        android:padding="@dimen/space_l"
+                        android:text="@string/home_history"
+                        android:textAppearance="@style/TextAppearance.RideAlong.TitleMedium"
+                        app:drawableStartCompat="@drawable/ic_history"
+                        app:drawableTint="@color/ra_primary" />
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <!-- Pending requests for my rides -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/pending_card"
+                style="@style/Widget.RideAlong.Card.Tinted"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/screen_padding"
+                android:layout_marginTop="@dimen/space_l"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/space_l">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:drawablePadding="@dimen/space_s"
+                            android:gravity="center_vertical"
+                            android:text="@string/home_pending_requests"
+                            android:textAppearance="@style/TextAppearance.RideAlong.TitleMedium"
+                            android:textColor="@color/ra_on_primary_container"
+                            app:drawableStartCompat="@drawable/ic_inbox"
+                            app:drawableTint="@color/ra_primary" />
+
+                        <TextView
+                            android:id="@+id/pending_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_badge"
+                            android:paddingHorizontal="@dimen/space_s"
+                            android:paddingVertical="@dimen/space_xxs"
+                            android:textAppearance="@style/TextAppearance.RideAlong.Caption"
+                            android:textColor="@color/ra_white"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/pending_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_s"
+                        android:orientation="vertical" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Active rides -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/screen_padding"
+                android:layout_marginTop="@dimen/space_xl"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/home_active_rides"
+                    android:textAppearance="@style/TextAppearance.RideAlong.TitleLarge" />
+
+                <TextView
+                    android:id="@+id/active_cached"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_pill"
+                    android:paddingHorizontal="@dimen/space_m"
+                    android:paddingVertical="@dimen/space_xs"
+                    android:text="@string/cached_label"
+                    android:textAppearance="@style/TextAppearance.RideAlong.Caption"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/active_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_s"
+                android:nestedScrollingEnabled="false" />
+
+            <com.example.ridealong.ui.common.StateView
+                android:id="@+id/active_state"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
