@@ -1,7 +1,7 @@
 # RideAlong: Project Status
 
 > *Your Route. Your People. Your Ride.*
-> The original specification is preserved in [`RideAlong_Master_Prompt.md`](RideAlong_Master_Prompt.md).
+> Build status, architecture and known limitations. Setup: [SETUP_GUIDE.md](SETUP_GUIDE.md).
 
 ## Verification summary
 | Check | Result |

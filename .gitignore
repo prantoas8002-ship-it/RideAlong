@@ -31,3 +31,6 @@ ui-debug.log
 emulator-data/
 .firebaserc
 share/
+
+# Original build prompt (kept locally, not published)
+RideAlong_Master_Prompt.md
