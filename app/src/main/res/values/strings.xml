@@ -493,4 +493,10 @@
     <string name="n_join_request_with_message_body">%1$s wants to join your ride to %2$s and sent you a message</string>
     <string name="per_person">per person</string>
     <string name="cost_amount">%1$s%2$s</string>
+    <!-- Appearance -->
+    <string name="settings_appearance_section">Appearance</string>
+    <string name="settings_theme">Theme</string>
+    <string name="settings_theme_system">System default</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
 </resources>

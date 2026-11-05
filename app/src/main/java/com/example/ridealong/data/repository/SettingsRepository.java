@@ -19,11 +19,31 @@ public class SettingsRepository {
     private static final String K_LOCATION_CONSENT = "location_consent";
     private static final String K_LAST_NOTIF_SEEN = "last_notification_seen";
     private static final String K_ASKED_NOTIF_PERMISSION = "asked_notification_permission";
+    private static final String K_THEME = "theme_mode";
+
+    public static final String THEME_SYSTEM = "system";
+    public static final String THEME_LIGHT = "light";
+    public static final String THEME_DARK = "dark";
 
     private final SharedPreferences prefs;
 
     public SettingsRepository(Context context) {
         prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+    }
+
+    public String getThemeMode() { return prefs.getString(K_THEME, THEME_SYSTEM); }
+
+    public void setThemeMode(String mode) {
+        prefs.edit().putString(K_THEME, mode).apply();
+        applyTheme(mode);
+    }
+
+    /** Applies Light / Dark / follow-system app-wide (AppCompat recreates visible activities). */
+    public static void applyTheme(String mode) {
+        int night = THEME_DARK.equals(mode) ? androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
+                : THEME_LIGHT.equals(mode) ? androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
+                : androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
+        androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(night);
     }
 
     public boolean isOnboardingDone() { return prefs.getBoolean(K_ONBOARDING, false); }

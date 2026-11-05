@@ -45,6 +45,16 @@ public class SettingsFragment extends Fragment {
         vm = new ViewModelProvider(this).get(SettingsViewModel.class);
         SettingsRepository settings = ServiceLocator.get().settings();
 
+        String theme = settings.getThemeMode();
+        b.themeGroup.check(SettingsRepository.THEME_DARK.equals(theme) ? R.id.theme_dark
+                : SettingsRepository.THEME_LIGHT.equals(theme) ? R.id.theme_light : R.id.theme_system);
+        b.themeGroup.addOnButtonCheckedListener((g, id, checked) -> {
+            if (!checked) return;
+            String mode = id == R.id.theme_dark ? SettingsRepository.THEME_DARK
+                    : id == R.id.theme_light ? SettingsRepository.THEME_LIGHT : SettingsRepository.THEME_SYSTEM;
+            if (!mode.equals(settings.getThemeMode())) settings.setThemeMode(mode);
+        });
+
         boolean googleAvailable = SettingsRepository.isGoogleMapsAvailable();
         b.mapGoogle.setEnabled(googleAvailable);
         b.googleNote.setVisibility(googleAvailable ? View.GONE : View.VISIBLE);

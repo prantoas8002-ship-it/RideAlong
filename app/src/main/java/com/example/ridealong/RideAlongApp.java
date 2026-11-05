@@ -18,6 +18,7 @@ public class RideAlongApp extends Application {
     public void onCreate() {
         super.onCreate();
         ServiceLocator.init(this);
+        com.example.ridealong.data.repository.SettingsRepository.applyTheme(ServiceLocator.get().settings().getThemeMode());
         FirebaseProvider.init(this);
         NotificationHelper.createChannels(this);
         configureOsmdroid();

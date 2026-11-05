@@ -28,10 +28,10 @@
             android:paddingVertical="@dimen/space_s"
             android:text="@string/offline_banner"
             android:textAppearance="@style/TextAppearance.RideAlong.Caption"
-            android:textColor="@color/ra_white"
+            android:textColor="@color/ra_inverse_on_surface"
             android:visibility="gone"
             app:drawableStartCompat="@drawable/ic_wifi_off"
-            app:drawableTint="@color/ra_white" />
+            app:drawableTint="@color/ra_inverse_on_surface" />
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/nav_host"

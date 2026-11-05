@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Theme.RideAlong" parent="Theme.Material3.Light.NoActionBar">
+    <style name="Theme.RideAlong" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/ra_primary</item>
         <item name="colorOnPrimary">@color/ra_white</item>
         <item name="colorPrimaryContainer">@color/ra_primary_container</item>
@@ -23,8 +23,9 @@
         <item name="colorErrorContainer">@color/ra_error_container</item>
 
         <item name="android:statusBarColor">@color/ra_background</item>
-        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightStatusBar">@bool/ra_light_system_bars</item>
         <item name="android:navigationBarColor">@color/ra_surface</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">@bool/ra_light_system_bars</item>
         <item name="android:windowBackground">@color/ra_background</item>
 
         <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.RideAlong.Small</item>

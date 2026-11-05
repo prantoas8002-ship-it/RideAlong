@@ -16,6 +16,9 @@
     <color name="ra_outline">#E2E8F0</color>
     <color name="ra_outline_strong">#CBD5E1</color>
     <color name="ra_white">#FFFFFF</color>
+    <!-- Inverse (e.g. offline banner): dark bar in light mode, light bar in dark mode -->
+    <color name="ra_inverse_surface">#0F172A</color>
+    <color name="ra_inverse_on_surface">#F8FAFC</color>
 
     <!-- Semantic -->
     <color name="ra_success">#16A34A</color>

@@ -24,6 +24,11 @@ public final class OsmMapProvider implements MapProvider {
         map.setMultiTouchControls(true);
         map.setTilesScaledToDpi(true);
         map.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.NEVER);
+        int ui = context.getResources().getConfiguration().uiMode & android.content.res.Configuration.UI_MODE_NIGHT_MASK;
+        if (ui == android.content.res.Configuration.UI_MODE_NIGHT_YES) {
+            // OSM has no free dark tile set; invert the standard tiles for a readable dark map.
+            map.getOverlayManager().getTilesOverlay().setColorFilter(org.osmdroid.views.overlay.TilesOverlay.INVERT_COLORS);
+        }
         map.setMinZoomLevel(4.0);
         map.setMaxZoomLevel(19.0);
         CopyrightOverlay copyright = new CopyrightOverlay(context);

@@ -30,3 +30,4 @@ ui-debug.log
 .firebase/
 emulator-data/
 .firebaserc
+share/
