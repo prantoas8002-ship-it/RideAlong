@@ -1,0 +1,334 @@
+rules_version = '2';
+
+// =====================================================================================
+// RideAlong Firestore security rules (Spark plan, no Cloud Functions).
+//
+// All multi-document workflows run as client transactions/batches. These rules validate
+// them by comparing the before state (get / resource) with the after state (getAfter /
+// request.resource), so a modified client cannot:
+//   * change seat counts or membership except through a matching join-request transition,
+//   * accept/reject requests unless it owns the ride, or cancel requests it did not send,
+//   * inflate ratings or completed-ride counters,
+//   * read chats or live locations of rides it is not a member of,
+//   * edit or duplicate reviews, or interact with users who blocked it.
+// =====================================================================================
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------- helpers ----------
+    function signedIn() { return request.auth != null; }
+    function uid() { return request.auth.uid; }
+    function newData() { return request.resource.data; }
+    function changed() { return request.resource.data.diff(resource.data).affectedKeys(); }
+    function docPath(coll, id) { return /databases/$(database)/documents/$(coll)/$(id); }
+
+    function rideDoc(rideId) { return get(docPath('rides', rideId)); }
+    function rideAfter(rideId) { return getAfter(docPath('rides', rideId)); }
+    function isRideMember(rideId) {
+      return signedIn() && uid() in rideDoc(rideId).data.memberIds;
+    }
+    function isBlockedBetween(a, b) {
+      return exists(docPath('blocks', a + '_' + b)) || exists(docPath('blocks', b + '_' + a));
+    }
+    function isStr(v, maxLen) { return v is string && v.size() <= maxLen; }
+    function isLat(v) { return v is number && v >= -90 && v <= 90; }
+    function isLng(v) { return v is number && v >= -180 && v <= 180; }
+
+    // Allowed ride status transitions. Keep in sync with domain/RideStateMachine.java
+    function manualTransition(from, to) {
+      return from == to
+        || (from == 'OPEN'        && to in ['IN_PROGRESS', 'CANCELLED'])
+        || (from == 'FULL'        && to in ['IN_PROGRESS', 'CANCELLED'])
+        || (from == 'IN_PROGRESS' && to in ['COMPLETED', 'CANCELLED']);
+    }
+
+    // ---------- app configuration (read-only for clients) ----------
+    match /config/{docId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    // ---------- users (public profile) ----------
+    match /users/{userId} {
+      allow read: if signedIn();
+
+      allow create: if signedIn() && userId == uid()
+        && newData().uid == uid()
+        && isStr(newData().fullName, 80) && newData().fullName.size() > 0
+        && newData().ratingSum == 0 && newData().ratingCount == 0 && newData().completedRides == 0
+        && (!('photoBase64' in newData()) || isStr(newData().photoBase64, 160000));
+
+      // (a) owner edits own profile fields; counters are never writable this way
+      function selfProfileEdit() {
+        return userId == uid()
+          && changed().hasOnly(['fullName', 'fullNameLower', 'organization', 'gender',
+                                'photoBase64', 'profileComplete', 'updatedAt'])
+          && isStr(newData().fullName, 80) && newData().fullName.size() > 0
+          && (!('photoBase64' in newData()) || isStr(newData().photoBase64, 160000));
+      }
+      // (b) reviewer adds exactly one new review's stars to the reviewee's counters, in the same batch
+      function ratingIncrement() {
+        let reviewPath = docPath('reviews', newData().lastReviewId);
+        let review = getAfter(reviewPath);
+        return changed().hasOnly(['ratingSum', 'ratingCount', 'lastReviewId'])
+          && !exists(reviewPath) && existsAfter(reviewPath)
+          && review.data.revieweeId == userId
+          && review.data.reviewerId == uid()
+          && newData().ratingSum == resource.data.ratingSum + review.data.rating
+          && newData().ratingCount == resource.data.ratingCount + 1;
+      }
+      // (c) ride owner completes a ride and increments every member's completed count once
+      function completionIncrement() {
+        let rideId = newData().lastCompletedRideId;
+        let before = rideDoc(rideId);
+        let after = rideAfter(rideId);
+        return changed().hasOnly(['completedRides', 'lastCompletedRideId'])
+          && before.data.status == 'IN_PROGRESS'
+          && after.data.status == 'COMPLETED'
+          && after.data.ownerId == uid()
+          && userId in after.data.memberIds
+          && newData().completedRides == resource.data.completedRides + 1;
+      }
+      allow update: if signedIn() && (selfProfileEdit() || ratingIncrement() || completionIncrement());
+      allow delete: if signedIn() && userId == uid();
+
+      // private: phone, email, emergency contacts (owner only)
+      match /private/{docId} {
+        allow read, delete: if signedIn() && userId == uid();
+        allow create, update: if signedIn() && userId == uid()
+          && (!('phone' in newData()) || isStr(newData().phone, 20))
+          && (!('emergencyContacts' in newData())
+              || (newData().emergencyContacts is list && newData().emergencyContacts.size() <= 5));
+      }
+    }
+
+    // ---------- rides ----------
+    match /rides/{rideId} {
+      allow read: if signedIn();
+
+      allow create: if signedIn()
+        && newData().ownerId == uid()
+        && newData().status == 'OPEN'
+        && newData().totalSeats is int && newData().totalSeats >= 1 && newData().totalSeats <= 8
+        && newData().seatsAvailable == newData().totalSeats
+        && newData().costPerPerson is number && newData().costPerPerson >= 0
+        && newData().maxDetourKm is number && newData().maxDetourKm >= 0 && newData().maxDetourKm <= 50
+        && newData().departureTime is timestamp
+        && newData().departureTime > request.time - duration.value(5, 'm')
+        && newData().memberIds == [uid()]
+        && isStr(newData().pickupGeohash, 12) && newData().pickupGeohash.size() > 0
+        && isLat(newData().pickupLat) && isLng(newData().pickupLng)
+        && isLat(newData().dropLat) && isLng(newData().dropLng)
+        && isStr(newData().comment, 500)
+        && !('lastRequestId' in newData());
+
+      // Owner edits status/comment without touching seats or members.
+      function ownerManualUpdate() {
+        return uid() == resource.data.ownerId
+          && changed().hasOnly(['status', 'comment', 'updatedAt', 'cancelReason', 'startedAt', 'completedAt'])
+          && manualTransition(resource.data.status, newData().status)
+          && isStr(newData().comment, 500);
+      }
+      // Owner accepts a PENDING request in the same transaction: seats down, requester appended.
+      function ownerAcceptUpdate() {
+        let reqPath = docPath('rideRequests', newData().lastRequestId);
+        let reqBefore = get(reqPath);
+        let reqAfter = getAfter(reqPath);
+        let seatsLeft = newData().seatsAvailable;
+        return uid() == resource.data.ownerId
+          && changed().hasOnly(['seatsAvailable', 'memberIds', 'status', 'lastRequestId', 'updatedAt'])
+          && resource.data.status == 'OPEN'
+          && reqAfter.data.rideId == rideId
+          && reqBefore.data.status == 'PENDING' && reqAfter.data.status == 'ACCEPTED'
+          && !(reqAfter.data.requesterId in resource.data.memberIds)
+          && seatsLeft == resource.data.seatsAvailable - reqAfter.data.seats
+          && seatsLeft >= 0
+          && newData().memberIds == resource.data.memberIds.concat([reqAfter.data.requesterId])
+          && ((seatsLeft == 0 && newData().status == 'FULL') || (seatsLeft > 0 && newData().status == 'OPEN'));
+      }
+      // An accepted participant leaves in the same transaction that marks their request LEFT.
+      function participantLeaveUpdate() {
+        let reqId = rideId + '_' + uid();
+        let reqPath = docPath('rideRequests', reqId);
+        let reqBefore = get(reqPath);
+        let reqAfter = getAfter(reqPath);
+        return uid() != resource.data.ownerId
+          && uid() in resource.data.memberIds
+          && newData().lastRequestId == reqId
+          && changed().hasOnly(['seatsAvailable', 'memberIds', 'status', 'lastRequestId', 'updatedAt'])
+          && resource.data.status in ['OPEN', 'FULL']
+          && reqBefore.data.status == 'ACCEPTED' && reqAfter.data.status == 'LEFT'
+          && newData().seatsAvailable == resource.data.seatsAvailable + reqAfter.data.seats
+          && newData().seatsAvailable <= resource.data.totalSeats
+          && newData().memberIds == resource.data.memberIds.removeAll([uid()])
+          && newData().status == 'OPEN';
+      }
+      allow update: if signedIn() && (ownerManualUpdate() || ownerAcceptUpdate() || participantLeaveUpdate());
+      allow delete: if false; // rides are kept for everyone's history
+
+      // Per-ride contact card (name + phone) used by the Call button. Members only.
+      match /contacts/{userId} {
+        allow read: if isRideMember(rideId)
+          && (userId in rideDoc(rideId).data.memberIds || uid() == rideDoc(rideId).data.ownerId);
+        allow create, update: if signedIn() && userId == uid()
+          && isStr(newData().phone, 20) && isStr(newData().name, 80)
+          && (uid() in rideDoc(rideId).data.memberIds
+              || existsAfter(docPath('rideRequests', rideId + '_' + uid())));
+        allow delete: if signedIn() && userId == uid();
+      }
+    }
+
+    // ---------- join requests (doc id = rideId_requesterId, so duplicates are impossible) ----------
+    match /rideRequests/{requestId} {
+      allow read: if signedIn()
+        && (resource.data.requesterId == uid() || resource.data.rideOwnerId == uid());
+
+      function validNewRequest(ride) {
+        return ride.data.status == 'OPEN'
+          && newData().rideOwnerId == ride.data.ownerId
+          && ride.data.ownerId != uid()                                   // no self-join
+          && !(uid() in ride.data.memberIds)
+          && newData().seats is int && newData().seats >= 1
+          && newData().seats <= ride.data.seatsAvailable                   // no overbooking
+          && !isBlockedBetween(uid(), ride.data.ownerId)
+          && (!('message' in newData()) || isStr(newData().message, 300));
+      }
+
+      allow create: if signedIn()
+        && requestId == newData().rideId + '_' + uid()
+        && newData().requesterId == uid()
+        && newData().status == 'PENDING'
+        && validNewRequest(rideDoc(newData().rideId));
+
+      function requesterCancel() {
+        return uid() == resource.data.requesterId
+          && resource.data.status == 'PENDING' && newData().status == 'CANCELLED'
+          && changed().hasOnly(['status', 'updatedAt']);
+      }
+      function requesterReRequest() {
+        return uid() == resource.data.requesterId
+          && resource.data.status == 'CANCELLED' && newData().status == 'PENDING'
+          && changed().hasOnly(['status', 'updatedAt', 'seats', 'message', 'createdAt',
+                                'compatibility', 'detourKm', 'sharedKm'])
+          && validNewRequest(rideDoc(resource.data.rideId));
+      }
+      function requesterLeave() {
+        return uid() == resource.data.requesterId
+          && resource.data.status == 'ACCEPTED' && newData().status == 'LEFT'
+          && changed().hasOnly(['status', 'updatedAt'])
+          && !(uid() in rideAfter(resource.data.rideId).data.memberIds);
+      }
+      function ownerAccept() {
+        let ride = rideAfter(resource.data.rideId);
+        return uid() == resource.data.rideOwnerId
+          && resource.data.status == 'PENDING' && newData().status == 'ACCEPTED'
+          && changed().hasOnly(['status', 'updatedAt'])
+          && ride.data.lastRequestId == requestId
+          && resource.data.requesterId in ride.data.memberIds;
+      }
+      function ownerReject() {
+        return uid() == resource.data.rideOwnerId
+          && resource.data.status == 'PENDING' && newData().status == 'REJECTED'
+          && changed().hasOnly(['status', 'updatedAt']);
+      }
+      allow update: if signedIn()
+        && (requesterCancel() || requesterReRequest() || requesterLeave() || ownerAccept() || ownerReject());
+      allow delete: if false;
+    }
+
+    // ---------- chat: one per ride, members only, messages immutable ----------
+    match /chats/{rideId}/messages/{messageId} {
+      allow read: if isRideMember(rideId);
+      allow create: if isRideMember(rideId)
+        && newData().senderId == uid()
+        && newData().type in ['TEXT', 'CALL', 'SYSTEM']
+        && newData().text is string && newData().text.size() > 0 && newData().text.size() <= 2000
+        && newData().createdAt == request.time;
+      allow update, delete: if false;
+    }
+    match /chats/{rideId}/readStates/{userId} {
+      allow read, write: if isRideMember(rideId) && userId == uid();
+    }
+
+    // ---------- live locations: members of the ride only ----------
+    match /liveLocations/{rideId}/members/{userId} {
+      allow read: if isRideMember(rideId);
+      allow create, update: if isRideMember(rideId) && userId == uid()
+        && isLat(newData().lat) && isLng(newData().lng)
+        && (rideDoc(rideId).data.status == 'IN_PROGRESS'
+            || (rideDoc(rideId).data.status in ['OPEN', 'FULL']
+                && rideDoc(rideId).data.departureTime < request.time + duration.value(2, 'h')));
+      allow delete: if signedIn() && userId == uid();
+    }
+
+    // ---------- in-app notifications ----------
+    match /notifications/{notificationId} {
+      allow read: if signedIn() && resource.data.userId == uid();
+
+      // Sender must be related to the ride the notification is about, and not blocked by the recipient.
+      function relatedToRide(rideId, recipient) {
+        let ride = rideDoc(rideId);
+        return uid() == ride.data.ownerId
+          || uid() in ride.data.memberIds
+          || (recipient == ride.data.ownerId && existsAfter(docPath('rideRequests', rideId + '_' + uid())));
+      }
+      allow create: if signedIn()
+        && newData().senderId == uid()
+        && newData().read == false
+        && newData().type in ['JOIN_REQUEST', 'REQUEST_ACCEPTED', 'REQUEST_REJECTED', 'REQUEST_CANCELLED',
+                              'PARTICIPANT_LEFT', 'NEW_MESSAGE', 'RIDE_STARTED', 'RIDE_COMPLETED',
+                              'RIDE_CANCELLED', 'RIDE_UPDATED']
+        && isStr(newData().title, 120) && isStr(newData().body, 400)
+        && !isBlockedBetween(uid(), newData().userId)
+        && relatedToRide(newData().rideId, newData().userId);
+      allow update: if signedIn() && resource.data.userId == uid() && changed().hasOnly(['read']);
+      allow delete: if signedIn() && resource.data.userId == uid();
+    }
+
+    // ---------- reviews: unique per (ride, reviewer, reviewee) and immutable ----------
+    match /reviews/{reviewId} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && reviewId == newData().rideId + '_' + uid() + '_' + newData().revieweeId
+        && newData().reviewerId == uid()
+        && newData().revieweeId != uid()
+        && rideDoc(newData().rideId).data.status == 'COMPLETED'
+        && uid() in rideDoc(newData().rideId).data.memberIds
+        && newData().revieweeId in rideDoc(newData().rideId).data.memberIds
+        && newData().rating is int && newData().rating >= 1 && newData().rating <= 5
+        && isStr(newData().comment, 500)
+        && newData().createdAt == request.time;
+      allow update, delete: if false;
+    }
+
+    // ---------- emergency events: the user's own history ----------
+    match /emergencyEvents/{eventId} {
+      allow read: if signedIn() && resource.data.userId == uid();
+      allow create: if signedIn() && newData().userId == uid()
+        && isStr(newData().action, 40);
+      allow update, delete: if false;
+    }
+
+    // ---------- blocks (doc id = blockerId_blockedId) ----------
+    match /blocks/{blockId} {
+      allow read: if signedIn()
+        && (resource.data.blockerId == uid() || resource.data.blockedId == uid());
+      allow create: if signedIn()
+        && newData().blockerId == uid()
+        && newData().blockedId != uid()
+        && blockId == uid() + '_' + newData().blockedId;
+      allow delete: if signedIn() && resource.data.blockerId == uid();
+      allow update: if false;
+    }
+
+    // ---------- reports (write-only; reviewed by admins in the console) ----------
+    match /reports/{reportId} {
+      allow create: if signedIn()
+        && newData().reporterId == uid()
+        && newData().reportedId != uid()
+        && isStr(newData().reason, 60)
+        && isStr(newData().details, 1000);
+      allow read, update, delete: if false;
+    }
+  }
+}
