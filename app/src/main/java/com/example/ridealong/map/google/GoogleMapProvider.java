@@ -20,6 +20,7 @@ public final class GoogleMapProvider implements MapProvider {
             MapsInitializer.initialize(context.getApplicationContext());
             MapView view = new MapView(context);
             view.onCreate(null);
+            view.onStart();
             container.removeAllViews();
             container.addView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             view.getMapAsync(map -> ready.onSuccess(new GoogleMapViewController(view, map)));

@@ -17,6 +17,19 @@ admin.initializeApp({ projectId: process.env.GCLOUD_PROJECT || 'demo-ridealong' 
 const auth = admin.auth();
 const db = admin.firestore();
 
+/** Same algorithm as domain/algorithm/GeoHash.java (precision 9 used for rides). */
+function geohash(lat, lng, precision = 9) {
+  const BASE32 = '0123456789bcdefghjkmnpqrstuvwxyz';
+  let latR = [-90, 90], lngR = [-180, 180], even = true, bit = 0, ch = 0, out = '';
+  while (out.length < precision) {
+    const r = even ? lngR : latR, v = even ? lng : lat, mid = (r[0] + r[1]) / 2;
+    if (v >= mid) { ch = (ch << 1) | 1; r[0] = mid; } else { ch <<= 1; r[1] = mid; }
+    even = !even;
+    if (++bit === 5) { out += BASE32[ch]; bit = 0; ch = 0; }
+  }
+  return out;
+}
+
 const users = [
   { email: 'tester1@ridealong.test', password: 'test1234', name: 'Test Rider One', phone: '01700000001' },
   { email: 'tester2@ridealong.test', password: 'test1234', name: 'Test Rider Two', phone: '01700000002' },
@@ -43,8 +56,8 @@ const users = [
   const owner = uids[0];
   const ride = await db.collection('rides').add({
     ownerId: owner, ownerName: users[0].name, status: 'OPEN',
-    pickupLat: 23.8069, pickupLng: 90.3687, pickupAddress: 'Mirpur 10 Circle, Dhaka', pickupGeohash: 'wh0r9q0kh',
-    dropLat: 23.7389, dropLng: 90.3950, dropAddress: 'Shahbag, Dhaka', dropGeohash: 'wh0qcw2u7',
+    pickupLat: 23.8069, pickupLng: 90.3687, pickupAddress: 'Mirpur 10 Circle, Dhaka', pickupGeohash: geohash(23.8069, 90.3687),
+    dropLat: 23.7389, dropLng: 90.3950, dropAddress: 'Shahbag, Dhaka', dropGeohash: geohash(23.7389, 90.3950),
     departureTime: admin.firestore.Timestamp.fromMillis(Date.now() + 2 * 3600 * 1000),
     costPerPerson: 70, totalSeats: 3, seatsAvailable: 3, maxDetourKm: 2, comment: 'Emulator seed ride',
     transportType: 'CNG', memberIds: [owner], routePolyline: '', routeDistanceKm: 9.2, routeDurationMin: 30,

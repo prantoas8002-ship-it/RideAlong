@@ -13,3 +13,5 @@ ORS_API_KEY=
 USE_FIREBASE_EMULATOR=false
 # 10.0.2.2 reaches the host machine from the Android emulator. Use your PC's LAN IP for a real device.
 FIREBASE_EMULATOR_HOST=10.0.2.2
+# Used only when app/google-services.json is absent: a "demo-" project works with the emulators alone.
+FIREBASE_EMULATOR_PROJECT_ID=demo-ridealong

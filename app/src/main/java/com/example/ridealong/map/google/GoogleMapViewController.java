@@ -136,5 +136,8 @@ final class GoogleMapViewController implements MapViewController {
     public void onPause() { view.onPause(); }
 
     @Override
-    public void onDestroy() { view.onDestroy(); }
+    public void onDestroy() {
+        view.onStop();
+        view.onDestroy();
+    }
 }

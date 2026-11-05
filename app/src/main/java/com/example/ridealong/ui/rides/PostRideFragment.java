@@ -58,7 +58,8 @@ public class PostRideFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle s) {
         vm = new ViewModelProvider(this).get(PostRideViewModel.class);
         if (s == null && b.detour.getText() != null && b.detour.getText().length() == 0) {
-            b.detour.setText(String.format(Locale.getDefault(), "%.1f", AppConfig.get().postDefaultMaxDetourKm));
+            // Locale.US: input fields must contain ASCII digits so parsing works in every locale (e.g. Bangla).
+            b.detour.setText(String.format(Locale.US, "%.1f", AppConfig.get().postDefaultMaxDetourKm));
         }
 
         b.pickup.setOnClickListener(v -> openPicker(Constants.PICK_KIND_PICKUP, vm.pickup().getValue()));
@@ -77,7 +78,7 @@ public class PostRideFragment extends Fragment {
         });
         b.useEstimate.setOnClickListener(v -> {
             Double est = vm.estimate().getValue();
-            if (est != null) b.cost.setText(RideUi.money(est).replace(",", ""));
+            if (est != null) b.cost.setText(String.format(Locale.US, "%.0f", est));
         });
         b.post.setOnClickListener(v -> submit());
 

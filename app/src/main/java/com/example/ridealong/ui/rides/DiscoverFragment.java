@@ -217,7 +217,7 @@ public class DiscoverFragment extends Fragment {
         dialog.setContentView(fb.getRoot());
         fb.filterDestination.setText(current.destinationContains);
         fb.seatsSlider.setValue(Math.max(1, Math.min(8, current.minSeats)));
-        if (current.maxCost != null) fb.filterMaxCost.setText(com.example.ridealong.ui.common.RideUi.money(current.maxCost).replace(",", ""));
+        if (current.maxCost != null) fb.filterMaxCost.setText(String.format(java.util.Locale.US, "%.0f", current.maxCost));
         int chip = current.window == RideFilters.TimeWindow.ONE_HOUR ? R.id.time_1h
                 : current.window == RideFilters.TimeWindow.THREE_HOURS ? R.id.time_3h
                 : current.window == RideFilters.TimeWindow.TODAY ? R.id.time_today : R.id.time_any;

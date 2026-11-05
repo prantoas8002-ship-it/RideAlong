@@ -39,6 +39,8 @@ android {
         buildConfigField("String", "ORS_API_KEY", "\"${localProp("ORS_API_KEY")}\"")
         buildConfigField("boolean", "USE_FIREBASE_EMULATOR", localProp("USE_FIREBASE_EMULATOR", "false").ifEmpty { "false" })
         buildConfigField("String", "FIREBASE_EMULATOR_HOST", "\"${localProp("FIREBASE_EMULATOR_HOST", "10.0.2.2")}\"")
+        // Must start with "demo-" (emulator-only project) when no google-services.json is present.
+        buildConfigField("String", "FIREBASE_EMULATOR_PROJECT_ID", "\"${localProp("FIREBASE_EMULATOR_PROJECT_ID", "demo-ridealong")}\"")
     }
 
     buildTypes {

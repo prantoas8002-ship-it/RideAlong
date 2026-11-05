@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.example.ridealong.BuildConfig;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
@@ -27,6 +28,16 @@ public final class FirebaseProvider {
         initialised = true;
         try {
             if (FirebaseApp.getApps(context).isEmpty()) FirebaseApp.initializeApp(context);
+            if (FirebaseApp.getApps(context).isEmpty() && BuildConfig.USE_FIREBASE_EMULATOR) {
+                // Development mode without google-services.json: Firebase's "demo-" project convention.
+                // demo-* projects only work against the Emulator Suite and can never reach production,
+                // so these are placeholders, not credentials.
+                FirebaseApp.initializeApp(context, new FirebaseOptions.Builder()
+                        .setProjectId(BuildConfig.FIREBASE_EMULATOR_PROJECT_ID)
+                        .setApplicationId("1:000000000000:android:0000000000000000")
+                        .setApiKey("emulator-only")
+                        .build());
+            }
             available = !FirebaseApp.getApps(context).isEmpty();
         } catch (Exception e) {
             Log.w(TAG, "Firebase not configured", e);
