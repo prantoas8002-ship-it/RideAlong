@@ -10,8 +10,9 @@ playServicesAuth = "20.7.0"
 playServicesLocation = "21.0.1"
 playServicesMaps = "18.2.0"
 osmdroid = "6.1.20"
-# Plain build of Google's libwebrtc (M123, BSD). No Kotlin/AndroidX deps, so it works with compileSdk 33.
-webrtc = "123.0.0"
+# Plain build of Google's libwebrtc (M119, BSD). No Kotlin/AndroidX deps (works with compileSdk 33).
+# Keep <= 119.x: 121+ is compiled for Java 17, which Android Studio Dolphin's JDK 11 cannot read.
+webrtc = "119.0.0"
 room = "2.5.2"
 navigation = "2.5.3"
 lifecycle = "2.6.2"
