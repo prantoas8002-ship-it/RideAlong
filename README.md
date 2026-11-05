@@ -79,6 +79,7 @@ cd firestore-tests && npm install && npm test   # 26 security-rules tests on the
 
 ## Known limitations (honest)
 
+* **Closed-app push needs the free relay.** Deploy `push-relay/` (Cloudflare Workers free tier) and set `PUSH_RELAY_URL`; then calls ring and notifications arrive even when the app is closed. Without it:
 * **No push when the app is killed.** Server push needs FCM + Cloud Functions, which require the paid
   Blaze plan. Notifications arrive while the process is alive. The optional *Background sync* setting
   keeps a foreground service running, but Android may still stop it (battery savers, Android 15

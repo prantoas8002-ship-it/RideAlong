@@ -77,6 +77,7 @@ See [SETUP_GUIDE.md](SETUP_GUIDE.md). Emulator-only mode (no Firebase project) i
 * ⚠️ Voice calls have not been tested between two real phones from this machine (no device attached).
 
 ## Known limitations
+* Calls/notifications reach a **fully closed** app only after the free push relay is deployed (`push-relay/README.md`) and `PUSH_RELAY_URL` is set. Without it they arrive while the app is running; missed calls are always recorded (Alerts + chat).
 * In-app calls between two phones on mobile data usually need a TURN relay (configure `TURN_*`, see SETUP_GUIDE).
 * No push to a killed app (needs FCM + Functions → Blaze). An optional background-sync foreground service is available.
 * Calls/SMS require the user to press Call/Send (an Android restriction). The app never claims an alert was sent.
