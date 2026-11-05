@@ -35,6 +35,7 @@ public final class NotificationHelper {
                 NotificationManager.IMPORTANCE_MIN));
     }
 
+    @androidx.annotation.RequiresApi(Build.VERSION_CODES.O)
     private static NotificationChannel channel(Context c, String id, int name, int desc, int importance) {
         NotificationChannel ch = new NotificationChannel(id, c.getString(name), importance);
         ch.setDescription(c.getString(desc));

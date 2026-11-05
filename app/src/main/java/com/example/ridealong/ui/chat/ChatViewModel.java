@@ -26,6 +26,7 @@ public class ChatViewModel extends ViewModel {
     private final MutableLiveData<Event<Throwable>> error = new MutableLiveData<>();
     private final MutableLiveData<List<User>> members = new MutableLiveData<>(new ArrayList<>());
     private String membersKey = "";
+    private boolean serverDelivered;
 
     public void init(String rideId) {
         if (this.rideId != null) return;
@@ -34,11 +35,13 @@ public class ChatViewModel extends ViewModel {
         ride = ServiceLocator.get().rides().observeRide(rideId);
         messages.addSource(ServiceLocator.get().chat().observeMessages(rideId), r -> {
             if (r == null) return;
-            if (r.isError() || (r.isSuccess() && r.fromCache && (r.data == null || r.data.isEmpty()))) {
+            if (r.isSuccess() && !r.fromCache) serverDelivered = true;
+            if (!serverDelivered && (r.isError() || (r.isSuccess() && r.fromCache && (r.data == null || r.data.isEmpty())))) {
                 // Offline or no access to the live listener: show the Room history (read-only).
                 AppExecutors.io().execute(() -> {
                     List<ChatMessage> cached = ServiceLocator.get().chat().cachedMessages(rideId);
                     AppExecutors.main(() -> {
+                        if (serverDelivered) return;
                         if (!cached.isEmpty()) messages.setValue(Resource.success(cached, true));
                         else messages.setValue(r);
                     });

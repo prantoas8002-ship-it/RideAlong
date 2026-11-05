@@ -51,6 +51,8 @@ public class RideDetailsViewModel extends ViewModel {
     private final MutableLiveData<Event<Throwable>> error = new MutableLiveData<>();
     private final MutableLiveData<Event<Integer>> message = new MutableLiveData<>();
     private String membersKey = "";
+    /** Set once the server has answered; late offline fallbacks must not overwrite live data. */
+    private boolean serverDelivered;
 
     public void init(String rideId) {
         if (this.rideId != null) return;
@@ -60,11 +62,14 @@ public class RideDetailsViewModel extends ViewModel {
         LiveData<Resource<Ride>> live = ServiceLocator.get().rides().observeRide(rideId);
         ride.addSource(live, r -> {
             if (r == null) return;
+            if (r.isSuccess() && !r.fromCache) serverDelivered = true;
             if (r.data != null) {
                 ride.setValue(Resource.success(new RideState(r.data, r.fromCache)));
                 onRide(r.data);
-            } else if (r.isError() || (r.isSuccess() && r.fromCache)) {
+            } else if (r.isError() || (r.isSuccess() && r.fromCache && !ServiceLocator.get().network().isOnline())) {
                 loadFromRoom(r.error);
+            } else if (r.isSuccess() && r.fromCache) {
+                ride.setValue(Resource.loading(null)); // online: wait for the server answer
             } else if (r.isSuccess()) {
                 ride.setValue(Resource.success(null));
             } else {
@@ -83,6 +88,7 @@ public class RideDetailsViewModel extends ViewModel {
         AppExecutors.io().execute(() -> {
             CachedRideEntity e = ServiceLocator.get().db().rides().get(rideId);
             AppExecutors.main(() -> {
+                if (serverDelivered) return;
                 if (e != null) {
                     Ride r = CacheMapper.toRide(e);
                     ride.setValue(Resource.success(new RideState(r, true)));

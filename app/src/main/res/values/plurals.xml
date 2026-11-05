@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="rides_count">
+        <item quantity="one">%1$d ride</item>
+        <item quantity="other">%1$d rides</item>
+    </plurals>
+    <plurals name="home_pending_count">
+        <item quantity="one">%1$d pending</item>
+        <item quantity="other">%1$d pending</item>
+    </plurals>
+    <plurals name="request_seats">
+        <item quantity="one">%1$d seat</item>
+        <item quantity="other">%1$d seats</item>
+    </plurals>
+    <plurals name="chat_unread">
+        <item quantity="one">%1$d new message</item>
+        <item quantity="other">%1$d new messages</item>
+    </plurals>
+    <plurals name="filter_active_count">
+        <item quantity="one">%1$d filter</item>
+        <item quantity="other">%1$d filters</item>
+    </plurals>
+    <plurals name="seats_left_short">
+        <item quantity="one">%1$d seat left</item>
+        <item quantity="other">%1$d seats left</item>
+    </plurals>
+    <plurals name="action_view_requests_count">
+        <item quantity="one">View requests · %1$d pending</item>
+        <item quantity="other">View requests · %1$d pending</item>
+    </plurals>
+</resources>

@@ -4,7 +4,6 @@
     <string name="tagline">Your Route. Your People. Your Ride.</string>
 
     <!-- Generic -->
-    <string name="action_continue">Continue</string>
     <string name="action_next">Next</string>
     <string name="action_skip">Skip</string>
     <string name="action_get_started">Get started</string>
@@ -13,16 +12,11 @@
     <string name="action_confirm">Confirm</string>
     <string name="action_retry">Retry</string>
     <string name="action_close">Close</string>
-    <string name="action_ok">OK</string>
-    <string name="action_yes">Yes</string>
     <string name="action_no">No</string>
     <string name="action_delete">Delete</string>
     <string name="action_remove">Remove</string>
-    <string name="action_edit">Edit</string>
-    <string name="action_done">Done</string>
     <string name="action_apply">Apply</string>
     <string name="action_reset">Reset</string>
-    <string name="action_open_settings">Open settings</string>
     <string name="action_allow">Allow</string>
     <string name="action_not_now">Not now</string>
     <string name="loading">Loading…</string>
@@ -35,7 +29,6 @@
     <string name="you">You</string>
     <string name="cd_back">Back</string>
     <string name="cd_avatar">Profile picture</string>
-    <string name="cd_more">More options</string>
 
     <!-- Firebase missing -->
     <string name="firebase_missing_title">Firebase isn\'t configured yet</string>
@@ -45,7 +38,6 @@
     <string name="offline_banner">Offline: showing cached data. Changes sync when you\'re back online.</string>
     <string name="back_online">Back online. Syncing…</string>
     <string name="cached_label">Cached</string>
-    <string name="live_label">Live</string>
     <string name="cached_data_notice">Showing cached data (offline, read-only)</string>
 
     <!-- Onboarding -->
@@ -145,7 +137,6 @@
     <string name="home_offer_ride">Offer a ride</string>
     <string name="home_active_rides">Your active rides</string>
     <string name="home_pending_requests">Requests waiting for you</string>
-    <string name="home_pending_count">%1$d pending</string>
     <string name="home_empty_active_title">No active rides</string>
     <string name="home_empty_active_body">Rides you post or join will appear here.</string>
     <string name="home_sos">SOS</string>
@@ -197,7 +188,6 @@
     <string name="picker_no_results">No places found</string>
     <string name="picker_search_failed">Search unavailable right now. You can still drop the pin on the map.</string>
     <string name="unnamed_location">Pinned location (%1$.5f, %2$.5f)</string>
-    <string name="map_attribution">© OpenStreetMap contributors</string>
 
     <!-- Discover -->
     <string name="discover_title">Rides near you</string>
@@ -215,7 +205,6 @@
     <string name="filter_today">Today</string>
     <string name="filter_min_seats">Seats needed</string>
     <string name="filter_max_cost">Max cost per person (৳)</string>
-    <string name="filter_active_count">%1$d filters</string>
     <string name="discover_empty_title">No rides nearby yet</string>
     <string name="discover_empty_body">Try a larger search radius in Settings, change filters, or post your own ride.</string>
     <string name="discover_location_needed_title">Location needed</string>
@@ -228,12 +217,10 @@
 
     <!-- Ride card / details -->
     <string name="seats_left">%1$d of %2$d seats left</string>
-    <string name="seats_left_short">%1$d left</string>
     <string name="cost_per_person">%1$s%2$s / person</string>
     <string name="cost_free">Free</string>
     <string name="rating_value">%1$.1f</string>
     <string name="rating_none">New</string>
-    <string name="rides_count">%1$d rides</string>
     <string name="ride_status_open">Open</string>
     <string name="ride_status_full">Full</string>
     <string name="ride_status_in_progress">In progress</string>
@@ -241,7 +228,6 @@
     <string name="ride_status_cancelled">Cancelled</string>
     <string name="posted_by">Posted by</string>
     <string name="max_detour_value">Max detour %1$.1f km</string>
-    <string name="details_route">Route</string>
     <string name="details_participants">Riders</string>
     <string name="details_comment">Note from poster</string>
     <string name="details_your_match">Your match</string>
@@ -252,7 +238,6 @@
     <string name="action_cancel_request">Cancel request</string>
     <string name="action_leave_ride">Leave ride</string>
     <string name="action_view_requests">View requests</string>
-    <string name="action_view_requests_count">View requests · %1$d pending</string>
     <string name="action_open_chat">Chat</string>
     <string name="action_call">Call</string>
     <string name="action_track">Live map</string>
@@ -263,7 +248,6 @@
     <string name="action_sos">SOS</string>
     <string name="action_block_user">Block user</string>
     <string name="action_report_user">Report user</string>
-    <string name="action_view_profile">View profile</string>
     <string name="request_pending_note">Request sent. Waiting for the poster to respond.</string>
     <string name="request_rejected_note">The poster declined your request.</string>
     <string name="request_accepted_note">You\'re in! Chat with your co-riders.</string>
@@ -297,13 +281,10 @@
     <string name="call_who">Who do you want to call?</string>
 
     <!-- Requests -->
-    <string name="requests_pending">Pending</string>
-    <string name="requests_accepted">Accepted riders</string>
     <string name="requests_empty_title">No requests yet</string>
     <string name="requests_empty_body">When someone asks to join, you\'ll see them here.</string>
     <string name="action_accept">Accept</string>
     <string name="action_reject">Decline</string>
-    <string name="request_seats">%1$d seat(s)</string>
     <string name="request_accepted_toast">Rider accepted</string>
     <string name="request_rejected_toast">Request declined</string>
     <string name="request_status_pending">Pending</string>
@@ -319,7 +300,6 @@
     <string name="chat_empty_body">Messages are only visible to the poster and accepted riders.</string>
     <string name="chat_not_member">Only the poster and accepted riders can open this chat.</string>
     <string name="chat_call_log">%1$s called %2$s</string>
-    <string name="chat_unread">%1$d new</string>
     <string name="chat_ride_closed">This ride has ended. Chat history is kept.</string>
 
     <!-- Tracking -->
@@ -334,12 +314,9 @@
     <string name="tracking_distance_to_pickup">%1$.1f km to pickup</string>
     <string name="tracking_distance_to_destination">%1$.1f km to destination</string>
     <string name="tracking_no_one_sharing">No one is sharing yet</string>
-    <string name="permission_location_title">Location permission</string>
-    <string name="permission_location_body">RideAlong needs your location to share it with co-riders and to detect pickup and arrival.</string>
     <string name="permission_background_title">Allow \"all the time\" location?</string>
     <string name="permission_background_body">For pickup and arrival alerts while the app is closed (geofencing), choose \"Allow all the time\" on the next screen. Without it, RideAlong checks distance only while sharing is on.</string>
     <string name="permission_denied_location">Location permission denied. Enable it in Settings to use this feature.</string>
-    <string name="permission_notifications_body">Allow notifications for join requests, messages and ride updates.</string>
     <string name="geofence_fallback_note">Pickup/arrival alerts use in-app distance checks (background location not granted).</string>
 
     <!-- Service notifications -->
@@ -393,7 +370,6 @@
     <string name="profile_reviews">Reviews</string>
     <string name="profile_reviews_empty">No reviews yet</string>
     <string name="profile_member_since">Member since %1$s</string>
-    <string name="profile_reviews_count">%1$d reviews</string>
     <string name="menu_edit_profile">Edit profile</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_history">Ride history</string>
@@ -420,7 +396,6 @@
     <string name="confirm_block_title">Block %1$s?</string>
     <string name="confirm_block_body">You won\'t see each other\'s rides and they can\'t send you requests or notifications.</string>
     <string name="user_blocked">User blocked</string>
-    <string name="user_unblocked">User unblocked</string>
     <string name="action_unblock">Unblock</string>
     <string name="report_title">Report %1$s</string>
     <string name="report_reason">Reason</string>
@@ -435,7 +410,6 @@
     <string name="blocked_users_empty">You haven\'t blocked anyone</string>
 
     <!-- Emergency -->
-    <string name="sos_title">Emergency</string>
     <string name="sos_subtitle">Press and confirm to call or text your emergency contact with your live location.</string>
     <string name="sos_button">SOS</string>
     <string name="sos_999_note">This does not replace the national emergency number. In immediate danger call 999.</string>
@@ -497,4 +471,10 @@
     <string name="cd_increase_seats">More seats</string>
     <string name="chat_system_joined">%1$s joined the ride</string>
     <string name="seats_value" translatable="false">%1$d</string>
+    <!-- Formatting (no concatenation in code) -->
+    <string name="chat_banner">%1$s → %2$s · %3$s</string>
+    <string name="chat_system_line">%1$s · %2$s</string>
+    <string name="sos_log_action">%1$s · %2$s</string>
+    <string name="sos_log_meta">%1$s %2$s%3$s</string>
+    <string name="notification_more">%1$s (+%2$d)</string>
 </resources>

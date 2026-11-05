@@ -92,7 +92,7 @@ final class RequestsAdapter extends RecyclerView.Adapter<RequestsAdapter.VH> {
         h.b.status.setBackgroundResource(bg);
         h.b.status.setTextColor(c.getColor(fg));
 
-        StringBuilder d = new StringBuilder(c.getString(R.string.request_seats, r.seats));
+        StringBuilder d = new StringBuilder(c.getResources().getQuantityString(R.plurals.request_seats, r.seats, r.seats));
         if (r.compatibility > 0) d.append("  ·  ").append(c.getString(R.string.match_score, (int) Math.round(r.compatibility)));
         if (r.detourKm > 0) d.append("  ·  ").append(c.getString(R.string.detour_value, r.detourKm));
         if (r.createdAt != null) d.append("  ·  ").append(DateTimeUtils.relative(c, r.createdAt.toDate().getTime()));

@@ -5,6 +5,7 @@
     android:gravity="start"
     android:orientation="vertical"
     android:paddingTop="@dimen/space_xs"
+    android:paddingStart="@dimen/space_xxs"
     android:paddingEnd="56dp"
     android:paddingBottom="@dimen/space_xs">
 

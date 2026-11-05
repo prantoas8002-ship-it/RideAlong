@@ -93,7 +93,16 @@ public class UserRepository {
                 CachedUserEntity e = db.users().get(uid);
                 return e == null ? null : CacheMapper.toPrivate(e);
             }
-            return t.getResult().toObject(PrivateInfo.class);
+            PrivateInfo p = t.getResult().toObject(PrivateInfo.class);
+            // Keep phone + emergency contacts in Room so SOS works offline.
+            CachedUserEntity e = db.users().get(uid);
+            if (e != null && p != null) {
+                e.phone = p.phone;
+                e.email = p.email;
+                e.emergencyContactsJson = CacheMapper.contactsToJson(p.emergencyContacts);
+                db.users().upsert(e);
+            }
+            return p;
         });
     }
 

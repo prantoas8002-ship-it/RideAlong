@@ -64,7 +64,7 @@ public class RidesAdapter extends ListAdapter<RideItem, RidesAdapter.VH> {
             b.pickup.setText(r.pickupAddress);
             b.drop.setText(r.dropAddress);
             b.time.setText(DateTimeUtils.formatDeparture(c, r.departureMillis()));
-            b.seats.setText(c.getString(R.string.seats_left_short, r.seatsAvailable));
+            b.seats.setText(c.getResources().getQuantityString(R.plurals.seats_left_short, r.seatsAvailable, r.seatsAvailable));
             b.cost.setText(RideUi.cost(c, r.costPerPerson));
             b.ownerName.setText(r.ownerName);
 
@@ -103,7 +103,7 @@ public class RidesAdapter extends ListAdapter<RideItem, RidesAdapter.VH> {
             }
             if (item.unread > 0) {
                 if (extra.length() > 0) extra.append("  ·  ");
-                extra.append(c.getString(R.string.chat_unread, (int) item.unread));
+                extra.append(c.getResources().getQuantityString(R.plurals.chat_unread, (int) item.unread, (int) item.unread));
             }
             if (item.cached) {
                 if (extra.length() > 0) extra.append("  ·  ");

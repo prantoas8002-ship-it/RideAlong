@@ -134,7 +134,7 @@ public class NotificationsFragment extends Fragment {
             NotificationsViewModel.Row row = rows.get(position);
             String[] tb = NotificationRepository.render(requireContext(), row.n);
             h.v.title.setText(tb[0]);
-            h.v.body.setText(row.group.size() > 1 ? tb[1] + "  (+" + (row.group.size() - 1) + ")" : tb[1]);
+            h.v.body.setText(row.group.size() > 1 ? getString(R.string.notification_more, tb[1], row.group.size() - 1) : tb[1]);
             h.v.time.setText(row.n.createdAt == null ? "" : DateTimeUtils.relative(requireContext(), row.n.createdAt.toDate().getTime()));
             h.v.icon.setImageResource(iconFor(row.n.type));
             h.v.unreadDot.setVisibility(row.unread ? View.VISIBLE : View.INVISIBLE);

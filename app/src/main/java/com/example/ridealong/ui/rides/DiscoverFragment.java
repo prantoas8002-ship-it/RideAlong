@@ -87,7 +87,7 @@ public class DiscoverFragment extends Fragment {
         });
         vm.filters().observe(getViewLifecycleOwner(), f -> {
             int n = f.activeCount();
-            b.filters.setText(n == 0 ? getString(R.string.action_filters) : getString(R.string.filter_active_count, n));
+            b.filters.setText(n == 0 ? getString(R.string.action_filters) : getResources().getQuantityString(R.plurals.filter_active_count, n, n));
         });
         vm.results().observe(getViewLifecycleOwner(), this::render);
 

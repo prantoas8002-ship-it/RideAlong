@@ -78,7 +78,7 @@ final class MessagesAdapter extends ListAdapter<ChatMessage, RecyclerView.ViewHo
             } else {
                 text = m.text;
             }
-            h.b.text.setText(text + "  ·  " + time);
+            h.b.text.setText(c.getString(R.string.chat_system_line, text, time));
             h.b.text.setCompoundDrawablesRelativeWithIntrinsicBounds(
                     Constants.MSG_CALL.equals(m.type) ? R.drawable.ic_call : R.drawable.ic_info, 0, 0, 0);
         }

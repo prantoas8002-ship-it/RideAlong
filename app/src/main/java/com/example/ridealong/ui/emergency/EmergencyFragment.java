@@ -156,10 +156,10 @@ public class EmergencyFragment extends Fragment {
             ItemEmergencyLogBinding row = ItemEmergencyLogBinding.inflate(getLayoutInflater(), b.history, false);
             int label = Constants.SOS_SMS.equals(e.action) ? R.string.sos_action_sms
                     : Constants.SOS_999.equals(e.action) ? R.string.sos_action_999 : R.string.sos_action_dial;
-            row.action.setText(getString(label) + (e.contactName == null ? "" : " · " + e.contactName));
+            row.action.setText(e.contactName == null ? getString(label) : getString(R.string.sos_log_action, getString(label), e.contactName));
             String where = e.lat == null ? "" : String.format(Locale.US, "  ·  %.5f, %.5f", e.lat, e.lng);
-            row.meta.setText(DateTimeUtils.formatDate(requireContext(), e.createdMillis) + " "
-                    + DateTimeUtils.formatTime(requireContext(), e.createdMillis) + where);
+            row.meta.setText(getString(R.string.sos_log_meta, DateTimeUtils.formatDate(requireContext(), e.createdMillis),
+                    DateTimeUtils.formatTime(requireContext(), e.createdMillis), where));
             b.history.addView(row.getRoot());
         }
     }

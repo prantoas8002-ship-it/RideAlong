@@ -8,7 +8,6 @@
     <dimen name="space_l">16dp</dimen>
     <dimen name="space_xl">24dp</dimen>
     <dimen name="space_xxl">32dp</dimen>
-    <dimen name="space_xxxl">48dp</dimen>
     <dimen name="screen_padding">20dp</dimen>
 
     <!-- Radii -->
@@ -18,14 +17,12 @@
     <dimen name="radius_xl">24dp</dimen>
 
     <!-- Sizes -->
-    <dimen name="avatar_xs">28dp</dimen>
     <dimen name="avatar_s">40dp</dimen>
     <dimen name="avatar_m">56dp</dimen>
     <dimen name="avatar_l">96dp</dimen>
     <dimen name="icon_s">16dp</dimen>
     <dimen name="icon_m">20dp</dimen>
     <dimen name="icon_l">24dp</dimen>
-    <dimen name="icon_xl">64dp</dimen>
     <dimen name="button_height">52dp</dimen>
     <dimen name="sos_button">200dp</dimen>
     <dimen name="map_height">220dp</dimen>

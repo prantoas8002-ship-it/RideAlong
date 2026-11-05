@@ -173,6 +173,39 @@ describe('join requests', () => {
   });
 });
 
+describe('contacts, request lookups and notifications', () => {
+  it('owner can create a ride and its contact card in one batch', async () => {
+    const d = db(BOB);
+    const b = d.batch();
+    b.set(d.doc('rides/r2'), rideData({ ownerId: BOB, memberIds: [BOB] }));
+    b.set(d.doc(`rides/r2/contacts/${BOB}`), { name: 'Bob', phone: '01711111111' });
+    await assertSucceeds(b.commit());
+  });
+  it('requester can check a request that does not exist yet', async () => {
+    await assertSucceeds(db(BOB).doc(`rideRequests/${RIDE}_${BOB}`).get());
+  });
+  it('requester publishes their contact together with the request; outsiders cannot read it', async () => {
+    const d = db(BOB);
+    const b = d.batch();
+    b.set(d.doc(`rideRequests/${RIDE}_${BOB}`), {
+      rideId: RIDE, rideOwnerId: ALICE, requesterId: BOB, requesterName: 'Bob', seats: 1, status: 'PENDING', message: '',
+    });
+    b.set(d.doc(`rides/${RIDE}/contacts/${BOB}`), { name: 'Bob', phone: '01711111111' });
+    await assertSucceeds(b.commit());
+    await assertSucceeds(db(ALICE).doc(`rides/${RIDE}/contacts/${BOB}`).get()); // owner may call a requester
+    await assertFails(db(CAROL).doc(`rides/${RIDE}/contacts/${BOB}`).get());
+    await assertFails(db(CAROL).doc(`rides/${RIDE}/contacts/${CAROL}`).set({ name: 'C', phone: '0170' }));
+  });
+  it('unrelated users cannot send notifications', async () => {
+    const n = (sender) => ({
+      userId: ALICE, senderId: sender, type: 'JOIN_REQUEST', title: 't', body: 'b', rideId: RIDE, read: false,
+      createdAt: FieldValue.serverTimestamp(),
+    });
+    await assertFails(db(CAROL).collection('notifications').add(n(CAROL)));
+    await assertFails(db(CAROL).collection('notifications').add(n(BOB))); // impersonation
+  });
+});
+
 describe('chat and live location', () => {
   beforeEach(async () => { await seedPendingRequest(); await acceptBob(); });
   const msg = (uid) => ({ senderId: uid, senderName: uid, text: 'hi', type: 'TEXT', createdAt: FieldValue.serverTimestamp() });

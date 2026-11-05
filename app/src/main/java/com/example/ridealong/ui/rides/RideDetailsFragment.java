@@ -249,7 +249,7 @@ public class RideDetailsFragment extends Fragment {
             switch (st) {
                 case OPEN:
                 case FULL:
-                    primary(n > 0 ? getString(R.string.action_view_requests_count, n)
+                    primary(n > 0 ? getResources().getQuantityString(R.plurals.action_view_requests_count, n, n)
                             : getString(R.string.action_view_requests), () -> Nav.go(this, R.id.rideRequestsFragment, Nav.ride(r.id)));
                     secondary(R.string.action_start_ride, () -> Ui.confirm(requireContext(), R.string.confirm_start_title,
                             R.string.confirm_start_body, R.string.action_start_ride, vm::start));

@@ -77,6 +77,6 @@ public final class RideUi {
         if (u == null || u.ratingCount <= 0) value.setText(R.string.rating_none);
         else value.setText(c.getString(R.string.rating_value, u.averageRating()));
         long completed = u == null ? 0 : u.completedRides;
-        rides.setText(c.getString(R.string.rides_count, (int) completed));
+        rides.setText(c.getResources().getQuantityString(R.plurals.rides_count, (int) completed, (int) completed));
     }
 }

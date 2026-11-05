@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/error_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -14,7 +15,7 @@
         android:importantForAccessibility="no"
         android:padding="24dp"
         android:src="@drawable/ic_warning"
-        android:tint="@color/ra_error" />
+        app:tint="@color/ra_error" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -39,6 +40,5 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/space_l"
         android:text="@string/action_retry"
-        app:icon="@drawable/ic_refresh"
-        xmlns:app="http://schemas.android.com/apk/res-auto" />
+        app:icon="@drawable/ic_refresh" />
 </LinearLayout>

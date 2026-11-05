@@ -90,7 +90,7 @@ public class HomeFragment extends Fragment {
             return;
         }
         b.pendingCard.setVisibility(View.VISIBLE);
-        b.pendingCount.setText(getString(R.string.home_pending_count, list.size()));
+        b.pendingCount.setText(getResources().getQuantityString(R.plurals.home_pending_count, list.size(), list.size()));
         b.pendingList.removeAllViews();
         for (int i = 0; i < Math.min(MAX_PENDING_ROWS, list.size()); i++) {
             RideRequest r = list.get(i);

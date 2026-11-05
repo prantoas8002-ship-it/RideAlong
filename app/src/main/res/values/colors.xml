@@ -2,7 +2,6 @@
 <resources>
     <!-- Brand tokens -->
     <color name="ra_primary">#2563EB</color>
-    <color name="ra_primary_dark">#1D4ED8</color>
     <color name="ra_primary_container">#DBEAFE</color>
     <color name="ra_on_primary_container">#1E3A8A</color>
     <color name="ra_secondary">#7C3AED</color>
@@ -28,7 +27,6 @@
     <color name="ra_star">#F59E0B</color>
     <color name="ra_sos">#DC2626</color>
     <color name="ra_sos_dark">#991B1B</color>
-    <color name="ra_scrim">#990F172A</color>
 
     <!-- Chat -->
     <color name="ra_bubble_out">#2563EB</color>

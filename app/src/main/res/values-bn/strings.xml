@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Bangla (partial). Strings not listed here fall back to values/strings.xml (English). -->
+<resources>
+    <string name="tagline">আপনার পথ। আপনার মানুষ। আপনার যাত্রা।</string>
+
+    <string name="action_next">পরবর্তী</string>
+    <string name="action_skip">এড়িয়ে যান</string>
+    <string name="action_get_started">শুরু করুন</string>
+    <string name="action_save">সংরক্ষণ করুন</string>
+    <string name="action_cancel">বাতিল</string>
+    <string name="action_confirm">নিশ্চিত করুন</string>
+    <string name="action_retry">আবার চেষ্টা করুন</string>
+    <string name="action_close">বন্ধ করুন</string>
+    <string name="action_no">না</string>
+    <string name="action_apply">প্রয়োগ করুন</string>
+    <string name="action_reset">রিসেট</string>
+    <string name="loading">লোড হচ্ছে…</string>
+    <string name="error_generic">কিছু একটা ভুল হয়েছে। আবার চেষ্টা করুন।</string>
+    <string name="error_network">আপনি অফলাইনে আছেন। সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।</string>
+    <string name="you">আপনি</string>
+
+    <string name="offline_banner">অফলাইন: সংরক্ষিত ডেটা দেখানো হচ্ছে। অনলাইনে ফিরলে পরিবর্তন সিঙ্ক হবে।</string>
+    <string name="back_online">আবার অনলাইনে। সিঙ্ক হচ্ছে…</string>
+
+    <string name="onboarding_1_title">রাইড শেয়ার করুন, খরচ ভাগ করুন</string>
+    <string name="onboarding_2_title">আপনার পথের সাথে মিলিয়ে</string>
+    <string name="onboarding_3_title">নিশ্চিন্তে যাতায়াত করুন</string>
+
+    <string name="login_title">আবার স্বাগতম</string>
+    <string name="login_subtitle">রাইড খুঁজতে ও শেয়ার করতে সাইন ইন করুন</string>
+    <string name="register_title">অ্যাকাউন্ট তৈরি করুন</string>
+    <string name="hint_full_name">পূর্ণ নাম</string>
+    <string name="hint_email">ইমেইল</string>
+    <string name="hint_password">পাসওয়ার্ড</string>
+    <string name="hint_confirm_password">পাসওয়ার্ড নিশ্চিত করুন</string>
+    <string name="hint_phone">ফোন নম্বর</string>
+    <string name="action_sign_in">সাইন ইন</string>
+    <string name="action_sign_up">অ্যাকাউন্ট তৈরি করুন</string>
+    <string name="action_google">Google দিয়ে চালিয়ে যান</string>
+    <string name="action_forgot_password">পাসওয়ার্ড ভুলে গেছেন?</string>
+    <string name="forgot_title">পাসওয়ার্ড রিসেট করুন</string>
+    <string name="action_send_reset_link">রিসেট লিংক পাঠান</string>
+    <string name="reset_link_sent">%1$s ঠিকানায় অ্যাকাউন্ট থাকলে পাসওয়ার্ড রিসেটের একটি লিংক পাঠানো হয়েছে। ইমেইল খুলে লিংকে ট্যাপ করে নতুন পাসওয়ার্ড দিন।</string>
+
+    <string name="nav_home">হোম</string>
+    <string name="nav_discover">খুঁজুন</string>
+    <string name="nav_post">পোস্ট</string>
+    <string name="nav_alerts">নোটিফিকেশন</string>
+    <string name="nav_profile">প্রোফাইল</string>
+
+    <string name="home_greeting">হাই, %1$s</string>
+    <string name="home_where_to">আজ কোথায় যাচ্ছেন?</string>
+    <string name="home_find_ride">রাইড খুঁজুন</string>
+    <string name="home_offer_ride">রাইড অফার করুন</string>
+    <string name="home_active_rides">আপনার সক্রিয় রাইড</string>
+
+    <string name="title_post_ride">রাইড পোস্ট করুন</string>
+    <string name="hint_pickup">পিকআপ স্থান</string>
+    <string name="hint_destination">গন্তব্য</string>
+    <string name="hint_seats">খালি সিট</string>
+    <string name="action_post_ride">রাইড পোস্ট করুন</string>
+    <string name="fare_estimate_label">আনুমানিক</string>
+    <string name="transport_cng">সিএনজি</string>
+    <string name="transport_rickshaw">রিকশা</string>
+    <string name="transport_car">গাড়ি</string>
+    <string name="transport_bus">বাস</string>
+    <string name="cost_free">ফ্রি</string>
+
+    <string name="discover_title">আশেপাশের রাইড</string>
+    <string name="action_filters">ফিল্টার</string>
+    <string name="action_request_join">যোগ দেওয়ার অনুরোধ</string>
+    <string name="action_cancel_request">অনুরোধ বাতিল</string>
+    <string name="action_leave_ride">রাইড ছেড়ে দিন</string>
+    <string name="action_open_chat">চ্যাট</string>
+    <string name="action_call">কল</string>
+    <string name="action_accept">গ্রহণ</string>
+    <string name="action_reject">প্রত্যাখ্যান</string>
+    <string name="hint_message">বার্তা</string>
+
+    <string name="title_emergency">জরুরি SOS</string>
+    <string name="sos_999_note">এটি জাতীয় জরুরি নম্বরের বিকল্প নয়। তাৎক্ষণিক বিপদে ৯৯৯-এ কল করুন।</string>
+    <string name="action_call_999">৯৯৯-এ কল করুন</string>
+    <string name="sos_not_sent_note">কিছুই স্বয়ংক্রিয়ভাবে পাঠানো হয় না। আপনি ফোন অ্যাপে কল বা সেন্ড চাপলেই কেবল সতর্কবার্তা যাবে।</string>
+
+    <string name="title_settings">সেটিংস</string>
+    <string name="settings_logout">লগ আউট</string>
+    <string name="settings_delete_account">অ্যাকাউন্ট মুছে ফেলুন</string>
+    <string name="title_notifications">নোটিফিকেশন</string>
+    <string name="title_history">রাইডের ইতিহাস</string>
+</resources>

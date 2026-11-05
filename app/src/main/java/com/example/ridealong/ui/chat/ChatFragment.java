@@ -83,8 +83,8 @@ public class ChatFragment extends Fragment {
             Ride ride = r == null ? null : r.data;
             if (ride == null) return;
             vm.onRide(ride);
-            b.banner.setText(ride.pickupAddress + " → " + ride.dropAddress + "  ·  "
-                    + DateTimeUtils.formatDeparture(requireContext(), ride.departureMillis()));
+            b.banner.setText(getString(R.string.chat_banner, ride.pickupAddress, ride.dropAddress,
+                    DateTimeUtils.formatDeparture(requireContext(), ride.departureMillis())));
             boolean member = ride.isMember(Me.uid());
             boolean closed = ride.statusEnum().isTerminal();
             b.inputBar.setVisibility(member && !closed ? View.VISIBLE : View.GONE);
