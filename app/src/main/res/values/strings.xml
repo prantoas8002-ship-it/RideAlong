@@ -490,4 +490,10 @@
     <!-- Empty / error states -->
     <string name="state_error_title">Couldn\'t load this</string>
     <string name="time_just_now">just now</string>
+    <string name="symbol_minus" translatable="false">−</string>
+    <string name="symbol_plus" translatable="false">+</string>
+    <string name="cd_decrease_seats">Fewer seats</string>
+    <string name="cd_increase_seats">More seats</string>
+    <string name="chat_system_joined">%1$s joined the ride</string>
+    <string name="seats_value" translatable="false">%1$d</string>
 </resources>

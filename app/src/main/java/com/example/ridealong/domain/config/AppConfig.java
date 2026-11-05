@@ -46,6 +46,16 @@ public final class AppConfig {
     public int avatarMaxBytes = 100 * 1024;
     public int maxEmergencyContacts = 5;
 
+    // Post-ride form starting values (the user can change all of them)
+    public int postDefaultSeats = 2;
+    public double postDefaultMaxDetourKm = 2.0;
+
+    // Map UI: initial camera when the device location is unknown (Dhaka city centre by default).
+    public double defaultMapCenterLat = 23.8103;
+    public double defaultMapCenterLng = 90.4125;
+    public double defaultMapZoom = 13;
+    public double pickedLocationZoom = 16;
+
     // Routing
     public int routeMaxStoredPoints = 300;
     public double routeSimplifyToleranceKm = 0.01;

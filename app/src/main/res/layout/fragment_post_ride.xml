@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/screen_padding"
+        android:paddingBottom="@dimen/space_xxl">
+
+        <!-- Route -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_s"
+            android:text="@string/post_route_section"
+            android:textAppearance="@style/TextAppearance.RideAlong.Overline" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_s">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/space_l">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/pickup_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/hint_pickup"
+                    app:startIconDrawable="@drawable/ic_place"
+                    app:startIconTint="@color/ra_primary">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/pickup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:cursorVisible="false"
+                        android:focusable="false"
+                        android:inputType="none"
+                        android:maxLines="2" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/drop_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_m"
+                    android:hint="@string/hint_destination"
+                    app:startIconDrawable="@drawable/ic_flag"
+                    app:startIconTint="@color/ra_secondary">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/drop"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:cursorVisible="false"
+                        android:focusable="false"
+                        android:inputType="none"
+                        android:maxLines="2" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <FrameLayout
+                    android:id="@+id/map_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/map_height"
+                    android:layout_marginTop="@dimen/space_m"
+                    android:background="@drawable/bg_map_card"
+                    android:visibility="gone">
+
+                    <FrameLayout
+                        android:id="@+id/map_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/route_summary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_s"
+                    android:drawablePadding="@dimen/space_xs"
+                    android:gravity="center_vertical"
+                    android:textAppearance="@style/TextAppearance.RideAlong.Caption"
+                    android:visibility="gone"
+                    app:drawableStartCompat="@drawable/ic_route"
+                    app:drawableTint="@color/ra_text_secondary" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Details -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xl"
+            android:text="@string/post_details_section"
+            android:textAppearance="@style/TextAppearance.RideAlong.Overline" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_s">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/space_l">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/date_layout"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="@string/hint_departure_date"
+                        app:startIconDrawable="@drawable/ic_event">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/date"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:cursorVisible="false"
+                            android:focusable="false"
+                            android:inputType="none" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/time_layout"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/space_s"
+                        android:layout_weight="1"
+                        android:hint="@string/hint_departure_time"
+                        app:startIconDrawable="@drawable/ic_schedule">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/time"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:cursorVisible="false"
+                            android:focusable="false"
+                            android:inputType="none" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_l"
+                    android:text="@string/hint_transport"
+                    android:textAppearance="@style/TextAppearance.RideAlong.Caption" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/transport_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:selectionRequired="true"
+                    app:singleSelection="true">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_cng"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checkable="true"
+                        android:checked="true"
+                        android:text="@string/transport_cng" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_rickshaw"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checkable="true"
+                        android:text="@string/transport_rickshaw" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_car"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checkable="true"
+                        android:text="@string/transport_car" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_bus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checkable="true"
+                        android:text="@string/transport_bus" />
+                </com.google.android.material.chip.ChipGroup>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_l"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/hint_seats"
+                        android:textAppearance="@style/TextAppearance.RideAlong.BodyLarge" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/seats_minus"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:padding="0dp"
+                        android:text="@string/symbol_minus"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/seats_value"
+                        android:layout_width="48dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textAppearance="@style/TextAppearance.RideAlong.TitleLarge" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/seats_plus"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:padding="0dp"
+                        android:text="@string/symbol_plus"
+                        android:textSize="20sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/seats_error"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.RideAlong.Caption"
+                    android:textColor="@color/ra_error"
+                    android:visibility="gone" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/cost_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_l"
+                    android:hint="@string/hint_cost_per_person"
+                    app:startIconDrawable="@drawable/ic_payments">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/cost"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="numberDecimal" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Fare estimate (reference only) -->
+                <com.google.android.material.card.MaterialCardView
+                    style="@style/Widget.RideAlong.Card.Tinted"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_s">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/space_m">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/fare_estimate_label"
+                                android:textAppearance="@style/TextAppearance.RideAlong.Overline"
+                                android:textColor="@color/ra_primary" />
+
+                            <TextView
+                                android:id="@+id/fare_estimate"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/fare_estimate_need_route"
+                                android:textAppearance="@style/TextAppearance.RideAlong.Caption"
+                                android:textColor="@color/ra_on_primary_container" />
+                        </LinearLayout>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/use_estimate"
+                            style="@style/Widget.RideAlong.Button.Text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:enabled="false"
+                            android:text="@string/action_apply" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/detour_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_l"
+                    android:hint="@string/hint_max_detour"
+                    app:startIconDrawable="@drawable/ic_route">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/detour"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="numberDecimal" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/comment_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_m"
+                    android:hint="@string/hint_comment"
+                    app:counterEnabled="true"
+                    app:counterMaxLength="500">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/comment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="top"
+                        android:inputType="textMultiLine|textCapSentences"
+                        android:minLines="2" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/post"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xl"
+            android:text="@string/action_post_ride"
+            app:icon="@drawable/ic_check" />
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/progress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_m"
+            android:indeterminate="true"
+            android:visibility="invisible" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

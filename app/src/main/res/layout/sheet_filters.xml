@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="@dimen/space_xl">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/filters_title"
+        android:textAppearance="@style/TextAppearance.RideAlong.TitleLarge" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_l"
+        android:hint="@string/filter_destination"
+        app:startIconDrawable="@drawable/ic_flag">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/filter_destination"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_l"
+        android:text="@string/filter_time_window"
+        android:textAppearance="@style/TextAppearance.RideAlong.Caption" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/time_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:selectionRequired="true"
+        app:singleSelection="true">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/time_any"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkable="true"
+            android:checked="true"
+            android:text="@string/filter_any_time" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/time_1h"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkable="true"
+            android:text="@string/filter_within_1h" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/time_3h"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkable="true"
+            android:text="@string/filter_within_3h" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/time_today"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkable="true"
+            android:text="@string/filter_today" />
+    </com.google.android.material.chip.ChipGroup>
+
+    <TextView
+        android:id="@+id/seats_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_l"
+        android:text="@string/filter_min_seats"
+        android:textAppearance="@style/TextAppearance.RideAlong.Caption" />
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/seats_slider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stepSize="1"
+        android:valueFrom="1"
+        android:valueTo="8"
+        app:labelBehavior="floating" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_s"
+        android:hint="@string/filter_max_cost"
+        app:startIconDrawable="@drawable/ic_payments">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/filter_max_cost"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_xl"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/reset"
+            style="@style/Widget.RideAlong.Button.Outlined"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/action_reset" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/apply"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_m"
+            android:layout_weight="1"
+            android:text="@string/action_apply" />
+    </LinearLayout>
+</LinearLayout>
