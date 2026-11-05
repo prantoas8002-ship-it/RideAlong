@@ -107,4 +107,6 @@
     <string name="call_end_ended">কল শেষ</string>
     <string name="n_missed_call_title">মিসড ভয়েস কল</string>
     <string name="n_missed_call_body">%1$s আপনাকে কল করার চেষ্টা করেছেন</string>
+    <string name="action_video_call">ভিডিও কল</string>
+    <string name="call_incoming_video_title">ইনকামিং ভিডিও কল</string>
 </resources>

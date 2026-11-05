@@ -51,6 +51,11 @@ public class EditProfileFragment extends Fragment {
             registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
                 if (uri != null) vm.processPhoto(uri);
             });
+    private final ActivityResultLauncher<String> cameraPermission =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> {
+                if (Boolean.TRUE.equals(granted)) launchCamera();
+                else Ui.snack(b.getRoot(), R.string.photo_camera_denied);
+            });
     private final ActivityResultLauncher<Uri> takePhoto =
             registerForActivityResult(new ActivityResultContracts.TakePicture(), ok -> {
                 if (Boolean.TRUE.equals(ok) && cameraUri != null) vm.processPhoto(cameraUri);
@@ -175,6 +180,12 @@ public class EditProfileFragment extends Fragment {
     }
 
     private void launchCamera() {
+        // The app declares CAMERA (video calls), so Android requires it before ACTION_IMAGE_CAPTURE.
+        if (androidx.core.content.ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.CAMERA)
+                != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            cameraPermission.launch(android.Manifest.permission.CAMERA);
+            return;
+        }
         try {
             File dir = new File(requireContext().getCacheDir(), "camera");
             if (!dir.exists() && !dir.mkdirs()) throw new IllegalStateException("no cache dir");

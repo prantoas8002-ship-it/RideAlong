@@ -528,4 +528,14 @@
     <string name="channel_call_ongoing_desc">Shown while a voice call is active</string>
     <string name="n_missed_call_title">Missed voice call</string>
     <string name="n_missed_call_body">%1$s tried to call you</string>
+    <!-- Video calls -->
+    <string name="action_video_call">Video call</string>
+    <string name="call_label_video">RideAlong video call · end-to-end encrypted</string>
+    <string name="call_incoming_video_title">Incoming video call</string>
+    <string name="call_camera">Camera on/off</string>
+    <string name="call_switch_camera">Switch camera</string>
+    <string name="call_camera_denied">Camera not allowed: joining with voice only. You can still see the other person.</string>
+    <string name="call_log_video">Video call · %1$s</string>
+    <string name="call_log_missed_video">Missed video call</string>
+    <string name="photo_camera_denied">Camera permission is needed to take a photo</string>
 </resources>

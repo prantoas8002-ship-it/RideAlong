@@ -26,40 +26,43 @@ import com.example.ridealong.service.call.CallManager;
 import com.example.ridealong.service.call.IncomingCallWatcher;
 import com.example.ridealong.ui.common.Avatars;
 
-/** Full-screen call UI (outgoing, incoming, in-call). Shows over the lock screen for incoming calls. */
+import org.webrtc.RendererCommon;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Full-screen call UI for voice and video calls (outgoing, incoming, in-call). Shows over the lock
+ * screen for incoming calls. Video: remote camera full screen, my camera as a small preview.
+ */
 public class CallActivity extends AppCompatActivity {
     public static final String EXTRA_AUTO_ACCEPT = "auto_accept";
     private static final String EXTRA_PEER_ID = "peer_id";
     private static final String EXTRA_PEER_NAME = "peer_name";
     private static final String EXTRA_RIDE_ID = "ride_id";
     private static final String EXTRA_CHAT_ID = "chat_id";
+    private static final String EXTRA_VIDEO = "video";
 
     private ActivityCallBinding b;
     private CallManager calls;
     private PowerManager.WakeLock proximity;
-    /** What to do once RECORD_AUDIO is granted. */
+    private boolean renderersReady;
+    /** What to do once permissions are answered. */
     private Runnable afterPermission;
 
-    private final ActivityResultLauncher<String> micPermission =
-            registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> {
-                Runnable r = afterPermission;
-                afterPermission = null;
-                if (Boolean.TRUE.equals(granted)) {
-                    if (r != null) r.run();
-                } else {
-                    Toast.makeText(this, R.string.call_mic_needed, Toast.LENGTH_LONG).show();
-                    if (calls.state().getValue() != null && calls.state().getValue().phase == CallManager.Phase.INCOMING) calls.decline();
-                    finish();
-                }
-            });
+    private final ActivityResultLauncher<String[]> permissions =
+            registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), this::onPermissions);
 
-    /** Start an in-app voice call to another passenger (no phone number involved). */
-    public static void startOutgoing(Context c, String peerId, String peerName, String rideId, @Nullable String chatId) {
+    /** Start an in-app voice or video call to another passenger (no phone number involved). */
+    public static void startOutgoing(Context c, String peerId, String peerName, String rideId, @Nullable String chatId,
+                                     boolean video) {
         c.startActivity(new Intent(c, CallActivity.class)
                 .putExtra(EXTRA_PEER_ID, peerId)
                 .putExtra(EXTRA_PEER_NAME, peerName)
                 .putExtra(EXTRA_RIDE_ID, rideId)
-                .putExtra(EXTRA_CHAT_ID, chatId == null ? "" : chatId));
+                .putExtra(EXTRA_CHAT_ID, chatId == null ? "" : chatId)
+                .putExtra(EXTRA_VIDEO, video));
     }
 
     @Override
@@ -77,11 +80,16 @@ public class CallActivity extends AppCompatActivity {
         calls = CallManager.get(this);
         IncomingCallWatcher.cancelIncomingNotification(this);
 
-        b.accept.setOnClickListener(v -> withMic(calls::accept));
+        b.accept.setOnClickListener(v -> {
+            CallManager.State s = calls.state().getValue();
+            withPermissions(s != null && s.video, calls::accept);
+        });
         b.decline.setOnClickListener(v -> calls.decline());
         b.hangUp.setOnClickListener(v -> calls.hangUp());
         b.mute.setOnClickListener(v -> calls.toggleMute());
         b.speaker.setOnClickListener(v -> calls.toggleSpeaker());
+        b.cameraToggle.setOnClickListener(v -> calls.toggleCamera());
+        b.switchCamera.setOnClickListener(v -> calls.switchCamera());
 
         calls.state().observe(this, this::render);
         if (savedInstanceState == null) handleIntent(getIntent());
@@ -99,23 +107,85 @@ public class CallActivity extends AppCompatActivity {
             String name = i.getStringExtra(EXTRA_PEER_NAME);
             String ride = i.getStringExtra(EXTRA_RIDE_ID);
             String chat = i.getStringExtra(EXTRA_CHAT_ID);
+            boolean video = i.getBooleanExtra(EXTRA_VIDEO, false);
             showPeer(peerId, name);
-            withMic(() -> {
-                if (!calls.startOutgoing(peerId, name, ride, chat)) finish();
+            withPermissions(video, () -> {
+                if (!calls.startOutgoing(peerId, name, ride, chat, video)) finish();
             });
         } else if (i.getBooleanExtra(EXTRA_AUTO_ACCEPT, false)) {
-            withMic(calls::accept);
+            CallManager.State s = calls.state().getValue();
+            withPermissions(s != null && s.video, calls::accept);
         }
     }
 
-    private void withMic(Runnable r) {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
-            r.run();
-        } else {
-            afterPermission = r;
-            micPermission.launch(Manifest.permission.RECORD_AUDIO);
-        }
+    // ----- permissions: microphone required; camera optional (video falls back to voice-only sending) -----
+
+    private boolean granted(String p) {
+        return ContextCompat.checkSelfPermission(this, p) == PackageManager.PERMISSION_GRANTED;
     }
+
+    private void withPermissions(boolean video, Runnable r) {
+        List<String> need = new ArrayList<>();
+        if (!granted(Manifest.permission.RECORD_AUDIO)) need.add(Manifest.permission.RECORD_AUDIO);
+        if (video && !granted(Manifest.permission.CAMERA)) need.add(Manifest.permission.CAMERA);
+        if (need.isEmpty()) {
+            r.run();
+            return;
+        }
+        afterPermission = r;
+        permissions.launch(need.toArray(new String[0]));
+    }
+
+    private void onPermissions(Map<String, Boolean> result) {
+        Runnable r = afterPermission;
+        afterPermission = null;
+        if (!granted(Manifest.permission.RECORD_AUDIO)) {
+            Toast.makeText(this, R.string.call_mic_needed, Toast.LENGTH_LONG).show();
+            CallManager.State s = calls.state().getValue();
+            if (s != null && s.phase == CallManager.Phase.INCOMING) calls.decline();
+            finish();
+            return;
+        }
+        if (Boolean.FALSE.equals(result.get(Manifest.permission.CAMERA))) {
+            Toast.makeText(this, R.string.call_camera_denied, Toast.LENGTH_LONG).show();
+        }
+        if (r != null) r.run();
+    }
+
+    // ----- video renderers -----
+
+    private void ensureRenderers() {
+        if (renderersReady) return;
+        renderersReady = true;
+        b.remoteVideo.init(calls.eglContext(), null);
+        b.remoteVideo.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FILL);
+        b.remoteVideo.setEnableHardwareScaler(true);
+        b.localVideo.init(calls.eglContext(), null);
+        b.localVideo.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FILL);
+        b.localVideo.setZOrderMediaOverlay(true); // draw the preview above the remote video
+        b.localVideo.setEnableHardwareScaler(true);
+        calls.attachVideo(b.localVideo, b.remoteVideo);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        CallManager.State s = calls.state().getValue();
+        if (s != null && s.video) {
+            ensureRenderers();
+            calls.attachVideo(b.localVideo, b.remoteVideo);
+        }
+        calls.onCallScreenVisible(true);
+    }
+
+    @Override
+    protected void onStop() {
+        // Privacy + battery: no camera capture while the call screen is not visible.
+        calls.onCallScreenVisible(false);
+        super.onStop();
+    }
+
+    // ----- rendering -----
 
     private void showPeer(@Nullable String peerId, @Nullable String name) {
         b.name.setText(name == null || name.isEmpty() ? getString(R.string.unknown_user) : name);
@@ -133,13 +203,28 @@ public class CallActivity extends AppCompatActivity {
             return;
         }
         showPeer(s.peerId, s.peerName);
+        if (s.video) ensureRenderers();
         boolean incoming = s.phase == CallManager.Phase.INCOMING;
+        boolean live = s.phase == CallManager.Phase.CONNECTING || s.phase == CallManager.Phase.CONNECTED
+                || s.phase == CallManager.Phase.OUTGOING;
         b.incomingControls.setVisibility(incoming ? View.VISIBLE : View.GONE);
-        b.callControls.setVisibility(incoming || s.phase == CallManager.Phase.ENDED ? View.GONE : View.VISIBLE);
-        b.mute.setSelected(s.muted);
+        b.callControls.setVisibility(live ? View.VISIBLE : View.GONE);
+
+        // Video surfaces
+        boolean showRemote = s.video && s.remoteVideo && s.phase == CallManager.Phase.CONNECTED;
+        b.remoteVideo.setVisibility(showRemote ? View.VISIBLE : View.GONE);
+        b.videoScrim.setVisibility(showRemote ? View.VISIBLE : View.GONE);
+        b.localVideo.setVisibility(s.video && s.cameraOn && live ? View.VISIBLE : View.GONE);
+        b.localVideo.setMirror(s.frontCamera);
+        b.avatar.setVisibility(showRemote ? View.GONE : View.VISIBLE);
+        b.videoControls.setVisibility(s.video && live ? View.VISIBLE : View.GONE);
+        b.cameraToggle.setImageResource(s.cameraOn ? R.drawable.ic_videocam : R.drawable.ic_videocam_off);
+        b.switchCamera.setEnabled(s.cameraOn);
+        b.switchCamera.setAlpha(s.cameraOn ? 1f : 0.4f);
+        b.label.setText(s.video ? R.string.call_label_video : R.string.call_label);
+
         b.mute.setImageResource(s.muted ? R.drawable.ic_mic_off : R.drawable.ic_mic);
-        b.speaker.setSelected(s.speaker);
-        b.speaker.setAlpha(s.speaker ? 1f : 0.7f);
+        b.speaker.setAlpha(s.speaker ? 1f : 0.6f);
         b.timer.stop();
         b.timer.setVisibility(View.GONE);
         switch (s.phase) {
@@ -147,7 +232,7 @@ public class CallActivity extends AppCompatActivity {
                 b.status.setText(R.string.call_status_calling);
                 break;
             case INCOMING:
-                b.status.setText(R.string.call_incoming_title);
+                b.status.setText(s.video ? R.string.call_incoming_video_title : R.string.call_incoming_title);
                 break;
             case CONNECTING:
                 b.status.setText(R.string.call_status_connecting);
@@ -165,7 +250,8 @@ public class CallActivity extends AppCompatActivity {
             default:
                 break;
         }
-        updateProximity(s.phase == CallManager.Phase.CONNECTED && !s.speaker);
+        // Ear-to-phone screen-off only makes sense for voice calls on the earpiece.
+        updateProximity(s.phase == CallManager.Phase.CONNECTED && !s.speaker && !s.video);
     }
 
     private int endText(@Nullable String reason) {
@@ -176,7 +262,6 @@ public class CallActivity extends AppCompatActivity {
         return R.string.call_end_ended;
     }
 
-    /** Screen off when the phone is held to the ear. */
     private void updateProximity(boolean on) {
         PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
         if (on && proximity == null && pm.isWakeLockLevelSupported(PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK)) {
@@ -192,6 +277,11 @@ public class CallActivity extends AppCompatActivity {
     protected void onDestroy() {
         updateProximity(false);
         b.timer.stop();
+        if (renderersReady) {
+            calls.attachVideo(null, null);
+            b.localVideo.release();
+            b.remoteVideo.release();
+        }
         super.onDestroy();
     }
 }

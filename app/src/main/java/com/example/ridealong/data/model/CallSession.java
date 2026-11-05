@@ -26,6 +26,8 @@ public class CallSession {
     /** Private chat id ("" for a call between ride members). */
     public String chatId;
     public String status;
+    /** true = video call (camera + audio). */
+    public boolean video;
     public Map<String, String> offer;
     public Map<String, String> answer;
     public Timestamp createdAt;

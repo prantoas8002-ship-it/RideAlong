@@ -20,6 +20,10 @@ public final class AppConfig {
     public long callReconnectGraceMs = 8_000;
     /** Ignore RINGING calls older than this (stale docs after a crash). */
     public long callStaleAfterMs = 60_000;
+    /** Camera capture for video calls (640x480 @ 24 fps keeps mobile data use moderate). */
+    public int callVideoWidth = 640;
+    public int callVideoHeight = 480;
+    public int callVideoFps = 24;
     /** Free public STUN servers; TURN comes from local.properties (TURN_URLS / TURN_USERNAME / TURN_PASSWORD). */
     public final java.util.List<String> callStunUrls = java.util.Arrays.asList(
             "stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302", "stun:stun2.l.google.com:19302");

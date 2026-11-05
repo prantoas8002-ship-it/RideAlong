@@ -73,6 +73,7 @@ See [SETUP_GUIDE.md](SETUP_GUIDE.md). Emulator-only mode (no Firebase project) i
 * **In-app voice calls** (WebRTC `com.dafruits:webrtc:123.0.0`, Firestore signaling, rules-protected
   `calls` collection, foreground `microphone` service, full-screen incoming call). Rules tests: 38 passing.
 * **Dark mode** with Light / Dark / System setting.
+* **Video calls** in the private chat (camera optional; falls back to voice-only sending if the camera is denied).
 * ⚠️ Voice calls have not been tested between two real phones from this machine (no device attached).
 
 ## Known limitations

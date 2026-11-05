@@ -150,7 +150,7 @@ public class ChatFragment extends Fragment {
 
     private void callUser(boolean voice, Ride ride, User u) {
         if (voice) {
-            com.example.ridealong.ui.call.CallActivity.startOutgoing(requireContext(), u.uidOrId(), u.displayName(), ride.id, "");
+            com.example.ridealong.ui.call.CallActivity.startOutgoing(requireContext(), u.uidOrId(), u.displayName(), ride.id, "", false);
         } else {
             CallHelper.call(b.getRoot(), ride, u.uidOrId(), u.displayName());
         }

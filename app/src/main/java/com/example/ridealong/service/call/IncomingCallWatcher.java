@@ -87,7 +87,7 @@ public final class IncomingCallWatcher {
         NotificationCompat.Builder b = new NotificationCompat.Builder(app, Constants.CHANNEL_CALLS)
                 .setSmallIcon(R.drawable.ic_call)
                 .setColor(app.getColor(R.color.ra_primary))
-                .setContentTitle(app.getString(R.string.call_incoming_title))
+                .setContentTitle(app.getString(s.video ? R.string.call_incoming_video_title : R.string.call_incoming_title))
                 .setContentText(name)
                 .setCategory(NotificationCompat.CATEGORY_CALL)
                 .setPriority(NotificationCompat.PRIORITY_MAX)

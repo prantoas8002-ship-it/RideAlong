@@ -1,15 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/call_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_call_screen"
+    android:background="@drawable/bg_call_screen">
+
+    <!-- Remote camera (video calls) -->
+    <org.webrtc.SurfaceViewRenderer
+        android:id="@+id/remote_video"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <View
+        android:id="@+id/video_scrim"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_call_video_scrim"
+        android:visibility="gone" />
+
+    <!-- My camera preview -->
+    <org.webrtc.SurfaceViewRenderer
+        android:id="@+id/local_video"
+        android:layout_width="104dp"
+        android:layout_height="148dp"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="72dp"
+        android:layout_marginEnd="@dimen/space_l"
+        android:visibility="gone" />
+
+<LinearLayout
+    android:id="@+id/overlay"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:gravity="center_horizontal"
     android:orientation="vertical"
     android:padding="@dimen/space_xl">
 
     <TextView
+        android:id="@+id/label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/space_xl"
@@ -127,6 +158,40 @@
         </LinearLayout>
     </LinearLayout>
 
+    <!-- Video only: camera on/off, switch camera -->
+    <LinearLayout
+        android:id="@+id/video_controls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/space_l"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/camera_toggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/call_camera"
+            app:backgroundTint="#33FFFFFF"
+            app:elevation="0dp"
+            app:fabCustomSize="52dp"
+            app:srcCompat="@drawable/ic_videocam"
+            app:tint="@color/ra_white" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/switch_camera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_xxl"
+            android:contentDescription="@string/call_switch_camera"
+            app:backgroundTint="#33FFFFFF"
+            app:elevation="0dp"
+            app:fabCustomSize="52dp"
+            app:srcCompat="@drawable/ic_flip_camera"
+            app:tint="@color/ra_white" />
+    </LinearLayout>
+
     <!-- Outgoing / in call: mute, hang up, speaker -->
     <LinearLayout
         android:id="@+id/call_controls"
@@ -171,3 +236,4 @@
             app:tint="@color/ra_white" />
     </LinearLayout>
 </LinearLayout>
+</FrameLayout>

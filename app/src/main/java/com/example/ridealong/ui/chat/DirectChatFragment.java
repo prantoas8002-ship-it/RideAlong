@@ -64,17 +64,17 @@ public class DirectChatFragment extends Fragment {
 
         requireActivity().addMenuProvider(new MenuProvider() {
             @Override
-            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) { inflater.inflate(R.menu.menu_chat, menu); }
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) { inflater.inflate(R.menu.menu_direct_chat, menu); }
 
             @Override
             public boolean onMenuItemSelected(@NonNull MenuItem item) {
                 DirectChat c = vm.current();
                 if (c == null) return false;
                 String me = Me.uid();
-                if (item.getItemId() == R.id.action_voice_call) {
+                if (item.getItemId() == R.id.action_voice_call || item.getItemId() == R.id.action_video_call) {
                     // In-app internet call: no phone number is shared or needed.
                     com.example.ridealong.ui.call.CallActivity.startOutgoing(requireContext(), c.otherId(me), c.otherName(me),
-                            c.rideId, c.id);
+                            c.rideId, c.id, item.getItemId() == R.id.action_video_call);
                     return true;
                 }
                 if (item.getItemId() == R.id.action_call) {

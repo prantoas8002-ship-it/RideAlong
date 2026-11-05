@@ -24,7 +24,7 @@ public class CallRepository {
     public DocumentReference ref(String id) { return col().document(id); }
 
     public Task<Void> create(DocumentReference ref, String calleeId, String calleeName, String myName, String rideId,
-                             String chatId, String sdpType, String sdp) {
+                             String chatId, boolean video, String sdpType, String sdp) {
         Map<String, Object> m = new HashMap<>();
         m.put("callerId", FirebaseProvider.uidOrNull());
         m.put("callerName", myName == null ? "" : myName);
@@ -33,6 +33,7 @@ public class CallRepository {
         m.put("rideId", rideId);
         m.put("chatId", chatId == null ? "" : chatId);
         m.put("status", CallSession.RINGING);
+        m.put("video", video);
         m.put("offer", sdpMap(sdpType, sdp));
         m.put("createdAt", FieldValue.serverTimestamp());
         return ref.set(m);

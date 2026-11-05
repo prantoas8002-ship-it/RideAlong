@@ -232,7 +232,7 @@ public class RideDetailsFragment extends Fragment {
             row.call.setVisibility(isMe || r.statusEnum().isTerminal() ? View.GONE : View.VISIBLE);
             // Tap: in-app voice call (no phone number). Long-press: regular phone call via the dialer.
             row.call.setOnClickListener(v ->
-                    com.example.ridealong.ui.call.CallActivity.startOutgoing(requireContext(), uid, u.displayName(), r.id, ""));
+                    com.example.ridealong.ui.call.CallActivity.startOutgoing(requireContext(), uid, u.displayName(), r.id, "", false));
             row.call.setOnLongClickListener(v -> {
                 CallHelper.call(b.getRoot(), r, uid, u.displayName());
                 return true;

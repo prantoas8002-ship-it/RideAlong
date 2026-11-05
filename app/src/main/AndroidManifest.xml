@@ -14,12 +14,14 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <!-- In-app voice calls (WebRTC) -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- Video calls only; requested at the moment a video call starts. -->
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
-    <!-- No CALL_PHONE / SEND_SMS: calls and SMS open the user's own apps (ACTION_DIAL / ACTION_SENDTO). -->
+    <!-- No CALL_PHONE / SEND_SMS: phone calls and SMS open the user's own apps (ACTION_DIAL / ACTION_SENDTO). -->
 
     <uses-feature android:name="android.hardware.camera" android:required="false" />
     <uses-feature android:name="android.hardware.location.gps" android:required="false" />
