@@ -97,6 +97,17 @@ public class RideDetailsFragment extends Fragment {
         b.chat.setOnClickListener(v -> Nav.go(this, R.id.chatFragment, Nav.ride(rideId)));
         b.track.setOnClickListener(v -> Nav.go(this, R.id.liveTrackingFragment, Nav.ride(rideId)));
         b.sos.setOnClickListener(v -> Nav.go(this, R.id.emergencyFragment, Nav.ride(rideId)));
+        b.messageOwner.setOnClickListener(v -> {
+            Ride r = vm.current();
+            if (r == null) return;
+            ServiceLocator.get().directChats()
+                    .ensureChat(r.id, r.ownerId, r.ownerName, Me.uid(), Me.name(), r.dropAddress)
+                    .addOnCompleteListener(t -> {
+                        if (b == null) return;
+                        if (t.isSuccessful()) Nav.go(this, R.id.directChatFragment, Nav.chat(t.getResult()));
+                        else Ui.error(b.getRoot(), t.getException());
+                    });
+        });
 
         vm.ride().observe(getViewLifecycleOwner(), this::renderRide);
         vm.myRequest().observe(getViewLifecycleOwner(), r -> renderActions());
@@ -272,6 +283,7 @@ public class RideDetailsFragment extends Fragment {
         }
 
         if (participant) {
+            b.messageOwner.setVisibility(View.VISIBLE); // private chat with the poster
             switch (st) {
                 case OPEN:
                 case FULL:
@@ -295,6 +307,7 @@ public class RideDetailsFragment extends Fragment {
         // Not a member: request flow.
         Resource<RideRequest> req = vm.myRequest().getValue();
         RequestStatus rs = req == null || req.data == null ? null : req.data.statusEnum();
+        b.messageOwner.setVisibility(rs == RequestStatus.PENDING ? View.VISIBLE : View.GONE);
         if (rs == RequestStatus.PENDING) {
             note(R.string.request_pending_note);
             secondary(R.string.action_cancel_request, vm::cancelRequest);
@@ -317,6 +330,7 @@ public class RideDetailsFragment extends Fragment {
         b.dangerAction.setVisibility(View.GONE);
         b.memberActions.setVisibility(View.GONE);
         b.note.setVisibility(View.GONE);
+        b.messageOwner.setVisibility(View.GONE);
     }
 
     private void primary(String text, Runnable action) {

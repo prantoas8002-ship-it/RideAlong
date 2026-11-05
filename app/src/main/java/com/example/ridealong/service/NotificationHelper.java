@@ -50,6 +50,13 @@ public final class NotificationHelper {
         return PendingIntent.getActivity(c, requestCode, i, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
     }
 
+    public static PendingIntent openDirectChatIntent(Context c, String chatId, int requestCode) {
+        Intent i = new Intent(c, MainActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .putExtra(Constants.EXTRA_DIRECT_CHAT_ID, chatId);
+        return PendingIntent.getActivity(c, requestCode, i, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+    }
+
     public static PendingIntent openNotificationsIntent(Context c) {
         Intent i = new Intent(c, MainActivity.class)
                 .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP)

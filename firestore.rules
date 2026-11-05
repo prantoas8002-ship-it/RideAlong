@@ -166,10 +166,13 @@ service cloud.firestore {
       allow update: if signedIn() && (ownerManualUpdate() || ownerAcceptUpdate() || participantLeaveUpdate());
       allow delete: if false; // rides are kept for everyone's history
 
-      // Per-ride contact card (name + phone) used by the Call button. Members only.
+      // Per-ride contact card (name + phone) used by the Call button. Members, plus a requester with a
+      // PENDING/ACCEPTED request reading the poster's card (so they can call from the private chat).
       match /contacts/{userId} {
-        allow read: if isRideMember(rideId)
-          && (userId in rideDoc(rideId).data.memberIds || uid() == rideDoc(rideId).data.ownerId);
+        allow read: if (isRideMember(rideId)
+            && (userId in rideDoc(rideId).data.memberIds || uid() == rideDoc(rideId).data.ownerId))
+          || (signedIn() && userId == rideDoc(rideId).data.ownerId
+            && get(docPath('rideRequests', rideId + '_' + uid())).data.status in ['PENDING', 'ACCEPTED']);
         allow create, update: if signedIn() && userId == uid()
           && isStr(newData().phone, 20) && isStr(newData().name, 80)
           && (uid() in rideAfter(rideId).data.memberIds
@@ -251,6 +254,46 @@ service cloud.firestore {
       allow read, write: if isRideMember(rideId) && userId == uid();
     }
 
+    // ---------- private 1-to-1 chat: ride poster <-> one requester ----------
+    // Doc id = rideId_requesterId (the same id as the join request), so it only exists alongside a request.
+    match /directChats/{chatId} {
+      function chatAfter() { return getAfter(docPath('directChats', chatId)); }
+
+      allow read: if signedIn() && (resource == null || uid() in resource.data.participants);
+
+      allow create: if signedIn()
+        && chatId == newData().rideId + '_' + newData().requesterId
+        && newData().participants.size() == 2
+        && newData().ownerId in newData().participants
+        && newData().requesterId in newData().participants
+        && newData().ownerId != newData().requesterId
+        && uid() in newData().participants
+        && rideDoc(newData().rideId).data.ownerId == newData().ownerId
+        && existsAfter(docPath('rideRequests', chatId))
+        && newData().lastReadAt is map
+        && !isBlockedBetween(newData().ownerId, newData().requesterId);
+
+      // Participants update the preview fields and only their OWN read marker.
+      allow update: if signedIn() && uid() in resource.data.participants
+        && changed().hasOnly(['lastMessage', 'lastMessageAt', 'lastSenderId', 'lastReadAt', 'updatedAt'])
+        && (!('lastSenderId' in changed()) || newData().lastSenderId == uid())
+        && newData().lastReadAt.diff(resource.data.lastReadAt).affectedKeys().hasOnly([uid()])
+        && isStr(newData().lastMessage, 200);
+      allow delete: if false;
+
+      match /messages/{messageId} {
+        allow read: if signedIn() && uid() in get(docPath('directChats', chatId)).data.participants;
+        allow create: if signedIn()
+          && uid() in chatAfter().data.participants
+          && newData().senderId == uid()
+          && newData().type in ['TEXT', 'CALL']
+          && newData().text is string && newData().text.size() > 0 && newData().text.size() <= 2000
+          && newData().createdAt == request.time
+          && !isBlockedBetween(chatAfter().data.ownerId, chatAfter().data.requesterId);
+        allow update, delete: if false;
+      }
+    }
+
     // ---------- live locations: members of the ride only ----------
     match /liveLocations/{rideId}/members/{userId} {
       allow read: if isRideMember(rideId);
@@ -278,7 +321,7 @@ service cloud.firestore {
         && newData().read == false
         && newData().type in ['JOIN_REQUEST', 'REQUEST_ACCEPTED', 'REQUEST_REJECTED', 'REQUEST_CANCELLED',
                               'PARTICIPANT_LEFT', 'NEW_MESSAGE', 'RIDE_STARTED', 'RIDE_COMPLETED',
-                              'RIDE_CANCELLED', 'RIDE_UPDATED']
+                              'RIDE_CANCELLED', 'RIDE_UPDATED', 'DIRECT_MESSAGE']
         && isStr(newData().title, 120) && isStr(newData().body, 400)
         && !isBlockedBetween(uid(), newData().userId)
         && relatedToRide(newData().rideId, newData().userId);

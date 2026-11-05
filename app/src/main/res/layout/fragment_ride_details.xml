@@ -294,6 +294,16 @@
                 android:visibility="gone" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/message_owner"
+                style="@style/Widget.RideAlong.Button.Tonal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_l"
+                android:text="@string/action_message_poster"
+                android:visibility="gone"
+                app:icon="@drawable/ic_chat" />
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/primary_action"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

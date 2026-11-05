@@ -72,6 +72,15 @@
             android:textAppearance="@style/TextAppearance.RideAlong.Body"
             android:visibility="gone" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/message_btn"
+            style="@style/Widget.RideAlong.Button.Tonal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_m"
+            android:text="@string/action_message"
+            app:icon="@drawable/ic_chat" />
+
         <LinearLayout
             android:id="@+id/actions"
             android:layout_width="match_parent"

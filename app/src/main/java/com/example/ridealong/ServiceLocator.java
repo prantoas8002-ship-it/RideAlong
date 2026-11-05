@@ -6,6 +6,7 @@ import com.example.ridealong.data.local.AppDatabase;
 import com.example.ridealong.data.repository.AuthRepository;
 import com.example.ridealong.data.repository.ChatRepository;
 import com.example.ridealong.data.repository.ConfigRepository;
+import com.example.ridealong.data.repository.DirectChatRepository;
 import com.example.ridealong.data.repository.EmergencyRepository;
 import com.example.ridealong.data.repository.LiveLocationRepository;
 import com.example.ridealong.data.repository.NotificationRepository;
@@ -36,6 +37,7 @@ public final class ServiceLocator {
     private RideRepository rides;
     private RequestRepository requests;
     private ChatRepository chat;
+    private DirectChatRepository directChats;
     private NotificationRepository notifications;
     private ReviewRepository reviews;
     private LiveLocationRepository liveLocations;
@@ -98,13 +100,18 @@ public final class ServiceLocator {
     }
 
     public synchronized RequestRepository requests() {
-        if (requests == null) requests = new RequestRepository(notifications(), chat());
+        if (requests == null) requests = new RequestRepository(notifications(), chat(), directChats());
         return requests;
     }
 
     public synchronized ChatRepository chat() {
         if (chat == null) chat = new ChatRepository(db(), notifications());
         return chat;
+    }
+
+    public synchronized DirectChatRepository directChats() {
+        if (directChats == null) directChats = new DirectChatRepository(db(), notifications());
+        return directChats;
     }
 
     public synchronized ReviewRepository reviews() {

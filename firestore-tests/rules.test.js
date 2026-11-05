@@ -206,6 +206,87 @@ describe('contacts, request lookups and notifications', () => {
   });
 });
 
+describe('private chat between poster and requester', () => {
+  const CHAT = `${RIDE}_${BOB}`;
+  const chat = () => ({
+    rideId: RIDE, ownerId: ALICE, ownerName: 'Alice', requesterId: BOB, requesterName: 'Bob',
+    participants: [ALICE, BOB], lastMessage: '', lastSenderId: '', lastReadAt: {},
+    lastMessageAt: FieldValue.serverTimestamp(), createdAt: FieldValue.serverTimestamp(),
+  });
+  const msg = (uid, text = 'hello') => ({ senderId: uid, senderName: uid, text, type: 'TEXT', createdAt: FieldValue.serverTimestamp() });
+
+  it('requester creates the chat together with the request (pending, not accepted)', async () => {
+    const d = db(BOB);
+    const b = d.batch();
+    b.set(d.doc(`rideRequests/${CHAT}`), {
+      rideId: RIDE, rideOwnerId: ALICE, requesterId: BOB, requesterName: 'Bob', seats: 1, status: 'PENDING', message: 'hi',
+    });
+    b.set(d.doc(`directChats/${CHAT}`), Object.assign(chat(), { lastMessage: 'hi', lastSenderId: BOB }));
+    b.set(d.doc(`directChats/${CHAT}/messages/m1`), msg(BOB, 'hi'));
+    await assertSucceeds(b.commit());
+    await assertSucceeds(db(ALICE).doc(`directChats/${CHAT}/messages/m1`).get());
+    await assertSucceeds(db(ALICE).collection('directChats').where('participants', 'array-contains', ALICE).get());
+  });
+
+  it('cannot create a chat without a request, or for someone else', async () => {
+    await assertFails(db(BOB).doc(`directChats/${CHAT}`).set(chat()));
+    await seedPendingRequest();
+    await assertFails(db(CAROL).doc(`directChats/${CHAT}`).set(chat()));
+    await assertFails(db(BOB).doc(`directChats/${RIDE}_${CAROL}`).set(Object.assign(chat(), { requesterId: CAROL, participants: [ALICE, CAROL] })));
+  });
+
+  it('both sides chat; outsiders cannot read, write or impersonate', async () => {
+    await seedPendingRequest();
+    await assertSucceeds(db(ALICE).doc(`directChats/${CHAT}`).set(chat())); // poster can open it too
+    await assertSucceeds(db(ALICE).collection(`directChats/${CHAT}/messages`).add(msg(ALICE)));
+    await assertSucceeds(db(BOB).collection(`directChats/${CHAT}/messages`).add(msg(BOB)));
+    await assertFails(db(BOB).collection(`directChats/${CHAT}/messages`).add(msg(ALICE)));
+    await assertFails(db(CAROL).collection(`directChats/${CHAT}/messages`).get());
+    await assertFails(db(CAROL).collection(`directChats/${CHAT}/messages`).add(msg(CAROL)));
+    await assertFails(db(CAROL).doc(`directChats/${CHAT}`).get());
+  });
+
+  it('participants update the preview and only their own read marker', async () => {
+    await seedPendingRequest();
+    await db(ALICE).doc(`directChats/${CHAT}`).set(chat());
+    await assertSucceeds(db(BOB).doc(`directChats/${CHAT}`).update({
+      lastMessage: 'yo', lastSenderId: BOB, lastMessageAt: FieldValue.serverTimestamp(),
+      [`lastReadAt.${BOB}`]: FieldValue.serverTimestamp(),
+    }));
+    await assertFails(db(BOB).doc(`directChats/${CHAT}`).update({ [`lastReadAt.${ALICE}`]: FieldValue.serverTimestamp() }));
+    await assertFails(db(BOB).doc(`directChats/${CHAT}`).update({ lastSenderId: ALICE }));
+    await assertFails(db(BOB).doc(`directChats/${CHAT}`).update({ participants: [BOB, CAROL] }));
+  });
+
+  it('blocked users cannot message', async () => {
+    await seedPendingRequest();
+    await db(ALICE).doc(`directChats/${CHAT}`).set(chat());
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await ctx.firestore().doc(`blocks/${ALICE}_${BOB}`).set({ blockerId: ALICE, blockedId: BOB });
+    });
+    await assertFails(db(BOB).collection(`directChats/${CHAT}/messages`).add(msg(BOB)));
+  });
+
+  it('requester can read the poster phone while pending, not after being declined', async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await ctx.firestore().doc(`rides/${RIDE}/contacts/${ALICE}`).set({ name: 'Alice', phone: '01711111111' });
+    });
+    await seedPendingRequest();
+    await assertSucceeds(db(BOB).doc(`rides/${RIDE}/contacts/${ALICE}`).get());
+    await assertFails(db(CAROL).doc(`rides/${RIDE}/contacts/${ALICE}`).get());
+    await db(ALICE).doc(`rideRequests/${CHAT}`).update({ status: 'REJECTED' });
+    await assertFails(db(BOB).doc(`rides/${RIDE}/contacts/${ALICE}`).get());
+  });
+
+  it('direct-message notifications are allowed between the two', async () => {
+    await seedPendingRequest();
+    await assertSucceeds(db(BOB).collection('notifications').add({
+      userId: ALICE, senderId: BOB, type: 'DIRECT_MESSAGE', title: 'Bob', body: 'hi', rideId: RIDE, read: false,
+      args: ['Bob', 'hi', CHAT], createdAt: FieldValue.serverTimestamp(),
+    }));
+  });
+});
+
 describe('chat and live location', () => {
   beforeEach(async () => { await seedPendingRequest(); await acceptBob(); });
   const msg = (uid) => ({ senderId: uid, senderName: uid, text: 'hi', type: 'TEXT', createdAt: FieldValue.serverTimestamp() });

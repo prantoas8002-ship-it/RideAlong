@@ -126,6 +126,12 @@ public class MainActivity extends AppCompatActivity {
             nav.navigate(R.id.notificationsFragment);
             return;
         }
+        String chatId = intent.getStringExtra(Constants.EXTRA_DIRECT_CHAT_ID);
+        if (chatId != null) {
+            nav.navigate(R.id.directChatFragment, Nav.chat(chatId), Nav.anim());
+            intent.removeExtra(Constants.EXTRA_DIRECT_CHAT_ID);
+            return;
+        }
         String rideId = intent.getStringExtra(Constants.EXTRA_RIDE_ID);
         if (rideId == null) return;
         boolean chat = intent.getBooleanExtra(Constants.EXTRA_OPEN_CHAT, false);

@@ -108,6 +108,7 @@ public class NotificationRepository {
             case Constants.N_PARTICIPANT_LEFT:
                 return new String[]{c.getString(R.string.n_left_title), c.getString(R.string.n_left_body, a0, a1)};
             case Constants.N_NEW_MESSAGE:
+            case Constants.N_DIRECT_MESSAGE:
                 return new String[]{c.getString(R.string.n_message_title, a0), a1};
             case Constants.N_RIDE_STARTED:
                 return new String[]{c.getString(R.string.n_started_title), c.getString(R.string.n_started_body, a1)};

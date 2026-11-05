@@ -1,6 +1,14 @@
 {
   "indexes": [
     {
+      "collectionGroup": "directChats",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "participants", "arrayConfig": "CONTAINS" },
+        { "fieldPath": "lastMessageAt", "order": "DESCENDING" }
+      ]
+    },
+    {
       "collectionGroup": "rides",
       "queryScope": "COLLECTION",
       "fields": [

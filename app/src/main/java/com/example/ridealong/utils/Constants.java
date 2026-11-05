@@ -7,6 +7,7 @@ public final class Constants {
     // Navigation arguments
     public static final String ARG_RIDE_ID = "rideId";
     public static final String ARG_USER_ID = "userId";
+    public static final String ARG_CHAT_ID = "chatId";
     public static final String ARG_SETUP_MODE = "setupMode";
     public static final String ARG_PICK_KIND = "pickKind";
     public static final String ARG_START_LAT = "startLat";
@@ -21,6 +22,7 @@ public final class Constants {
     // Intent extras / actions
     public static final String EXTRA_RIDE_ID = "extra_ride_id";
     public static final String EXTRA_OPEN_CHAT = "extra_open_chat";
+    public static final String EXTRA_DIRECT_CHAT_ID = "extra_direct_chat_id";
     public static final String EXTRA_OPEN_NOTIFICATIONS = "extra_open_notifications";
     public static final String ACTION_STOP_SHARING = "com.example.ridealong.action.STOP_SHARING";
 
@@ -56,6 +58,7 @@ public final class Constants {
     public static final String N_RIDE_COMPLETED = "RIDE_COMPLETED";
     public static final String N_RIDE_CANCELLED = "RIDE_CANCELLED";
     public static final String N_RIDE_UPDATED = "RIDE_UPDATED";
+    public static final String N_DIRECT_MESSAGE = "DIRECT_MESSAGE";
 
     // Emergency actions
     public static final String SOS_DIAL = "DIAL_OPENED";

@@ -41,6 +41,12 @@ public final class Nav {
         return b;
     }
 
+    public static Bundle chat(String chatId) {
+        Bundle b = new Bundle();
+        b.putString(Constants.ARG_CHAT_ID, chatId);
+        return b;
+    }
+
     public static Bundle user(String userId) {
         Bundle b = new Bundle();
         b.putString(Constants.ARG_USER_ID, userId);

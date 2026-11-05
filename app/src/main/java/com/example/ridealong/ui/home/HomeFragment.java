@@ -29,6 +29,7 @@ public class HomeFragment extends Fragment {
     private FragmentHomeBinding b;
     private HomeViewModel vm;
     private RidesAdapter adapter;
+    private android.widget.TextView chatBadge;
 
     @Nullable
     @Override
@@ -55,6 +56,29 @@ public class HomeFragment extends Fragment {
         b.avatar.setOnClickListener(v -> selectTab(R.id.profileFragment));
         b.quickSos.setOnClickListener(v -> Nav.go(this, R.id.emergencyFragment));
         b.quickHistory.setOnClickListener(v -> Nav.go(this, R.id.rideHistoryFragment));
+
+        // Top-right chat icon: private conversations with requesters / posters.
+        requireActivity().addMenuProvider(new androidx.core.view.MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull android.view.Menu menu, @NonNull android.view.MenuInflater inflater) {
+                inflater.inflate(R.menu.menu_home, menu);
+                android.view.MenuItem item = menu.findItem(R.id.action_chats);
+                View action = item.getActionView();
+                if (action != null) {
+                    chatBadge = action.findViewById(R.id.chat_badge);
+                    action.setOnClickListener(v -> Nav.go(HomeFragment.this, R.id.conversationsFragment));
+                    renderChatBadge(vm.unreadChats().getValue());
+                }
+            }
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull android.view.MenuItem item) {
+                if (item.getItemId() != R.id.action_chats) return false;
+                Nav.go(HomeFragment.this, R.id.conversationsFragment);
+                return true;
+            }
+        }, getViewLifecycleOwner(), androidx.lifecycle.Lifecycle.State.RESUMED);
+        vm.unreadChats().observe(getViewLifecycleOwner(), this::renderChatBadge);
 
         b.greeting.setText(R.string.home_greeting_generic);
         vm.me().observe(getViewLifecycleOwner(), r -> {
@@ -101,6 +125,13 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    private void renderChatBadge(@Nullable Integer n) {
+        if (chatBadge == null) return;
+        int count = n == null ? 0 : n;
+        chatBadge.setVisibility(count > 0 ? View.VISIBLE : View.GONE);
+        chatBadge.setText(count > 99 ? "99+" : String.valueOf(count));
+    }
+
     private void selectTab(int id) {
         BottomNavigationView nav = requireActivity().findViewById(R.id.bottom_nav);
         if (nav != null) nav.setSelectedItemId(id);
@@ -115,6 +146,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        chatBadge = null;
         b = null;
     }
 }

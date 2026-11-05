@@ -477,4 +477,15 @@
     <string name="sos_log_action">%1$s · %2$s</string>
     <string name="sos_log_meta">%1$s %2$s%3$s</string>
     <string name="notification_more">%1$s (+%2$d)</string>
+    <!-- Private chat (poster <-> requester) -->
+    <string name="chats_title">Messages</string>
+    <string name="cd_open_chats">Messages</string>
+    <string name="chats_empty_title">No conversations yet</string>
+    <string name="chats_empty_body">When someone requests your ride, or you request one, you can message each other privately here.</string>
+    <string name="conversation_ride">Ride to %1$s</string>
+    <string name="conversation_no_messages">No messages yet. Say hello 👋</string>
+    <string name="action_message">Message</string>
+    <string name="action_message_poster">Message poster</string>
+    <string name="direct_chat_note">Private chat with %1$s · ride to %2$s</string>
+    <string name="direct_chat_empty_body">Only you and %1$s can see this conversation.</string>
 </resources>

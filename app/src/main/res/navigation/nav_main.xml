@@ -61,6 +61,16 @@
         <argument android:name="rideId" app:argType="string" />
     </fragment>
     <fragment
+        android:id="@+id/conversationsFragment"
+        android:name="com.example.ridealong.ui.chat.ConversationsFragment"
+        android:label="@string/chats_title" />
+    <fragment
+        android:id="@+id/directChatFragment"
+        android:name="com.example.ridealong.ui.chat.DirectChatFragment"
+        android:label="@string/chats_title">
+        <argument android:name="chatId" app:argType="string" />
+    </fragment>
+    <fragment
         android:id="@+id/liveTrackingFragment"
         android:name="com.example.ridealong.ui.tracking.LiveTrackingFragment"
         android:label="@string/title_tracking">

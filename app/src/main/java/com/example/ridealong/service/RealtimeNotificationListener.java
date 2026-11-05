@@ -25,6 +25,8 @@ public final class RealtimeNotificationListener {
     private static RealtimeNotificationListener instance;
     /** Chat currently on screen: its message notifications are suppressed. */
     public static volatile String visibleChatRideId;
+    /** Private chat currently on screen. */
+    public static volatile String visibleDirectChatId;
 
     private final Context app;
     private final MutableLiveData<Integer> unread = new MutableLiveData<>(0);
@@ -78,10 +80,20 @@ public final class RealtimeNotificationListener {
     }
 
     private void maybeShow(AppNotification n, SettingsRepository settings) {
-        boolean isMessage = Constants.N_NEW_MESSAGE.equals(n.type);
+        boolean direct = Constants.N_DIRECT_MESSAGE.equals(n.type);
+        boolean isMessage = direct || Constants.N_NEW_MESSAGE.equals(n.type);
         if (isMessage && !settings.notifyMessages()) return;
         if (!isMessage && !settings.notifyRequests()) return;
-        if (isMessage && n.rideId != null && n.rideId.equals(visibleChatRideId)) return;
+        String chatId = direct && n.args != null && n.args.size() > 2 ? n.args.get(2) : null;
+        if (direct && chatId != null && chatId.equals(visibleDirectChatId)) return;
+        if (!direct && isMessage && n.rideId != null && n.rideId.equals(visibleChatRideId)) return;
+        if (direct && chatId != null) {
+            String[] dm = NotificationRepository.render(app, n);
+            int dmId = ("dm" + chatId).hashCode();
+            NotificationHelper.show(app, Constants.CHANNEL_MESSAGES, dmId, dm[0], dm[1],
+                    NotificationHelper.openDirectChatIntent(app, chatId, dmId));
+            return;
+        }
         String[] tb = NotificationRepository.render(app, n);
         String channel = isMessage ? Constants.CHANNEL_MESSAGES : Constants.CHANNEL_RIDES;
         // One notification per chat (updates in place); one per other notification.

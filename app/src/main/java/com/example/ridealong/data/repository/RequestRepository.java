@@ -34,10 +34,12 @@ import java.util.Map;
 public class RequestRepository {
     private final NotificationRepository notifications;
     private final ChatRepository chat;
+    private final DirectChatRepository directChats;
 
-    public RequestRepository(NotificationRepository notifications, ChatRepository chat) {
+    public RequestRepository(NotificationRepository notifications, ChatRepository chat, DirectChatRepository directChats) {
         this.notifications = notifications;
         this.chat = chat;
+        this.directChats = directChats;
     }
 
     /** Optional match details stored with the request so the poster sees compatibility. */
@@ -70,9 +72,12 @@ public class RequestRepository {
         DocumentReference ref = requests().document(reqId);
         return safety.isBlockedBetween(uid, ride.ownerId).onSuccessTask(blocked -> {
             if (Boolean.TRUE.equals(blocked)) return fail(DomainException.Reason.BLOCKED);
-            return ref.get();
-        }).onSuccessTask(obj -> {
-            DocumentSnapshot existing = (DocumentSnapshot) obj;
+            return Tasks.whenAllComplete(ref.get(), directChats.ref(reqId).get());
+        }).onSuccessTask(parts -> {
+            DocumentSnapshot existing = ((Task<DocumentSnapshot>) parts.get(0)).isSuccessful()
+                    ? ((Task<DocumentSnapshot>) parts.get(0)).getResult() : null;
+            Task<DocumentSnapshot> chatGet = (Task<DocumentSnapshot>) parts.get(1);
+            boolean chatExists = chatGet.isSuccessful() && chatGet.getResult() != null && chatGet.getResult().exists();
             WriteBatch batch = FirebaseProvider.db().batch();
             if (existing != null && existing.exists()) {
                 RequestStatus st = RequestStatus.fromName(existing.getString("status"));
@@ -106,6 +111,15 @@ public class RequestRepository {
             }
             // The poster needs my phone to call me; rules allow this write only together with my request.
             batch.set(contactRef(ride.id, uid), RideRepository.contactMap(myName, myPhone));
+            // Private chat with the poster, available immediately (before acceptance). The request note
+            // becomes its first message so the poster can reply from the Messages screen.
+            String note = message == null ? "" : message.trim();
+            if (!chatExists) {
+                Map<String, Object> chatMap = DirectChatRepository.newChat(ride.id, ride.ownerId, ride.ownerName, uid, myName,
+                        ride.dropAddress);
+                if (!note.isEmpty()) directChats.addFirstMessage(batch, reqId, chatMap, uid, myName, note);
+                batch.set(directChats.ref(reqId), chatMap);
+            }
             return batch.commit();
         }).addOnSuccessListener(v ->
                 notifications.send(ride.ownerId, Constants.N_JOIN_REQUEST, ride.id, myName, ride.dropAddress));

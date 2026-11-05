@@ -46,13 +46,14 @@ public class NotificationsViewModel extends ViewModel {
                 Map<String, Row> chats = new HashMap<>();
                 Map<String, List<AppNotification>> groups = new HashMap<>();
                 for (AppNotification n : r.data) {
-                    if (Constants.N_NEW_MESSAGE.equals(n.type) && n.rideId != null) {
-                        List<AppNotification> g = groups.get(n.rideId);
+                    String key = groupKey(n);
+                    if (key != null) {
+                        List<AppNotification> g = groups.get(key);
                         if (g == null) {
                             g = new ArrayList<>();
-                            groups.put(n.rideId, g);
+                            groups.put(key, g);
                             Row row = new Row(n, g);
-                            chats.put(n.rideId, row);
+                            chats.put(key, row);
                             out.add(row);
                         }
                         g.add(n);
@@ -69,6 +70,17 @@ public class NotificationsViewModel extends ViewModel {
             });
         }
         return rows;
+    }
+
+    /** Messages collapse into one row per conversation (ride group chat, or private chat). */
+    private static String groupKey(AppNotification n) {
+        if (Constants.N_NEW_MESSAGE.equals(n.type) && n.rideId != null) return "ride:" + n.rideId;
+        if (Constants.N_DIRECT_MESSAGE.equals(n.type)) return "dm:" + directChatId(n);
+        return null;
+    }
+
+    public static String directChatId(AppNotification n) {
+        return n.args != null && n.args.size() > 2 ? n.args.get(2) : null;
     }
 
     public void open(Row row) {

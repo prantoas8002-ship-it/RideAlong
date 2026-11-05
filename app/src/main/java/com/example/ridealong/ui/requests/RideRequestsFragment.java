@@ -47,6 +47,19 @@ public class RideRequestsFragment extends Fragment {
 
             @Override
             public void onProfile(RideRequest r) { Nav.go(RideRequestsFragment.this, R.id.userProfileFragment, Nav.user(r.requesterId)); }
+
+            @Override
+            public void onMessage(RideRequest r) {
+                // Opens (creating if needed) the private chat with this requester, accepted or not.
+                com.example.ridealong.ServiceLocator.get().directChats()
+                        .ensureChat(r.rideId, r.rideOwnerId, com.example.ridealong.ui.common.Me.name(), r.requesterId,
+                                r.requesterName, r.rideDropAddress)
+                        .addOnCompleteListener(t -> {
+                            if (b == null) return;
+                            if (t.isSuccessful()) Nav.go(RideRequestsFragment.this, R.id.directChatFragment, Nav.chat(t.getResult()));
+                            else Ui.error(b.getRoot(), t.getException());
+                        });
+            }
         });
         b.list.setLayoutManager(new LinearLayoutManager(requireContext()));
         b.list.setAdapter(adapter);

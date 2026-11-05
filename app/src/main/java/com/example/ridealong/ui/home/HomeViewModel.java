@@ -23,6 +23,7 @@ import java.util.Map;
 public class HomeViewModel extends ViewModel {
     private LiveData<Resource<User>> me;
     private LiveData<Resource<List<RideRequest>>> pending;
+    private LiveData<Integer> unreadChats;
     private final MediatorLiveData<Resource<List<RideItem>>> active = new MediatorLiveData<>();
     private final Map<String, Long> unread = new HashMap<>();
     private List<Ride> lastRides = new ArrayList<>();
@@ -33,6 +34,13 @@ public class HomeViewModel extends ViewModel {
         String uid = Me.uid();
         me = ServiceLocator.get().users().observeUser(uid, true);
         pending = ServiceLocator.get().requests().observePendingForOwner(uid);
+        unreadChats = androidx.lifecycle.Transformations.map(ServiceLocator.get().directChats().observeMyChats(uid), r -> {
+            int n = 0;
+            if (r != null && r.data != null) {
+                for (com.example.ridealong.data.model.DirectChat c : r.data) if (c.isUnreadFor(uid)) n++;
+            }
+            return n;
+        });
         LiveData<Resource<List<Ride>>> live = ServiceLocator.get().rides().observeMyRides(uid);
         LiveData<List<CachedRideEntity>> cached = ServiceLocator.get().rides().observeCachedRides(uid);
         active.addSource(live, r -> {
@@ -91,6 +99,9 @@ public class HomeViewModel extends ViewModel {
     public LiveData<Resource<User>> me() { return me; }
 
     public LiveData<Resource<List<RideRequest>>> pending() { return pending; }
+
+    /** Private conversations with an unread message from the other person. */
+    public LiveData<Integer> unreadChats() { return unreadChats; }
 
     public LiveData<Resource<List<RideItem>>> active() { return active; }
 }

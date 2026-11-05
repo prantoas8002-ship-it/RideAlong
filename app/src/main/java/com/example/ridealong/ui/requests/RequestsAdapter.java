@@ -30,6 +30,8 @@ final class RequestsAdapter extends RecyclerView.Adapter<RequestsAdapter.VH> {
         void onReject(RideRequest r);
 
         void onProfile(RideRequest r);
+
+        void onMessage(RideRequest r);
     }
 
     private final List<RideRequest> items = new ArrayList<>();
@@ -109,6 +111,7 @@ final class RequestsAdapter extends RecyclerView.Adapter<RequestsAdapter.VH> {
         h.b.accept.setOnClickListener(v -> listener.onAccept(r));
         h.b.reject.setOnClickListener(v -> listener.onReject(r));
         h.b.header.setOnClickListener(v -> listener.onProfile(r));
+        h.b.messageBtn.setOnClickListener(v -> listener.onMessage(r));
 
         User cached = ServiceLocator.get().users().peekCached(r.requesterId);
         bindUser(h, cached);
