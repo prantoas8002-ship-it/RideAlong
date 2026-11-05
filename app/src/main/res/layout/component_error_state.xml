@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/error_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="@dimen/space_xxl">
+
+    <ImageView
+        android:layout_width="88dp"
+        android:layout_height="88dp"
+        android:background="@drawable/bg_pill_error"
+        android:importantForAccessibility="no"
+        android:padding="24dp"
+        android:src="@drawable/ic_warning"
+        android:tint="@color/ra_error" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_l"
+        android:text="@string/state_error_title"
+        android:textAppearance="@style/TextAppearance.RideAlong.TitleMedium" />
+
+    <TextView
+        android:id="@+id/error_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_xs"
+        android:gravity="center"
+        android:maxWidth="320dp"
+        android:textAppearance="@style/TextAppearance.RideAlong.Body" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/error_retry"
+        style="@style/Widget.RideAlong.Button.Tonal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_l"
+        android:text="@string/action_retry"
+        app:icon="@drawable/ic_refresh"
+        xmlns:app="http://schemas.android.com/apk/res-auto" />
+</LinearLayout>

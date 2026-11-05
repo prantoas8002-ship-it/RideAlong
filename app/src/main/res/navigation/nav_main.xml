@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_main"
+    app:startDestination="@id/homeFragment">
+
+    <!-- Top-level (bottom navigation) -->
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.ridealong.ui.home.HomeFragment"
+        android:label="@string/app_name" />
+    <fragment
+        android:id="@+id/discoverFragment"
+        android:name="com.example.ridealong.ui.rides.DiscoverFragment"
+        android:label="@string/discover_title" />
+    <fragment
+        android:id="@+id/postRideFragment"
+        android:name="com.example.ridealong.ui.rides.PostRideFragment"
+        android:label="@string/title_post_ride" />
+    <fragment
+        android:id="@+id/notificationsFragment"
+        android:name="com.example.ridealong.ui.notifications.NotificationsFragment"
+        android:label="@string/title_notifications" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.ridealong.ui.profile.ProfileFragment"
+        android:label="@string/nav_profile">
+        <argument
+            android:name="userId"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
+
+    <!-- Detail screens -->
+    <fragment
+        android:id="@+id/userProfileFragment"
+        android:name="com.example.ridealong.ui.profile.ProfileFragment"
+        android:label="@string/title_user_profile">
+        <argument
+            android:name="userId"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/rideDetailsFragment"
+        android:name="com.example.ridealong.ui.rides.RideDetailsFragment"
+        android:label="@string/title_ride_details">
+        <argument android:name="rideId" app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/rideRequestsFragment"
+        android:name="com.example.ridealong.ui.requests.RideRequestsFragment"
+        android:label="@string/title_requests">
+        <argument android:name="rideId" app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.example.ridealong.ui.chat.ChatFragment"
+        android:label="@string/title_chat">
+        <argument android:name="rideId" app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/liveTrackingFragment"
+        android:name="com.example.ridealong.ui.tracking.LiveTrackingFragment"
+        android:label="@string/title_tracking">
+        <argument android:name="rideId" app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/ratingFragment"
+        android:name="com.example.ridealong.ui.profile.RatingFragment"
+        android:label="@string/title_rating">
+        <argument android:name="rideId" app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/emergencyFragment"
+        android:name="com.example.ridealong.ui.emergency.EmergencyFragment"
+        android:label="@string/title_emergency">
+        <argument
+            android:name="rideId"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.example.ridealong.ui.profile.EditProfileFragment"
+        android:label="@string/edit_profile_title">
+        <argument
+            android:name="setupMode"
+            android:defaultValue="false"
+            app:argType="boolean" />
+    </fragment>
+    <fragment
+        android:id="@+id/rideHistoryFragment"
+        android:name="com.example.ridealong.ui.rides.RideHistoryFragment"
+        android:label="@string/title_history" />
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.ridealong.ui.settings.SettingsFragment"
+        android:label="@string/title_settings" />
+    <fragment
+        android:id="@+id/locationPickerFragment"
+        android:name="com.example.ridealong.ui.rides.LocationPickerFragment"
+        android:label="@string/title_pick_location">
+        <argument android:name="pickKind" app:argType="string" />
+        <argument
+            android:name="startLat"
+            android:defaultValue="0"
+            app:argType="float" />
+        <argument
+            android:name="startLng"
+            android:defaultValue="0"
+            app:argType="float" />
+    </fragment>
+</navigation>

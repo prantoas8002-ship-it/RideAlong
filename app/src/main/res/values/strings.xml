@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">RideAlong</string>
+    <string name="tagline">Your Route. Your People. Your Ride.</string>
+
+    <!-- Generic -->
+    <string name="action_continue">Continue</string>
+    <string name="action_next">Next</string>
+    <string name="action_skip">Skip</string>
+    <string name="action_get_started">Get started</string>
+    <string name="action_save">Save</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_confirm">Confirm</string>
+    <string name="action_retry">Retry</string>
+    <string name="action_close">Close</string>
+    <string name="action_ok">OK</string>
+    <string name="action_yes">Yes</string>
+    <string name="action_no">No</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_remove">Remove</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_done">Done</string>
+    <string name="action_apply">Apply</string>
+    <string name="action_reset">Reset</string>
+    <string name="action_open_settings">Open settings</string>
+    <string name="action_allow">Allow</string>
+    <string name="action_not_now">Not now</string>
+    <string name="loading">Loading…</string>
+    <string name="error_generic">Something went wrong. Please try again.</string>
+    <string name="error_network">You appear to be offline. Check your connection and try again.</string>
+    <string name="error_permission_denied">You don\'t have permission to do that.</string>
+    <string name="error_not_signed_in">Please sign in again.</string>
+    <string name="optional">Optional</string>
+    <string name="unknown_user">RideAlong user</string>
+    <string name="you">You</string>
+    <string name="cd_back">Back</string>
+    <string name="cd_avatar">Profile picture</string>
+    <string name="cd_more">More options</string>
+
+    <!-- Firebase missing -->
+    <string name="firebase_missing_title">Firebase isn\'t configured yet</string>
+    <string name="firebase_missing_body">RideAlong needs a Firebase project to sign in and sync rides. Add app/google-services.json (see SETUP_GUIDE.md) and rebuild the app.</string>
+
+    <!-- Offline -->
+    <string name="offline_banner">Offline: showing cached data. Changes sync when you\'re back online.</string>
+    <string name="back_online">Back online. Syncing…</string>
+    <string name="cached_label">Cached</string>
+    <string name="live_label">Live</string>
+    <string name="cached_data_notice">Showing cached data (offline, read-only)</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_1_title">Share the ride, split the cost</string>
+    <string name="onboarding_1_body">Post where you\'re going, or join someone heading the same way. Every rider can post and join.</string>
+    <string name="onboarding_2_title">Matched to your route</string>
+    <string name="onboarding_2_body">Rides are ranked by pickup distance, timing and how much of the route you actually share.</string>
+    <string name="onboarding_3_title">Travel with confidence</string>
+    <string name="onboarding_3_body">Chat, call, share live location with co-riders, rate each other and keep an SOS button one tap away.</string>
+
+    <!-- Auth -->
+    <string name="login_title">Welcome back</string>
+    <string name="login_subtitle">Sign in to find and share rides</string>
+    <string name="register_title">Create your account</string>
+    <string name="register_subtitle">Join commuters heading your way</string>
+    <string name="hint_full_name">Full name</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_confirm_password">Confirm password</string>
+    <string name="hint_phone">Phone number</string>
+    <string name="hint_organization">University / organization</string>
+    <string name="hint_gender">Gender</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="action_sign_up">Create account</string>
+    <string name="action_google">Continue with Google</string>
+    <string name="action_forgot_password">Forgot password?</string>
+    <string name="no_account">Don\'t have an account?</string>
+    <string name="have_account">Already have an account?</string>
+    <string name="action_register_link">Sign up</string>
+    <string name="action_login_link">Sign in</string>
+    <string name="or_divider">or</string>
+    <string name="forgot_title">Reset your password</string>
+    <string name="forgot_subtitle">Enter the email you registered with. We will email you a link to set a new password.</string>
+    <string name="action_send_reset_link">Send reset link</string>
+    <string name="reset_link_sent">If an account exists for %1$s, a password-reset LINK has been sent. Open the email and tap the link to choose a new password.</string>
+    <string name="error_invalid_email">Enter a valid email address</string>
+    <string name="error_invalid_password">At least 8 characters with a letter and a number</string>
+    <string name="error_password_mismatch">Passwords don\'t match</string>
+    <string name="error_invalid_name">Enter your full name (2–80 characters)</string>
+    <string name="error_invalid_phone">Enter a valid mobile number (e.g. 01712345678)</string>
+    <string name="error_wrong_credentials">Incorrect email or password</string>
+    <string name="error_email_in_use">An account already exists with this email</string>
+    <string name="error_google_unavailable">Google Sign-In isn\'t configured. Add the SHA-1 fingerprint and web client ID in Firebase (see SETUP_GUIDE.md).</string>
+    <string name="error_google_failed">Google Sign-In was cancelled or failed</string>
+    <string name="error_too_many_requests">Too many attempts. Please wait and try again.</string>
+
+    <!-- Profile setup / edit -->
+    <string name="profile_setup_title">Set up your profile</string>
+    <string name="profile_setup_subtitle">Co-riders see your name, photo and rating. Your phone is only shared with people on the same ride.</string>
+    <string name="edit_profile_title">Edit profile</string>
+    <string name="action_change_photo">Change photo</string>
+    <string name="photo_source_title">Profile picture</string>
+    <string name="photo_from_camera">Take a photo</string>
+    <string name="photo_from_gallery">Choose from gallery</string>
+    <string name="photo_remove">Remove photo</string>
+    <string name="photo_processing_failed">Couldn\'t process that image. Try another one.</string>
+    <string name="gender_male">Male</string>
+    <string name="gender_female">Female</string>
+    <string name="gender_other">Other</string>
+    <string name="gender_prefer_not">Prefer not to say</string>
+    <string name="emergency_contacts">Emergency contacts</string>
+    <string name="emergency_contacts_hint">At least 1, up to 5. Used only by the SOS screen.</string>
+    <string name="hint_contact_name">Contact name</string>
+    <string name="hint_contact_phone">Contact phone</string>
+    <string name="action_add_contact">Add contact</string>
+    <string name="error_contacts_required">Add at least one valid emergency contact</string>
+    <string name="error_contacts_max">You can add up to 5 emergency contacts</string>
+    <string name="profile_saved">Profile saved</string>
+    <string name="private_info_note">Phone and emergency contacts are private.</string>
+
+    <!-- Bottom nav / titles -->
+    <string name="nav_home">Home</string>
+    <string name="nav_discover">Discover</string>
+    <string name="nav_post">Post</string>
+    <string name="nav_alerts">Alerts</string>
+    <string name="nav_profile">Profile</string>
+    <string name="title_post_ride">Post a ride</string>
+    <string name="title_ride_details">Ride details</string>
+    <string name="title_requests">Join requests</string>
+    <string name="title_chat">Ride chat</string>
+    <string name="title_tracking">Live tracking</string>
+    <string name="title_history">Ride history</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_settings">Settings</string>
+    <string name="title_emergency">Emergency SOS</string>
+    <string name="title_rating">Rate your co-riders</string>
+    <string name="title_pick_location">Choose location</string>
+    <string name="title_pick_pickup">Choose pickup</string>
+    <string name="title_pick_destination">Choose destination</string>
+    <string name="title_user_profile">Profile</string>
+
+    <!-- Home -->
+    <string name="home_greeting">Hi, %1$s</string>
+    <string name="home_greeting_generic">Hi there</string>
+    <string name="home_where_to">Where are you heading today?</string>
+    <string name="home_find_ride">Find a ride</string>
+    <string name="home_offer_ride">Offer a ride</string>
+    <string name="home_active_rides">Your active rides</string>
+    <string name="home_pending_requests">Requests waiting for you</string>
+    <string name="home_pending_count">%1$d pending</string>
+    <string name="home_empty_active_title">No active rides</string>
+    <string name="home_empty_active_body">Rides you post or join will appear here.</string>
+    <string name="home_sos">SOS</string>
+    <string name="home_history">History</string>
+
+    <!-- Post ride -->
+    <string name="post_route_section">Route</string>
+    <string name="post_details_section">Details</string>
+    <string name="hint_pickup">Pickup location</string>
+    <string name="hint_destination">Destination</string>
+    <string name="hint_departure_date">Departure date</string>
+    <string name="hint_departure_time">Departure time</string>
+    <string name="hint_cost_per_person">Cost per person (৳)</string>
+    <string name="hint_seats">Available seats</string>
+    <string name="hint_max_detour">Max detour (km)</string>
+    <string name="hint_comment">Comment for riders (optional)</string>
+    <string name="hint_transport">Transport</string>
+    <string name="transport_cng">CNG</string>
+    <string name="transport_rickshaw">Rickshaw</string>
+    <string name="transport_car">Car</string>
+    <string name="transport_bus">Bus</string>
+    <string name="fare_estimate_label">ESTIMATE</string>
+    <string name="fare_estimate">Estimated ~%1$s%2$s per person (%3$s, %4$.1f km, %5$d riders). You set the final cost.</string>
+    <string name="fare_estimate_need_route">Choose pickup and destination to see a fare estimate.</string>
+    <string name="route_summary">%1$.1f km · ~%2$d min</string>
+    <string name="route_summary_approx">~%1$.1f km straight-line (routing unavailable)</string>
+    <string name="route_loading">Calculating route…</string>
+    <string name="action_post_ride">Post ride</string>
+    <string name="ride_posted">Your ride is live. Nearby riders can now request to join.</string>
+    <string name="error_pickup_required">Choose a pickup location</string>
+    <string name="error_drop_required">Choose a destination</string>
+    <string name="error_same_location">Pickup and destination must be different</string>
+    <string name="error_time_required">Choose a departure date and time</string>
+    <string name="error_time_past">Departure must be in the future</string>
+    <string name="error_time_far">Departure must be within 30 days</string>
+    <string name="error_seats_range">Seats must be between 1 and 8</string>
+    <string name="error_cost_required">Enter the cost per person (0 is allowed)</string>
+    <string name="error_cost_negative">Cost can\'t be negative</string>
+    <string name="error_cost_high">That cost looks too high</string>
+    <string name="error_detour_range">Detour must be between 0 and 20 km</string>
+    <string name="error_comment_long">Comment is too long (max 500 characters)</string>
+
+    <!-- Location picker -->
+    <string name="hint_search_place">Search a place</string>
+    <string name="action_use_my_location">Use my location</string>
+    <string name="action_confirm_location">Confirm location</string>
+    <string name="picker_move_map">Move the map to place the pin</string>
+    <string name="picker_resolving">Finding address…</string>
+    <string name="picker_no_results">No places found</string>
+    <string name="picker_search_failed">Search unavailable right now. You can still drop the pin on the map.</string>
+    <string name="unnamed_location">Pinned location (%1$.5f, %2$.5f)</string>
+    <string name="map_attribution">© OpenStreetMap contributors</string>
+
+    <!-- Discover -->
+    <string name="discover_title">Rides near you</string>
+    <string name="discover_subtitle">Within %1$.0f km of %2$s</string>
+    <string name="discover_your_location">your location</string>
+    <string name="hint_my_destination">Where to? (improves matching)</string>
+    <string name="hint_my_pickup">From</string>
+    <string name="action_filters">Filters</string>
+    <string name="filters_title">Filter rides</string>
+    <string name="filter_destination">Destination contains</string>
+    <string name="filter_time_window">Departure window</string>
+    <string name="filter_any_time">Any time</string>
+    <string name="filter_within_1h">Next 1 hour</string>
+    <string name="filter_within_3h">Next 3 hours</string>
+    <string name="filter_today">Today</string>
+    <string name="filter_min_seats">Seats needed</string>
+    <string name="filter_max_cost">Max cost per person (৳)</string>
+    <string name="filter_active_count">%1$d filters</string>
+    <string name="discover_empty_title">No rides nearby yet</string>
+    <string name="discover_empty_body">Try a larger search radius in Settings, change filters, or post your own ride.</string>
+    <string name="discover_location_needed_title">Location needed</string>
+    <string name="discover_location_needed_body">Allow location access or choose your pickup point to see nearby rides.</string>
+    <string name="action_choose_pickup">Choose pickup</string>
+    <string name="action_grant_location">Allow location</string>
+    <string name="match_score">%1$d%% match</string>
+    <string name="detour_value">+%1$.1f km detour</string>
+    <string name="distance_away">%1$.1f km away</string>
+
+    <!-- Ride card / details -->
+    <string name="seats_left">%1$d of %2$d seats left</string>
+    <string name="seats_left_short">%1$d left</string>
+    <string name="cost_per_person">%1$s%2$s / person</string>
+    <string name="cost_free">Free</string>
+    <string name="rating_value">%1$.1f</string>
+    <string name="rating_none">New</string>
+    <string name="rides_count">%1$d rides</string>
+    <string name="ride_status_open">Open</string>
+    <string name="ride_status_full">Full</string>
+    <string name="ride_status_in_progress">In progress</string>
+    <string name="ride_status_completed">Completed</string>
+    <string name="ride_status_cancelled">Cancelled</string>
+    <string name="posted_by">Posted by</string>
+    <string name="max_detour_value">Max detour %1$.1f km</string>
+    <string name="details_route">Route</string>
+    <string name="details_participants">Riders</string>
+    <string name="details_comment">Note from poster</string>
+    <string name="details_your_match">Your match</string>
+    <string name="details_match_info">%1$d%% compatible · shared %2$.1f km · detour %3$.1f km</string>
+    <string name="details_estimated_share">Your estimated share: ~%1$s%2$s (estimate)</string>
+    <string name="owner_badge">Poster</string>
+    <string name="action_request_join">Request to join</string>
+    <string name="action_cancel_request">Cancel request</string>
+    <string name="action_leave_ride">Leave ride</string>
+    <string name="action_view_requests">View requests</string>
+    <string name="action_open_chat">Chat</string>
+    <string name="action_call">Call</string>
+    <string name="action_track">Live map</string>
+    <string name="action_start_ride">Start ride</string>
+    <string name="action_complete_ride">Complete ride</string>
+    <string name="action_cancel_ride">Cancel ride</string>
+    <string name="action_rate_riders">Rate riders</string>
+    <string name="action_sos">SOS</string>
+    <string name="action_block_user">Block user</string>
+    <string name="action_report_user">Report user</string>
+    <string name="action_view_profile">View profile</string>
+    <string name="request_pending_note">Request sent. Waiting for the poster to respond.</string>
+    <string name="request_rejected_note">The poster declined your request.</string>
+    <string name="request_accepted_note">You\'re in! Chat with your co-riders.</string>
+    <string name="request_left_note">You left this ride.</string>
+    <string name="ride_full_note">This ride is full.</string>
+    <string name="ride_not_joinable">This ride is no longer accepting riders.</string>
+    <string name="request_dialog_title">Request to join</string>
+    <string name="request_dialog_seats">Seats</string>
+    <string name="hint_request_message">Message to the poster (optional)</string>
+    <string name="request_sent">Request sent</string>
+    <string name="request_cancelled">Request cancelled</string>
+    <string name="confirm_leave_title">Leave this ride?</string>
+    <string name="confirm_leave_body">Your seat will be released and the poster will be notified.</string>
+    <string name="confirm_cancel_ride_title">Cancel this ride?</string>
+    <string name="confirm_cancel_ride_body">All riders and pending requesters will be notified and the ride will close.</string>
+    <string name="hint_cancel_reason">Reason (optional)</string>
+    <string name="confirm_start_title">Start the ride?</string>
+    <string name="confirm_start_body">Riders can then share live location until the ride is completed.</string>
+    <string name="confirm_complete_title">Mark ride as completed?</string>
+    <string name="confirm_complete_body">Everyone will be able to rate each other. Live location sharing stops.</string>
+    <string name="ride_cancelled_toast">Ride cancelled. Riders were notified.</string>
+    <string name="ride_started_toast">Ride started</string>
+    <string name="ride_completed_toast">Ride completed</string>
+    <string name="error_self_join">You can\'t join your own ride</string>
+    <string name="error_ride_full">Not enough seats left</string>
+    <string name="error_already_requested">You have already requested this ride</string>
+    <string name="error_blocked">You can\'t interact with this user</string>
+    <string name="error_ride_closed">This ride is no longer open</string>
+    <string name="error_request_changed">This request was already handled</string>
+    <string name="no_phone_available">This rider hasn\'t shared a phone number for this ride</string>
+    <string name="call_who">Who do you want to call?</string>
+
+    <!-- Requests -->
+    <string name="requests_pending">Pending</string>
+    <string name="requests_accepted">Accepted riders</string>
+    <string name="requests_empty_title">No requests yet</string>
+    <string name="requests_empty_body">When someone asks to join, you\'ll see them here.</string>
+    <string name="action_accept">Accept</string>
+    <string name="action_reject">Decline</string>
+    <string name="request_seats">%1$d seat(s)</string>
+    <string name="request_accepted_toast">Rider accepted</string>
+    <string name="request_rejected_toast">Request declined</string>
+    <string name="request_status_pending">Pending</string>
+    <string name="request_status_accepted">Accepted</string>
+    <string name="request_status_rejected">Declined</string>
+    <string name="request_status_cancelled">Cancelled</string>
+    <string name="request_status_left">Left</string>
+
+    <!-- Chat -->
+    <string name="hint_message">Message</string>
+    <string name="cd_send">Send</string>
+    <string name="chat_empty_title">Say hello 👋</string>
+    <string name="chat_empty_body">Messages are only visible to the poster and accepted riders.</string>
+    <string name="chat_not_member">Only the poster and accepted riders can open this chat.</string>
+    <string name="chat_call_log">%1$s called %2$s</string>
+    <string name="chat_unread">%1$d new</string>
+    <string name="chat_ride_closed">This ride has ended. Chat history is kept.</string>
+
+    <!-- Tracking -->
+    <string name="tracking_consent_title">Share your live location?</string>
+    <string name="tracking_consent_body">While sharing is on, only the poster and accepted riders of this ride can see your position. Sharing stops automatically when the ride is completed or cancelled, or when you tap Stop.</string>
+    <string name="action_start_sharing">Start sharing</string>
+    <string name="action_stop_sharing">Stop sharing</string>
+    <string name="tracking_sharing_on">You are sharing your live location</string>
+    <string name="tracking_sharing_off">Location sharing is off</string>
+    <string name="tracking_not_allowed">Live location is available to riders of an in-progress ride or one starting within 2 hours.</string>
+    <string name="tracking_last_update">%1$s · updated %2$s</string>
+    <string name="tracking_distance_to_pickup">%1$.1f km to pickup</string>
+    <string name="tracking_distance_to_destination">%1$.1f km to destination</string>
+    <string name="tracking_no_one_sharing">No one is sharing yet</string>
+    <string name="permission_location_title">Location permission</string>
+    <string name="permission_location_body">RideAlong needs your location to share it with co-riders and to detect pickup and arrival.</string>
+    <string name="permission_background_title">Allow \"all the time\" location?</string>
+    <string name="permission_background_body">For pickup and arrival alerts while the app is closed (geofencing), choose \"Allow all the time\" on the next screen. Without it, RideAlong checks distance only while sharing is on.</string>
+    <string name="permission_denied_location">Location permission denied. Enable it in Settings to use this feature.</string>
+    <string name="permission_notifications_body">Allow notifications for join requests, messages and ride updates.</string>
+    <string name="geofence_fallback_note">Pickup/arrival alerts use in-app distance checks (background location not granted).</string>
+
+    <!-- Service notifications -->
+    <string name="channel_rides">Ride updates</string>
+    <string name="channel_rides_desc">Join requests, acceptances and ride changes</string>
+    <string name="channel_messages">Messages</string>
+    <string name="channel_messages_desc">New chat messages from co-riders</string>
+    <string name="channel_location">Live location</string>
+    <string name="channel_location_desc">Shown while you share your live location</string>
+    <string name="channel_geofence">Pickup and arrival</string>
+    <string name="channel_geofence_desc">Alerts when you approach pickup or destination</string>
+    <string name="channel_sync">Background sync</string>
+    <string name="channel_sync_desc">Keeps notifications arriving while the app is in the background</string>
+    <string name="notif_sharing_title">Sharing live location</string>
+    <string name="notif_sharing_body">Visible only to your co-riders on this ride</string>
+    <string name="notif_sync_title">RideAlong is connected</string>
+    <string name="notif_sync_body">Receiving ride updates in the background</string>
+    <string name="geofence_near_pickup">You\'re near the pickup point</string>
+    <string name="geofence_near_pickup_body">%1$s is close. Check the chat for your co-riders.</string>
+    <string name="geofence_arrived">You\'ve arrived</string>
+    <string name="geofence_arrived_body">You\'re near %1$s.</string>
+
+    <!-- Notification texts (stored in Firestore) -->
+    <string name="n_join_request_title">New join request</string>
+    <string name="n_join_request_body">%1$s wants to join your ride to %2$s</string>
+    <string name="n_accepted_title">Request accepted</string>
+    <string name="n_accepted_body">%1$s accepted you for the ride to %2$s</string>
+    <string name="n_rejected_title">Request declined</string>
+    <string name="n_rejected_body">Your request for the ride to %1$s was declined</string>
+    <string name="n_request_cancelled_title">Request withdrawn</string>
+    <string name="n_request_cancelled_body">%1$s withdrew their request</string>
+    <string name="n_left_title">A rider left</string>
+    <string name="n_left_body">%1$s left your ride to %2$s</string>
+    <string name="n_message_title">%1$s</string>
+    <string name="n_started_title">Ride started</string>
+    <string name="n_started_body">Your ride to %1$s has started</string>
+    <string name="n_completed_title">Ride completed</string>
+    <string name="n_completed_body">Rate your co-riders for the ride to %1$s</string>
+    <string name="n_cancelled_title">Ride cancelled</string>
+    <string name="n_cancelled_body">The ride to %1$s was cancelled by the poster</string>
+
+    <!-- Notifications screen -->
+    <string name="notifications_empty_title">You\'re all caught up</string>
+    <string name="notifications_empty_body">Join requests, acceptances and messages will show up here.</string>
+    <string name="action_mark_all_read">Mark all as read</string>
+    <string name="notifications_background_note">Notifications arrive while RideAlong is running. Turn on Background sync in Settings to keep receiving them when the app is in the background.</string>
+
+    <!-- Profile -->
+    <string name="profile_rating">Rating</string>
+    <string name="profile_completed_rides">Completed rides</string>
+    <string name="profile_reviews">Reviews</string>
+    <string name="profile_reviews_empty">No reviews yet</string>
+    <string name="profile_member_since">Member since %1$s</string>
+    <string name="profile_reviews_count">%1$d reviews</string>
+    <string name="menu_edit_profile">Edit profile</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_history">Ride history</string>
+    <string name="menu_emergency">Emergency SOS</string>
+
+    <!-- History -->
+    <string name="history_all">All</string>
+    <string name="history_posted">Posted</string>
+    <string name="history_joined">Joined</string>
+    <string name="history_empty_title">No rides yet</string>
+    <string name="history_empty_body">Your posted and joined rides will be listed here, even offline.</string>
+
+    <!-- Ratings -->
+    <string name="rating_subtitle">How was riding with them? Ratings help everyone travel safely.</string>
+    <string name="hint_review">Write a short review (optional)</string>
+    <string name="action_submit_rating">Submit</string>
+    <string name="rating_submitted">Thanks! Rating submitted</string>
+    <string name="rating_already">Already rated</string>
+    <string name="rating_need_stars">Choose 1 to 5 stars</string>
+    <string name="rating_empty_title">Nobody to rate</string>
+    <string name="rating_empty_body">Ratings open after a ride is completed.</string>
+
+    <!-- Block / report -->
+    <string name="confirm_block_title">Block %1$s?</string>
+    <string name="confirm_block_body">You won\'t see each other\'s rides and they can\'t send you requests or notifications.</string>
+    <string name="user_blocked">User blocked</string>
+    <string name="user_unblocked">User unblocked</string>
+    <string name="action_unblock">Unblock</string>
+    <string name="report_title">Report %1$s</string>
+    <string name="report_reason">Reason</string>
+    <string name="report_reason_unsafe">Unsafe behaviour</string>
+    <string name="report_reason_harassment">Harassment</string>
+    <string name="report_reason_noshow">No-show / unreliable</string>
+    <string name="report_reason_fake">Fake profile</string>
+    <string name="report_reason_other">Other</string>
+    <string name="hint_report_details">What happened? (optional)</string>
+    <string name="report_sent">Report submitted. Thank you for keeping RideAlong safe.</string>
+    <string name="blocked_users">Blocked users</string>
+    <string name="blocked_users_empty">You haven\'t blocked anyone</string>
+
+    <!-- Emergency -->
+    <string name="sos_title">Emergency</string>
+    <string name="sos_subtitle">Press and confirm to call or text your emergency contact with your live location.</string>
+    <string name="sos_button">SOS</string>
+    <string name="sos_999_note">This does not replace the national emergency number. In immediate danger call 999.</string>
+    <string name="action_call_999">Call 999</string>
+    <string name="sos_confirm_title">Start emergency actions?</string>
+    <string name="sos_confirm_body">RideAlong will get your current location, then open the dialer and an SMS with your location link. Android requires you to press Call / Send yourself.</string>
+    <string name="sos_getting_location">Getting your location…</string>
+    <string name="sos_location_failed">Couldn\'t get your location. The message will be sent without coordinates.</string>
+    <string name="sos_choose_contact">Choose a contact to call</string>
+    <string name="sos_no_contacts">Add emergency contacts in your profile first.</string>
+    <string name="sos_step_dial">1. Call contact</string>
+    <string name="sos_step_sms">2. Send SMS with location</string>
+    <string name="sos_dialer_opened">Dialer opened for %1$s. Press Call to connect.</string>
+    <string name="sos_sms_opened">SMS composer opened. Press Send to alert your contacts.</string>
+    <string name="sos_not_sent_note">Nothing is sent automatically. An alert only goes out if you press Call or Send in the phone app.</string>
+    <string name="sos_sms_message">EMERGENCY from %1$s via RideAlong. I need help. My location: %2$s</string>
+    <string name="sos_sms_message_no_location">EMERGENCY from %1$s via RideAlong. I need help. (Location unavailable)</string>
+    <string name="sos_ride_context">Ride: %1$s → %2$s</string>
+    <string name="sos_history">Your emergency log</string>
+    <string name="sos_history_empty">No emergency actions logged</string>
+    <string name="sos_action_dial">Dialer opened</string>
+    <string name="sos_action_sms">SMS composer opened</string>
+    <string name="sos_action_999">999 dialer opened</string>
+    <string name="sos_no_sms_app">No SMS app available on this device</string>
+    <string name="sos_no_dialer">No phone app available on this device</string>
+
+    <!-- Settings -->
+    <string name="settings_map_section">Maps</string>
+    <string name="settings_map_provider">Map provider</string>
+    <string name="settings_map_osm">OpenStreetMap (free)</string>
+    <string name="settings_map_google">Google Maps</string>
+    <string name="settings_google_unavailable">Google Maps needs MAPS_API_KEY in local.properties</string>
+    <string name="settings_search_radius">Search radius</string>
+    <string name="settings_radius_value">%1$.0f km</string>
+    <string name="settings_notifications_section">Notifications</string>
+    <string name="settings_notify_requests">Join requests and ride changes</string>
+    <string name="settings_notify_messages">Chat messages</string>
+    <string name="settings_background_sync">Background sync</string>
+    <string name="settings_background_sync_desc">Keeps a small persistent notification so updates arrive while the app is in the background. Without a paid server, notifications can\'t arrive when the app is fully closed.</string>
+    <string name="settings_account_section">Account</string>
+    <string name="settings_logout">Log out</string>
+    <string name="settings_delete_account">Delete account</string>
+    <string name="settings_delete_confirm_title">Delete your account?</string>
+    <string name="settings_delete_confirm_body">Your profile, private info and login will be permanently deleted. Rides you took part in stay in your co-riders\' history.</string>
+    <string name="settings_delete_reauth">For security, sign in again and then retry deleting your account.</string>
+    <string name="settings_account_deleted">Account deleted</string>
+    <string name="settings_about_section">About</string>
+    <string name="settings_version">Version %1$s</string>
+    <string name="settings_osm_attribution">Map data © OpenStreetMap contributors. Routing by OSRM. Search by Nominatim.</string>
+    <string name="confirm_logout">Log out of RideAlong?</string>
+    <string name="hint_reauth_password">Current password</string>
+
+    <!-- Empty / error states -->
+    <string name="state_error_title">Couldn\'t load this</string>
+    <string name="time_just_now">just now</string>
+</resources>

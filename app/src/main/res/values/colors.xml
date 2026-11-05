@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand tokens -->
+    <color name="ra_primary">#2563EB</color>
+    <color name="ra_primary_dark">#1D4ED8</color>
+    <color name="ra_primary_container">#DBEAFE</color>
+    <color name="ra_on_primary_container">#1E3A8A</color>
+    <color name="ra_secondary">#7C3AED</color>
+    <color name="ra_secondary_container">#EDE9FE</color>
+    <color name="ra_on_secondary_container">#4C1D95</color>
+    <color name="ra_background">#F8FAFC</color>
+    <color name="ra_surface">#FFFFFF</color>
+    <color name="ra_surface_variant">#F1F5F9</color>
+    <color name="ra_text">#0F172A</color>
+    <color name="ra_text_secondary">#475569</color>
+    <color name="ra_text_tertiary">#94A3B8</color>
+    <color name="ra_outline">#E2E8F0</color>
+    <color name="ra_outline_strong">#CBD5E1</color>
+    <color name="ra_white">#FFFFFF</color>
+
+    <!-- Semantic -->
+    <color name="ra_success">#16A34A</color>
+    <color name="ra_success_container">#DCFCE7</color>
+    <color name="ra_warning">#D97706</color>
+    <color name="ra_warning_container">#FEF3C7</color>
+    <color name="ra_error">#DC2626</color>
+    <color name="ra_error_container">#FEE2E2</color>
+    <color name="ra_star">#F59E0B</color>
+    <color name="ra_sos">#DC2626</color>
+    <color name="ra_sos_dark">#991B1B</color>
+    <color name="ra_scrim">#990F172A</color>
+
+    <!-- Chat -->
+    <color name="ra_bubble_out">#2563EB</color>
+    <color name="ra_bubble_in">#FFFFFF</color>
+</resources>

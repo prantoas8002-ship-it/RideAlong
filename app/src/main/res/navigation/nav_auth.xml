@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_auth"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.ridealong.ui.auth.LoginFragment"
+        android:label="@string/login_title" />
+
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.example.ridealong.ui.auth.RegisterFragment"
+        android:label="@string/register_title" />
+
+    <fragment
+        android:id="@+id/forgotPasswordFragment"
+        android:name="com.example.ridealong.ui.auth.ForgotPasswordFragment"
+        android:label="@string/forgot_title" />
+
+    <fragment
+        android:id="@+id/profileSetupFragment"
+        android:name="com.example.ridealong.ui.profile.EditProfileFragment"
+        android:label="@string/profile_setup_title">
+        <argument
+            android:name="setupMode"
+            android:defaultValue="true"
+            app:argType="boolean" />
+    </fragment>
+</navigation>

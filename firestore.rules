@@ -172,7 +172,7 @@ service cloud.firestore {
           && (userId in rideDoc(rideId).data.memberIds || uid() == rideDoc(rideId).data.ownerId);
         allow create, update: if signedIn() && userId == uid()
           && isStr(newData().phone, 20) && isStr(newData().name, 80)
-          && (uid() in rideDoc(rideId).data.memberIds
+          && (uid() in rideAfter(rideId).data.memberIds
               || existsAfter(docPath('rideRequests', rideId + '_' + uid())));
         allow delete: if signedIn() && userId == uid();
       }
@@ -180,8 +180,9 @@ service cloud.firestore {
 
     // ---------- join requests (doc id = rideId_requesterId, so duplicates are impossible) ----------
     match /rideRequests/{requestId} {
+      // resource == null: reading a request that doesn't exist yet ("have I requested?") reveals nothing.
       allow read: if signedIn()
-        && (resource.data.requesterId == uid() || resource.data.rideOwnerId == uid());
+        && (resource == null || resource.data.requesterId == uid() || resource.data.rideOwnerId == uid());
 
       function validNewRequest(ride) {
         return ride.data.status == 'OPEN'
@@ -312,7 +313,7 @@ service cloud.firestore {
     // ---------- blocks (doc id = blockerId_blockedId) ----------
     match /blocks/{blockId} {
       allow read: if signedIn()
-        && (resource.data.blockerId == uid() || resource.data.blockedId == uid());
+        && (resource == null || resource.data.blockerId == uid() || resource.data.blockedId == uid());
       allow create: if signedIn()
         && newData().blockerId == uid()
         && newData().blockedId != uid()

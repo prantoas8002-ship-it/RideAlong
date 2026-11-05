@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:layout_width="@dimen/icon_s"
+        android:layout_height="@dimen/icon_s"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_star"
+        app:tint="@color/ra_star" />
+
+    <TextView
+        android:id="@+id/rating_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_xxs"
+        android:textAppearance="@style/TextAppearance.RideAlong.Caption"
+        android:textColor="@color/ra_text"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/rating_rides"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_xs"
+        android:textAppearance="@style/TextAppearance.RideAlong.Caption" />
+</LinearLayout>

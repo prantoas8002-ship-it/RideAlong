@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 4dp spacing scale -->
+    <dimen name="space_xxs">2dp</dimen>
+    <dimen name="space_xs">4dp</dimen>
+    <dimen name="space_s">8dp</dimen>
+    <dimen name="space_m">12dp</dimen>
+    <dimen name="space_l">16dp</dimen>
+    <dimen name="space_xl">24dp</dimen>
+    <dimen name="space_xxl">32dp</dimen>
+    <dimen name="space_xxxl">48dp</dimen>
+    <dimen name="screen_padding">20dp</dimen>
+
+    <!-- Radii -->
+    <dimen name="radius_s">8dp</dimen>
+    <dimen name="radius_m">12dp</dimen>
+    <dimen name="radius_l">16dp</dimen>
+    <dimen name="radius_xl">24dp</dimen>
+
+    <!-- Sizes -->
+    <dimen name="avatar_xs">28dp</dimen>
+    <dimen name="avatar_s">40dp</dimen>
+    <dimen name="avatar_m">56dp</dimen>
+    <dimen name="avatar_l">96dp</dimen>
+    <dimen name="icon_s">16dp</dimen>
+    <dimen name="icon_m">20dp</dimen>
+    <dimen name="icon_l">24dp</dimen>
+    <dimen name="icon_xl">64dp</dimen>
+    <dimen name="button_height">52dp</dimen>
+    <dimen name="sos_button">200dp</dimen>
+    <dimen name="map_height">220dp</dimen>
+    <dimen name="card_elevation">0dp</dimen>
+    <dimen name="stroke">1dp</dimen>
+</resources>

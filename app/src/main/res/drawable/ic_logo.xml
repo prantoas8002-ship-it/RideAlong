@@ -1,0 +1,12 @@
+<!-- RideAlong mark: two connected pins on a route -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp" android:height="96dp"
+    android:viewportWidth="96" android:viewportHeight="96">
+    <path android:strokeColor="#FFFFFF" android:strokeWidth="5" android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:pathData="M28,66 C28,48 68,52 68,32"/>
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M28,46c-7.2,0 -13,5.8 -13,13c0,9.8 13,23 13,23s13,-13.2 13,-23c0,-7.2 -5.8,-13 -13,-13zM28,64a5,5 0,1 1,0 -10a5,5 0,1 1,0 10z"/>
+    <path android:fillColor="#C4B5FD"
+        android:pathData="M68,12c-7.2,0 -13,5.8 -13,13c0,9.8 13,23 13,23s13,-13.2 13,-23c0,-7.2 -5.8,-13 -13,-13zM68,30a5,5 0,1 1,0 -10a5,5 0,1 1,0 10z"/>
+</vector>
