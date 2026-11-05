@@ -78,7 +78,8 @@
                         android:textColor="@color/ra_primary"
                         app:backgroundTint="@color/ra_white"
                         app:icon="@drawable/ic_search"
-                        app:iconTint="@color/ra_primary" />
+                        app:iconTint="@color/ra_primary"
+                        app:rippleColor="@color/ra_primary_container" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/offer"
@@ -91,7 +92,8 @@
                         android:textColor="@color/ra_white"
                         app:icon="@drawable/ic_add"
                         app:iconTint="@color/ra_white"
-                        app:strokeColor="#99FFFFFF" />
+                        app:rippleColor="#33FFFFFF"
+                        app:strokeColor="@color/ra_white" />
                 </LinearLayout>
             </LinearLayout>
 

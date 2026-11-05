@@ -65,7 +65,8 @@ public class RidesAdapter extends ListAdapter<RideItem, RidesAdapter.VH> {
             b.drop.setText(r.dropAddress);
             b.time.setText(DateTimeUtils.formatDeparture(c, r.departureMillis()));
             b.seats.setText(c.getResources().getQuantityString(R.plurals.seats_left_short, r.seatsAvailable, r.seatsAvailable));
-            b.cost.setText(RideUi.cost(c, r.costPerPerson));
+            b.cost.setText(RideUi.costAmount(c, r.costPerPerson));
+            b.costUnit.setVisibility(r.costPerPerson > 0 ? View.VISIBLE : View.GONE);
             b.ownerName.setText(r.ownerName);
 
             User owner = item.owner;

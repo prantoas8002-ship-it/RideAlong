@@ -147,8 +147,8 @@
     <string name="post_details_section">Details</string>
     <string name="hint_pickup">Pickup location</string>
     <string name="hint_destination">Destination</string>
-    <string name="hint_departure_date">Departure date</string>
-    <string name="hint_departure_time">Departure time</string>
+    <string name="hint_departure_date">Date</string>
+    <string name="hint_departure_time">Time</string>
     <string name="hint_cost_per_person">Cost per person (৳)</string>
     <string name="hint_seats">Available seats</string>
     <string name="hint_max_detour">Max detour (km)</string>
@@ -465,8 +465,6 @@
     <!-- Empty / error states -->
     <string name="state_error_title">Couldn\'t load this</string>
     <string name="time_just_now">just now</string>
-    <string name="symbol_minus" translatable="false">−</string>
-    <string name="symbol_plus" translatable="false">+</string>
     <string name="cd_decrease_seats">Fewer seats</string>
     <string name="cd_increase_seats">More seats</string>
     <string name="chat_system_joined">%1$s joined the ride</string>
@@ -488,4 +486,11 @@
     <string name="action_message_poster">Message poster</string>
     <string name="direct_chat_note">Private chat with %1$s · ride to %2$s</string>
     <string name="direct_chat_empty_body">Only you and %1$s can see this conversation.</string>
+    <!-- Message notifications never contain the message text -->
+    <string name="n_message_title_generic">New message</string>
+    <string name="n_message_body">%1$s sent you a message</string>
+    <string name="n_message_body_ride">%1$s sent you a message about the ride to %2$s</string>
+    <string name="n_join_request_with_message_body">%1$s wants to join your ride to %2$s and sent you a message</string>
+    <string name="per_person">per person</string>
+    <string name="cost_amount">%1$s%2$s</string>
 </resources>

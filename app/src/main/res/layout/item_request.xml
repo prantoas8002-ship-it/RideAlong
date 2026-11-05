@@ -74,7 +74,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/message_btn"
-            style="@style/Widget.RideAlong.Button.Tonal"
+            style="@style/Widget.RideAlong.Button.Tonal.Small"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_m"
@@ -90,7 +90,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/reject"
-                style="@style/Widget.RideAlong.Button.Outlined"
+                style="@style/Widget.RideAlong.Button.Outlined.Danger"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

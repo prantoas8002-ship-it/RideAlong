@@ -150,7 +150,8 @@ public class RideDetailsFragment extends Fragment {
         Ride r = res.data.ride;
         b.cached.setVisibility(res.data.cached ? View.VISIBLE : View.GONE);
         RideUi.styleStatus(b.status, r.statusEnum());
-        b.cost.setText(RideUi.cost(requireContext(), r.costPerPerson));
+        b.cost.setText(RideUi.costAmount(requireContext(), r.costPerPerson));
+        b.costUnit.setVisibility(r.costPerPerson > 0 ? View.VISIBLE : View.GONE);
         b.departure.setText(DateTimeUtils.formatDeparture(requireContext(), r.departureMillis()));
         b.pickup.setText(r.pickupAddress);
         b.drop.setText(r.dropAddress);

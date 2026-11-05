@@ -55,25 +55,48 @@
                     android:textAppearance="@style/TextAppearance.RideAlong.Caption"
                     android:visibility="gone" />
 
-                <Space
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
-
-                <TextView
-                    android:id="@+id/cost"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearance.RideAlong.TitleLarge"
-                    android:textColor="@color/ra_primary" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/departure"
-                android:layout_width="wrap_content"
+            <!-- Departure (wraps if long) + price column -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_s"
-                android:textAppearance="@style/TextAppearance.RideAlong.Headline" />
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/departure"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textAppearance="@style/TextAppearance.RideAlong.TitleLarge" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_m"
+                    android:gravity="end"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/cost"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:includeFontPadding="false"
+                        android:maxLines="1"
+                        android:textAppearance="@style/TextAppearance.RideAlong.Headline"
+                        android:textColor="@color/ra_primary" />
+
+                    <TextView
+                        android:id="@+id/cost_unit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        android:text="@string/per_person"
+                        android:textAppearance="@style/TextAppearance.RideAlong.Caption" />
+                </LinearLayout>
+            </LinearLayout>
 
             <!-- Route -->
             <com.google.android.material.card.MaterialCardView
@@ -320,7 +343,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/chat"
-                    style="@style/Widget.RideAlong.Button.Tonal"
+                    style="@style/Widget.RideAlong.Button.Tile"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -329,7 +352,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/track"
-                    style="@style/Widget.RideAlong.Button.Tonal"
+                    style="@style/Widget.RideAlong.Button.Tile"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/space_s"
@@ -339,15 +362,13 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/sos"
-                    style="@style/Widget.RideAlong.Button.Tonal"
-                    android:layout_width="wrap_content"
+                    style="@style/Widget.RideAlong.Button.Tile.Danger"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/space_s"
+                    android:layout_weight="1"
                     android:text="@string/action_sos"
-                    android:textColor="@color/ra_error"
-                    app:backgroundTint="@color/ra_error_container"
-                    app:icon="@drawable/ic_warning"
-                    app:iconTint="@color/ra_error" />
+                    app:icon="@drawable/ic_warning" />
             </LinearLayout>
 
             <com.google.android.material.button.MaterialButton
@@ -360,11 +381,10 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/danger_action"
-                style="@style/Widget.RideAlong.Button.Text"
+                style="@style/Widget.RideAlong.Button.Outlined.Danger"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_s"
-                android:textColor="@color/ra_error"
+                android:layout_marginTop="@dimen/space_m"
                 android:visibility="gone" />
 
             <com.google.android.material.progressindicator.LinearProgressIndicator

@@ -87,4 +87,9 @@
     <string name="settings_delete_account">অ্যাকাউন্ট মুছে ফেলুন</string>
     <string name="title_notifications">নোটিফিকেশন</string>
     <string name="title_history">রাইডের ইতিহাস</string>
+    <string name="n_message_title_generic">নতুন বার্তা</string>
+    <string name="n_message_body">%1$s আপনাকে একটি বার্তা পাঠিয়েছেন</string>
+    <string name="n_message_body_ride">%2$s রাইড নিয়ে %1$s আপনাকে একটি বার্তা পাঠিয়েছেন</string>
+    <string name="n_join_request_with_message_body">%1$s আপনার %2$s-এর রাইডে যোগ দিতে চান এবং একটি বার্তা পাঠিয়েছেন</string>
+    <string name="per_person">জনপ্রতি</string>
 </resources>

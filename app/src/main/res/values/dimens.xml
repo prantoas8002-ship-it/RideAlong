@@ -23,7 +23,8 @@
     <dimen name="icon_s">16dp</dimen>
     <dimen name="icon_m">20dp</dimen>
     <dimen name="icon_l">24dp</dimen>
-    <dimen name="button_height">52dp</dimen>
+    <dimen name="button_height">48dp</dimen>
+    <dimen name="button_height_small">40dp</dimen>
     <dimen name="sos_button">200dp</dimen>
     <dimen name="map_height">220dp</dimen>
     <dimen name="card_elevation">0dp</dimen>

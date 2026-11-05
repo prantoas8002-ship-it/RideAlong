@@ -87,14 +87,16 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ellipsize="end"
-            android:maxLines="1"
+            android:maxLines="2"
             android:textAppearance="@style/TextAppearance.RideAlong.Caption" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/filters"
-            style="@style/Widget.RideAlong.Button.Text"
+            style="@style/Widget.RideAlong.Button.Outlined.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_s"
+            android:layout_marginEnd="@dimen/space_s"
             android:text="@string/action_filters"
             app:icon="@drawable/ic_tune" />
 

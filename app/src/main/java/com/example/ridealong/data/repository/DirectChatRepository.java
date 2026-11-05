@@ -148,7 +148,9 @@ public class DirectChatRepository {
         b.update(ref(chat.id), u);
         Task<Void> commit = b.commit();
         if (notify) {
-            notifications.send(chat.otherId(me), Constants.N_DIRECT_MESSAGE, chat.rideId, myName, preview(trimmed), chat.id);
+            // "X sent you a message" only; never the text.
+            notifications.send(chat.otherId(me), Constants.N_DIRECT_MESSAGE, chat.rideId, myName, "", chat.id,
+                    chat.rideDropAddress == null ? "" : chat.rideDropAddress);
         }
         return commit;
     }

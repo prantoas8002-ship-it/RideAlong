@@ -72,10 +72,9 @@ public class ChatRepository {
         String trimmed = text.trim();
         Task<Void> write = write(ride.id, uid, myName, trimmed, Constants.MSG_TEXT);
         markRead(ride.id, uid);
-        // Firestore writes are queued offline, so notify optimistically once the write is accepted locally.
-        String preview = trimmed.length() > 120 ? trimmed.substring(0, 119) + "…" : trimmed;
+        // Notify "X sent a message" only; the text itself stays inside the chat.
         for (String m : ride.memberIds) {
-            if (!m.equals(uid)) notifications.send(m, Constants.N_NEW_MESSAGE, ride.id, myName, preview);
+            if (!m.equals(uid)) notifications.send(m, Constants.N_NEW_MESSAGE, ride.id, myName, "", "", ride.dropAddress);
         }
         return write;
     }

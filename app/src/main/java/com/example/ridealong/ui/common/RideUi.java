@@ -57,6 +57,12 @@ public final class RideUi {
         return String.format(Locale.getDefault(), "%,.2f", amount);
     }
 
+    /** Amount only ("৳120" or "Free"); pair with the "per person" caption. */
+    public static String costAmount(Context c, double perPerson) {
+        if (perPerson <= 0) return c.getString(R.string.cost_free);
+        return c.getString(R.string.cost_amount, AppConfig.get().fare.currencySymbol, money(perPerson));
+    }
+
     public static String cost(Context c, double perPerson) {
         if (perPerson <= 0) return c.getString(R.string.cost_free);
         return c.getString(R.string.cost_per_person, AppConfig.get().fare.currencySymbol, money(perPerson));

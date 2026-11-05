@@ -98,7 +98,11 @@ public class NotificationRepository {
         if (type == null) type = "";
         switch (type) {
             case Constants.N_JOIN_REQUEST:
-                return new String[]{c.getString(R.string.n_join_request_title), c.getString(R.string.n_join_request_body, a0, a1)};
+                // args: [requesterName, rideDestination, "1" if the request came with a note]. The note itself
+                // is only readable inside the private chat.
+                return new String[]{c.getString(R.string.n_join_request_title), "1".equals(arg(args, 2))
+                        ? c.getString(R.string.n_join_request_with_message_body, a0, a1)
+                        : c.getString(R.string.n_join_request_body, a0, a1)};
             case Constants.N_REQUEST_ACCEPTED:
                 return new String[]{c.getString(R.string.n_accepted_title), c.getString(R.string.n_accepted_body, a0, a1)};
             case Constants.N_REQUEST_REJECTED:
@@ -108,8 +112,15 @@ public class NotificationRepository {
             case Constants.N_PARTICIPANT_LEFT:
                 return new String[]{c.getString(R.string.n_left_title), c.getString(R.string.n_left_body, a0, a1)};
             case Constants.N_NEW_MESSAGE:
-            case Constants.N_DIRECT_MESSAGE:
-                return new String[]{c.getString(R.string.n_message_title, a0), a1};
+            case Constants.N_DIRECT_MESSAGE: {
+                // PRIVACY: never show message text outside the chat. args: [sender, (unused), chatId, destination].
+                // Older documents stored a preview in args[1]; it is deliberately ignored.
+                String sender = a0.isEmpty() ? c.getString(R.string.unknown_user) : a0;
+                String dest = arg(args, 3);
+                return new String[]{c.getString(R.string.n_message_title_generic), dest.isEmpty()
+                        ? c.getString(R.string.n_message_body, sender)
+                        : c.getString(R.string.n_message_body_ride, sender, dest)};
+            }
             case Constants.N_RIDE_STARTED:
                 return new String[]{c.getString(R.string.n_started_title), c.getString(R.string.n_started_body, a1)};
             case Constants.N_RIDE_COMPLETED:
@@ -122,7 +133,10 @@ public class NotificationRepository {
     }
 
     public static String[] render(Context c, AppNotification n) {
-        if (n.args != null && !n.args.isEmpty()) return render(c, n.type, n.args);
+        boolean message = Constants.N_NEW_MESSAGE.equals(n.type) || Constants.N_DIRECT_MESSAGE.equals(n.type);
+        if (message || (n.args != null && !n.args.isEmpty())) {
+            return render(c, n.type, n.args == null ? new ArrayList<>() : n.args);
+        }
         return new String[]{n.title == null ? "" : n.title, n.body == null ? "" : n.body};
     }
 

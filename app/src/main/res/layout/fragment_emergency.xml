@@ -95,14 +95,12 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/step_sms"
-                    style="@style/Widget.RideAlong.Button.Outlined"
+                    style="@style/Widget.RideAlong.Button.Outlined.Danger"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/space_s"
                     android:text="@string/sos_step_sms"
-                    android:textColor="@color/ra_error"
-                    app:icon="@drawable/ic_sms"
-                    app:iconTint="@color/ra_error" />
+                    app:icon="@drawable/ic_sms" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -138,7 +136,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/call_999"
-                    style="@style/Widget.RideAlong.Button.Tonal"
+                    style="@style/Widget.RideAlong.Button.Danger"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/space_m"

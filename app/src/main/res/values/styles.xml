@@ -55,6 +55,7 @@
     <style name="TextAppearance.RideAlong.Label" parent="TextAppearance.Material3.LabelLarge">
         <item name="android:textSize">14sp</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.01</item>
     </style>
     <style name="TextAppearance.RideAlong.Overline" parent="TextAppearance.Material3.LabelSmall">
         <item name="android:textSize">11sp</item>
@@ -86,33 +87,105 @@
         <item name="boxBackgroundColor">@color/ra_surface</item>
     </style>
 
+    <!-- Buttons: one consistent system. Single line + ellipsis so labels never clip or wrap. -->
     <style name="Widget.RideAlong.Button" parent="Widget.Material3.Button">
         <item name="android:minHeight">@dimen/button_height</item>
         <item name="android:textAppearance">@style/TextAppearance.RideAlong.Label</item>
         <item name="shapeAppearance">@style/ShapeAppearance.RideAlong.Medium</item>
         <item name="android:insetTop">0dp</item>
         <item name="android:insetBottom">0dp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:paddingStart">@dimen/space_l</item>
+        <item name="android:paddingEnd">@dimen/space_l</item>
+        <item name="iconSize">18dp</item>
+        <item name="iconPadding">@dimen/space_s</item>
+        <item name="iconGravity">textStart</item>
+    </style>
+    <style name="Widget.RideAlong.Button.Small" parent="Widget.RideAlong.Button">
+        <item name="android:minHeight">@dimen/button_height_small</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:paddingStart">@dimen/space_m</item>
+        <item name="android:paddingEnd">@dimen/space_m</item>
     </style>
     <style name="Widget.RideAlong.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
         <item name="android:minHeight">@dimen/button_height</item>
         <item name="android:textAppearance">@style/TextAppearance.RideAlong.Label</item>
         <item name="shapeAppearance">@style/ShapeAppearance.RideAlong.Medium</item>
         <item name="strokeColor">@color/ra_outline_strong</item>
+        <item name="android:textColor">@color/btn_primary_fg</item>
+        <item name="iconTint">@color/btn_primary_fg</item>
         <item name="android:insetTop">0dp</item>
         <item name="android:insetBottom">0dp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="iconSize">18dp</item>
+        <item name="iconPadding">@dimen/space_s</item>
+        <item name="iconGravity">textStart</item>
     </style>
+    <style name="Widget.RideAlong.Button.Outlined.Small" parent="Widget.RideAlong.Button.Outlined">
+        <item name="android:minHeight">@dimen/button_height_small</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:paddingStart">@dimen/space_m</item>
+        <item name="android:paddingEnd">@dimen/space_m</item>
+    </style>
+    <style name="Widget.RideAlong.Button.Outlined.Danger" parent="Widget.RideAlong.Button.Outlined">
+        <item name="strokeColor">@color/ra_error</item>
+        <item name="android:textColor">@color/btn_danger_fg</item>
+        <item name="iconTint">@color/btn_danger_fg</item>
+        <item name="rippleColor">@color/ra_error_container</item>
+    </style>
+    <!-- Secondary actions: light blue (matches the brand) instead of Material's default purple tonal. -->
     <style name="Widget.RideAlong.Button.Tonal" parent="Widget.Material3.Button.TonalButton">
         <item name="android:minHeight">@dimen/button_height</item>
         <item name="android:textAppearance">@style/TextAppearance.RideAlong.Label</item>
         <item name="shapeAppearance">@style/ShapeAppearance.RideAlong.Medium</item>
+        <item name="backgroundTint">@color/btn_tonal_bg</item>
+        <item name="android:textColor">@color/btn_tonal_fg</item>
+        <item name="iconTint">@color/btn_tonal_fg</item>
         <item name="android:insetTop">0dp</item>
         <item name="android:insetBottom">0dp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="iconSize">18dp</item>
+        <item name="iconPadding">@dimen/space_s</item>
+        <item name="iconGravity">textStart</item>
+    </style>
+    <style name="Widget.RideAlong.Button.Tonal.Small" parent="Widget.RideAlong.Button.Tonal">
+        <item name="android:minHeight">@dimen/button_height_small</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:paddingStart">@dimen/space_m</item>
+        <item name="android:paddingEnd">@dimen/space_m</item>
+    </style>
+    <!-- Equal-width tiles with the icon above a short label (Chat / Live map / SOS). -->
+    <style name="Widget.RideAlong.Button.Tile" parent="Widget.RideAlong.Button.Tonal">
+        <item name="android:minHeight">72dp</item>
+        <item name="android:textSize">12sp</item>
+        <item name="iconGravity">top</item>
+        <item name="iconSize">22dp</item>
+        <item name="iconPadding">@dimen/space_xs</item>
+        <item name="android:paddingStart">@dimen/space_xs</item>
+        <item name="android:paddingEnd">@dimen/space_xs</item>
+        <item name="android:paddingTop">@dimen/space_s</item>
+        <item name="android:paddingBottom">@dimen/space_s</item>
+    </style>
+    <style name="Widget.RideAlong.Button.Tile.Danger" parent="Widget.RideAlong.Button.Tile">
+        <item name="backgroundTint">@color/ra_error_container</item>
+        <item name="android:textColor">@color/btn_danger_fg</item>
+        <item name="iconTint">@color/btn_danger_fg</item>
     </style>
     <style name="Widget.RideAlong.Button.Text" parent="Widget.Material3.Button.TextButton">
         <item name="android:textAppearance">@style/TextAppearance.RideAlong.Label</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="iconSize">18dp</item>
     </style>
     <style name="Widget.RideAlong.Button.Danger" parent="Widget.RideAlong.Button">
         <item name="backgroundTint">@color/ra_error</item>
+    </style>
+    <style name="Widget.RideAlong.Button.Stepper" parent="Widget.Material3.Button.IconButton.Outlined">
+        <item name="iconTint">@color/btn_primary_fg</item>
+        <item name="strokeColor">@color/ra_outline_strong</item>
     </style>
 
     <style name="Widget.RideAlong.Toolbar" parent="Widget.Material3.Toolbar">

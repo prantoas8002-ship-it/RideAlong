@@ -122,7 +122,8 @@ public class RequestRepository {
             }
             return batch.commit();
         }).addOnSuccessListener(v ->
-                notifications.send(ride.ownerId, Constants.N_JOIN_REQUEST, ride.id, myName, ride.dropAddress));
+                notifications.send(ride.ownerId, Constants.N_JOIN_REQUEST, ride.id, myName, ride.dropAddress,
+                        message != null && !message.trim().isEmpty() ? "1" : ""));
     }
 
     private static void putMatch(Map<String, Object> m, @Nullable MatchInfo match) {

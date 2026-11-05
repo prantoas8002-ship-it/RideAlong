@@ -34,6 +34,7 @@
         <item name="materialCardViewStyle">@style/Widget.RideAlong.Card</item>
         <item name="textInputStyle">@style/Widget.RideAlong.TextInput</item>
         <item name="materialButtonStyle">@style/Widget.RideAlong.Button</item>
+        <item name="materialButtonOutlinedStyle">@style/Widget.RideAlong.Button.Outlined</item>
         <item name="toolbarStyle">@style/Widget.RideAlong.Toolbar</item>
         <item name="bottomNavigationStyle">@style/Widget.RideAlong.BottomNav</item>
         <item name="chipStyle">@style/Widget.RideAlong.Chip</item>

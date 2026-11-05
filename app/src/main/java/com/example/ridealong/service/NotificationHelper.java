@@ -75,6 +75,7 @@ public final class NotificationHelper {
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
                 .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
                 .setContentIntent(tap);
         try {
             NotificationManagerCompat.from(c).notify(id, b.build());

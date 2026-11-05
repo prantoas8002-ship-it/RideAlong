@@ -15,7 +15,7 @@
         android:orientation="vertical"
         android:padding="@dimen/space_l">
 
-        <!-- Poster row -->
+        <!-- Header: poster on the left, price column on the right (never squeezed) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -38,7 +38,7 @@
 
                 <TextView
                     android:id="@+id/owner_name"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:maxLines="1"
@@ -49,16 +49,30 @@
                     layout="@layout/component_rating_summary" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/badge"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_pill_primary"
-                android:paddingHorizontal="@dimen/space_m"
-                android:paddingVertical="@dimen/space_xs"
-                android:textAppearance="@style/TextAppearance.RideAlong.Caption"
-                android:textColor="@color/ra_on_primary_container"
-                android:textStyle="bold" />
+                android:layout_marginStart="@dimen/space_s"
+                android:gravity="end"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/cost"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:textAppearance="@style/TextAppearance.RideAlong.TitleLarge"
+                    android:textColor="@color/ra_primary" />
+
+                <TextView
+                    android:id="@+id/cost_unit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:text="@string/per_person"
+                    android:textAppearance="@style/TextAppearance.RideAlong.Caption" />
+            </LinearLayout>
         </LinearLayout>
 
         <!-- Route -->
@@ -73,7 +87,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center_horizontal"
                 android:orientation="vertical"
-                android:paddingVertical="4dp">
+                android:paddingVertical="5dp">
 
                 <View
                     android:layout_width="12dp"
@@ -125,7 +139,7 @@
             android:layout_marginVertical="@dimen/space_m"
             android:background="@color/ra_outline" />
 
-        <!-- Meta row -->
+        <!-- Footer: time takes the remaining width and ellipsizes; seats and badge stay intact -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -135,32 +149,40 @@
             <TextView
                 android:id="@+id/time"
                 style="@style/RideAlong.InfoText"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
                 app:drawableStartCompat="@drawable/ic_schedule" />
 
             <TextView
                 android:id="@+id/seats"
                 style="@style/RideAlong.InfoText"
                 android:layout_marginStart="@dimen/space_m"
+                android:maxLines="1"
                 app:drawableStartCompat="@drawable/ic_seat" />
 
-            <Space
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
             <TextView
-                android:id="@+id/cost"
+                android:id="@+id/badge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.RideAlong.TitleMedium"
-                android:textColor="@color/ra_primary" />
+                android:layout_marginStart="@dimen/space_s"
+                android:background="@drawable/bg_pill_primary"
+                android:maxLines="1"
+                android:paddingHorizontal="@dimen/space_s"
+                android:paddingVertical="@dimen/space_xxs"
+                android:textAppearance="@style/TextAppearance.RideAlong.Caption"
+                android:textColor="@color/ra_on_primary_container"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/extra"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_s"
+            android:ellipsize="end"
+            android:maxLines="2"
             android:textAppearance="@style/TextAppearance.RideAlong.Caption"
             android:visibility="gone" />
     </LinearLayout>
