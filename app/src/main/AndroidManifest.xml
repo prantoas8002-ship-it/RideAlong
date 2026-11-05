@@ -41,7 +41,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.RideAlong"
-        tools:targetApi="35">
+        tools:targetApi="33">
 
         <!-- Empty unless MAPS_API_KEY is set in local.properties; Google Maps is optional. -->
         <meta-data

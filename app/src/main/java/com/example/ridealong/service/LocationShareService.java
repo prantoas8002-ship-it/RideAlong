@@ -124,7 +124,7 @@ public class LocationShareService extends LifecycleService {
                 .build();
         int type = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q ? ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION : 0;
         try {
-            ServiceCompat.startForeground(this, Constants.NOTIF_ID_LOCATION_SERVICE, n, type);
+            ForegroundCompat.start(this, Constants.NOTIF_ID_LOCATION_SERVICE, n, type);
             return true;
         } catch (Exception e) {
             // e.g. ForegroundServiceStartNotAllowedException or missing permission on Android 14

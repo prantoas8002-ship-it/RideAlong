@@ -9,7 +9,6 @@ import android.os.IBinder;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
-import androidx.core.app.ServiceCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleService;
 
@@ -46,7 +45,7 @@ public class RealtimeSyncService extends LifecycleService {
                 .build();
         int type = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q ? ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC : 0;
         try {
-            ServiceCompat.startForeground(this, Constants.NOTIF_ID_SYNC_SERVICE, n, type);
+            ForegroundCompat.start(this, Constants.NOTIF_ID_SYNC_SERVICE, n, type);
         } catch (Exception e) {
             stopSelf();
             return START_NOT_STICKY;
@@ -55,11 +54,6 @@ public class RealtimeSyncService extends LifecycleService {
         return START_STICKY;
     }
 
-    /** Android 15+: dataSync services get a daily time budget; stop cleanly when it's used up. */
-    @Override
-    public void onTimeout(int startId) {
-        stopSelf();
-    }
 
     @Nullable
     @Override

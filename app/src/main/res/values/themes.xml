@@ -17,9 +17,6 @@
         <item name="colorOnSurface">@color/ra_text</item>
         <item name="colorSurfaceVariant">@color/ra_surface_variant</item>
         <item name="colorOnSurfaceVariant">@color/ra_text_secondary</item>
-        <item name="colorSurfaceContainer">@color/ra_surface</item>
-        <item name="colorSurfaceContainerLow">@color/ra_surface</item>
-        <item name="colorSurfaceContainerHigh">@color/ra_surface_variant</item>
         <item name="colorOutline">@color/ra_outline_strong</item>
         <item name="colorOutlineVariant">@color/ra_outline</item>
         <item name="colorError">@color/ra_error</item>

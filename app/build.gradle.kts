@@ -22,12 +22,12 @@ fun localProp(name: String, default: String = ""): String =
 
 android {
     namespace = "com.example.ridealong"
-    compileSdk = 35
+    compileSdk = 33
 
     defaultConfig {
         applicationId = "com.example.ridealong"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 33
         versionCode = 1
         versionName = "1.0.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -51,8 +51,9 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        // Java 11: Android Studio Dolphin's bundled JDK and the AGP 7.3 requirement.
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     buildFeatures {
         viewBinding = true
@@ -69,6 +70,8 @@ android {
 }
 
 dependencies {
+    // Aligns kotlin-stdlib / -jdk7 / -jdk8 pulled in transitively (avoids duplicate-class errors).
+    implementation(platform(libs.kotlin.bom))
     implementation(libs.androidx.core)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.activity)

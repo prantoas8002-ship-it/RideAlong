@@ -6,22 +6,22 @@
 ## Verification summary
 | Check | Result |
 |---|---|
-| `./gradlew assembleDebug` | ✅ BUILD SUCCESSFUL (without google-services.json; the google-services plugin is applied automatically once the file exists) |
+| `./gradlew assembleDebug` | ✅ BUILD SUCCESSFUL with the real `app/google-services.json` (project `ridealong-f946d`) on the Dolphin toolchain |
 | `./gradlew testDebugUnitTest` | ✅ 73 / 73 JVM tests pass |
 | Firestore rules tests (`firestore-tests`, emulator) | ✅ 26 / 26 pass |
 | `./gradlew lintDebug` | ✅ 0 errors (remaining warnings: intentionally pinned dependency versions, minor style) |
 | Emulator seed script | ✅ verified against the local emulator; refuses to run without emulator env vars |
 | **Running the app on a device/emulator** | ⚠️ **Not verified here.** The Android emulator can't start on this machine (hypervisor driver not installed) and no device was attached. All screens compile and were reviewed statically, but nothing has been exercised at runtime |
-| Build with a real `google-services.json` | ⚠️ Not possible here (no credentials). The standard google-services plugin path is used |
 
 ## Environment
 | Tool | Version |
 |---|---|
-| JDK (Gradle runtime) | Temurin 21 (JDK 17 also works) |
-| Gradle wrapper / AGP | 8.9 / 8.7.2 |
-| compileSdk / targetSdk / minSdk | 35 / 35 / 24 |
-| Firebase BoM | 33.5.1 (Auth, Firestore) |
-| Others | Material 1.12.0, Navigation 2.7.7, Room 2.6.1, Lifecycle 2.8.7, osmdroid 6.1.20, Glide 4.16.0, Play Services Location 21.3.0 / Auth 21.2.0 / Maps 19.0.0 |
+| Target IDE | Android Studio Dolphin 2021.3.1 |
+| JDK (Gradle runtime) | 11 (Studio's bundled JDK); verified here with JDK 17 |
+| Gradle wrapper / AGP | 7.5.1 / 7.3.1 |
+| compileSdk / targetSdk / minSdk | 33 / 33 / 24 |
+| Firebase BoM | 32.7.0 (Auth, Firestore) |
+| Others | Material 1.9.0, Navigation 2.5.3, Room 2.5.2, Lifecycle 2.6.2, AndroidX Core 1.10.1, osmdroid 6.1.20, Glide 4.16.0, Play Services Location 21.0.1 / Auth 20.7.0 / Maps 18.2.0 |
 
 ## Roadmap
 | # | Phase | Status |

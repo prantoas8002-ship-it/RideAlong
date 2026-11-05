@@ -1,7 +1,9 @@
 # RideAlong: Setup Guide
 
-Requirements: **Android Studio** (Ladybug or newer), **JDK 17+**, Android SDK platform 35. Gradle 8.9
-and AGP 8.7.2 are pinned through the wrapper and `gradle/libs.versions.toml`.
+Requirements: **Android Studio Dolphin (2021.3.1) or newer**, its bundled **JDK 11** (JDK 17 also works),
+Android SDK **platform 33**. The toolchain is pinned for Dolphin: **AGP 7.3.1, Gradle 7.5.1,
+compileSdk/targetSdk 33, Java 11** (see `gradle/libs.versions.toml`). Opening the project in a newer
+Studio works too; ignore the "upgrade AGP" suggestion unless you upgrade every library together.
 
 Without any configuration the project **builds**, but the app shows a "Firebase isn't configured"
 screen at launch. You have two options:
