@@ -26,7 +26,9 @@ Setup steps are in **[SETUP_GUIDE.md](SETUP_GUIDE.md)**; build status and limita
 | Requests | Send / cancel / accept / decline / leave. Duplicates, overbooking and self-joining are blocked in the app **and** in `firestore.rules`. Accept and leave are **transactions** |
 | Ride states | `OPEN → FULL → IN_PROGRESS → COMPLETED`, `CANCELLED`, defined in one place (`RideStateMachine`) and mirrored in rules |
 | Chat | One chat per ride (members only), real-time, full history (Room cache offline), unread counts, call events logged ("Zed called Rafi") |
-| Calling | `ACTION_DIAL` with the co-rider's phone, from a member-only contact card (no `CALL_PHONE` permission) |
+| Private chat | 1-to-1 chat between a poster and each requester (works before acceptance), Messages inbox with unread badge on Home |
+| In-app voice calls | Messenger-style internet calls (WebRTC, peer-to-peer, encrypted), no phone number needed: ringing screen over the lock screen, accept/decline, mute, speaker, proximity screen-off, missed-call notification, call log in chat. Phone-dialer calling is still available as an option |
+| Dark mode | Light / Dark / System setting, full night palette, dark-tinted map |
 | Live location | Foreground service (`location` type), consent dialog, throttled writes, members-only markers, auto-stop on completion/cancellation |
 | Geofencing | Pickup proximity + arrival alerts via the Geofencing API; falls back to in-app distance checks without background location |
 | SOS | Big button → confirmation → location → dialer for an emergency contact + SMS with an OpenStreetMap link. Never claims anything was sent. 999 notice and button. Local + Firestore log |
@@ -80,6 +82,10 @@ cd firestore-tests && npm install && npm test   # 26 security-rules tests on the
   Blaze plan. Notifications arrive while the process is alive. The optional *Background sync* setting
   keeps a foreground service running, but Android may still stop it (battery savers, Android 15
   `dataSync` time limits).
+* **In-app calls need a TURN relay on strict networks.** Free Google STUN servers are built in and work
+  on most Wi-Fi. Two phones on mobile data behind carrier NAT often need a TURN relay; add free TURN
+  credentials in `local.properties` (see SETUP_GUIDE). Incoming calls ring while the app process is
+  alive, the same limitation as notifications.
 * **Calls and SMS are never automatic.** Android doesn't allow normal apps to place calls or send SMS
   silently. RideAlong opens the dialer / SMS composer and the user presses Call / Send.
 * **Profile photo cropping** is an automatic center-square crop (no manual crop UI), so no extra library

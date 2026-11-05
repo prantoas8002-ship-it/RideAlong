@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_call_screen"
+    android:fitsSystemWindows="true"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="@dimen/space_xl">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_xl"
+        android:drawablePadding="@dimen/space_xs"
+        android:gravity="center_vertical"
+        android:text="@string/call_label"
+        android:textAppearance="@style/TextAppearance.RideAlong.Caption"
+        android:textColor="#B3FFFFFF"
+        app:drawableStartCompat="@drawable/ic_lock"
+        app:drawableTint="#B3FFFFFF" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/avatar"
+        style="@style/Widget.RideAlong.Avatar"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="@dimen/space_xxl"
+        android:contentDescription="@string/cd_avatar"
+        app:strokeColor="#40FFFFFF"
+        app:strokeWidth="3dp" />
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_l"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="2"
+        android:textAppearance="@style/TextAppearance.RideAlong.Headline"
+        android:textColor="@color/ra_white" />
+
+    <TextView
+        android:id="@+id/status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_xs"
+        android:textAppearance="@style/TextAppearance.RideAlong.BodyLarge"
+        android:textColor="#CCFFFFFF" />
+
+    <Chronometer
+        android:id="@+id/timer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_xs"
+        android:textColor="@color/ra_white"
+        android:textSize="18sp"
+        android:visibility="gone" />
+
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <!-- Incoming: decline / accept -->
+    <LinearLayout
+        android:id="@+id/incoming_controls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/space_xxl"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/decline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/call_decline"
+                app:backgroundTint="#DC2626"
+                app:fabCustomSize="72dp"
+                app:maxImageSize="32dp"
+                app:srcCompat="@drawable/ic_call_end"
+                app:tint="@color/ra_white" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_s"
+                android:text="@string/call_decline"
+                android:textColor="@color/ra_white" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/accept"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/call_accept"
+                app:backgroundTint="#16A34A"
+                app:fabCustomSize="72dp"
+                app:maxImageSize="32dp"
+                app:srcCompat="@drawable/ic_call"
+                app:tint="@color/ra_white" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_s"
+                android:text="@string/call_accept"
+                android:textColor="@color/ra_white" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Outgoing / in call: mute, hang up, speaker -->
+    <LinearLayout
+        android:id="@+id/call_controls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/space_xxl"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/mute"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/call_mute"
+            app:backgroundTint="#33FFFFFF"
+            app:elevation="0dp"
+            app:fabCustomSize="60dp"
+            app:srcCompat="@drawable/ic_mic"
+            app:tint="@color/ra_white" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/hang_up"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/space_xxl"
+            android:contentDescription="@string/call_hang_up"
+            app:backgroundTint="#DC2626"
+            app:fabCustomSize="72dp"
+            app:maxImageSize="32dp"
+            app:srcCompat="@drawable/ic_call_end"
+            app:tint="@color/ra_white" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/speaker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/call_speaker"
+            app:backgroundTint="#33FFFFFF"
+            app:elevation="0dp"
+            app:fabCustomSize="60dp"
+            app:srcCompat="@drawable/ic_volume_up"
+            app:tint="@color/ra_white" />
+    </LinearLayout>
+</LinearLayout>

@@ -294,6 +294,63 @@ service cloud.firestore {
       }
     }
 
+    // ---------- in-app voice calls (WebRTC signaling) ----------
+    // A call is allowed only between two people who share a private chat (poster <-> requester) or
+    // are both members of the ride, and are not blocked. Only the two parties can read it.
+    match /calls/{callId} {
+      function callDoc() { return get(docPath('calls', callId)); }
+      function canCall(caller, callee, rideId, chatId) {
+        let chat = get(docPath('directChats', chatId));
+        let ride = rideDoc(rideId);
+        return (exists(docPath('directChats', chatId)) && caller in chat.data.participants && callee in chat.data.participants)
+          || (caller in ride.data.memberIds && callee in ride.data.memberIds);
+      }
+
+      allow read: if signedIn()
+        && (resource == null || uid() == resource.data.callerId || uid() == resource.data.calleeId);
+
+      allow create: if signedIn()
+        && newData().callerId == uid()
+        && newData().calleeId != uid()
+        && newData().status == 'RINGING'
+        && newData().offer is map
+        && newData().createdAt == request.time
+        && isStr(newData().callerName, 80)
+        && !isBlockedBetween(uid(), newData().calleeId)
+        && canCall(uid(), newData().calleeId, newData().rideId, newData().chatId);
+
+      function calleeUpdate() {
+        let from = resource.data.status;
+        let to = newData().status;
+        return uid() == resource.data.calleeId
+          && changed().hasOnly(['answer', 'status', 'answeredAt', 'endedAt'])
+          && ((from == 'RINGING' && to == 'ACCEPTED' && newData().answer is map)
+              || (from == 'RINGING' && to in ['REJECTED', 'BUSY'])
+              || (from == 'ACCEPTED' && to == 'ENDED'));
+      }
+      function callerUpdate() {
+        let from = resource.data.status;
+        let to = newData().status;
+        return uid() == resource.data.callerId
+          && changed().hasOnly(['status', 'endedAt'])
+          && ((from == 'RINGING' && to in ['CANCELLED', 'MISSED'])
+              || (from == 'ACCEPTED' && to == 'ENDED'));
+      }
+      allow update: if signedIn() && (calleeUpdate() || callerUpdate());
+      allow delete: if false;
+
+      match /callerCandidates/{candidateId} {
+        allow read: if signedIn() && (uid() == callDoc().data.callerId || uid() == callDoc().data.calleeId);
+        allow create: if signedIn() && uid() == callDoc().data.callerId;
+        allow update, delete: if false;
+      }
+      match /calleeCandidates/{candidateId} {
+        allow read: if signedIn() && (uid() == callDoc().data.callerId || uid() == callDoc().data.calleeId);
+        allow create: if signedIn() && uid() == callDoc().data.calleeId;
+        allow update, delete: if false;
+      }
+    }
+
     // ---------- live locations: members of the ride only ----------
     match /liveLocations/{rideId}/members/{userId} {
       allow read: if isRideMember(rideId);
@@ -321,7 +378,7 @@ service cloud.firestore {
         && newData().read == false
         && newData().type in ['JOIN_REQUEST', 'REQUEST_ACCEPTED', 'REQUEST_REJECTED', 'REQUEST_CANCELLED',
                               'PARTICIPANT_LEFT', 'NEW_MESSAGE', 'RIDE_STARTED', 'RIDE_COMPLETED',
-                              'RIDE_CANCELLED', 'RIDE_UPDATED', 'DIRECT_MESSAGE']
+                              'RIDE_CANCELLED', 'RIDE_UPDATED', 'DIRECT_MESSAGE', 'MISSED_CALL']
         && isStr(newData().title, 120) && isStr(newData().body, 400)
         && !isBlockedBetween(uid(), newData().userId)
         && relatedToRide(newData().rideId, newData().userId);

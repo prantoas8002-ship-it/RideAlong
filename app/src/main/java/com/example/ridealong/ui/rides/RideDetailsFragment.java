@@ -230,7 +230,13 @@ public class RideDetailsFragment extends Fragment {
                 row.badge.setText(R.string.owner_badge);
             }
             row.call.setVisibility(isMe || r.statusEnum().isTerminal() ? View.GONE : View.VISIBLE);
-            row.call.setOnClickListener(v -> CallHelper.call(b.getRoot(), r, uid, u.displayName()));
+            // Tap: in-app voice call (no phone number). Long-press: regular phone call via the dialer.
+            row.call.setOnClickListener(v ->
+                    com.example.ridealong.ui.call.CallActivity.startOutgoing(requireContext(), uid, u.displayName(), r.id, ""));
+            row.call.setOnLongClickListener(v -> {
+                CallHelper.call(b.getRoot(), r, uid, u.displayName());
+                return true;
+            });
             row.getRoot().setOnClickListener(v -> {
                 if (!isMe) Nav.go(this, R.id.userProfileFragment, Nav.user(uid));
             });

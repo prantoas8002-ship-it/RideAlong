@@ -32,11 +32,17 @@ android {
         versionName = "1.0.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+        // WebRTC ships native libraries for 4 CPU types; phones only need ARM (x86_64 kept for emulators).
+        ndk { abiFilters += listOf("armeabi-v7a", "arm64-v8a", "x86_64") }
 
         val mapsKey = localProp("MAPS_API_KEY")
         manifestPlaceholders["MAPS_API_KEY"] = mapsKey
         buildConfigField("String", "MAPS_API_KEY", "\"$mapsKey\"")
         buildConfigField("String", "ORS_API_KEY", "\"${localProp("ORS_API_KEY")}\"")
+        // Optional TURN relay for in-app calls (needed when both phones are behind strict mobile NAT).
+        buildConfigField("String", "TURN_URLS", "\"${localProp("TURN_URLS")}\"")
+        buildConfigField("String", "TURN_USERNAME", "\"${localProp("TURN_USERNAME")}\"")
+        buildConfigField("String", "TURN_PASSWORD", "\"${localProp("TURN_PASSWORD")}\"")
         buildConfigField("boolean", "USE_FIREBASE_EMULATOR", localProp("USE_FIREBASE_EMULATOR", "false").ifEmpty { "false" })
         buildConfigField("String", "FIREBASE_EMULATOR_HOST", "\"${localProp("FIREBASE_EMULATOR_HOST", "10.0.2.2")}\"")
         // Must start with "demo-" (emulator-only project) when no google-services.json is present.
@@ -102,6 +108,7 @@ dependencies {
     implementation(libs.play.services.maps)
 
     implementation(libs.osmdroid)
+    implementation(libs.webrtc)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.junit)

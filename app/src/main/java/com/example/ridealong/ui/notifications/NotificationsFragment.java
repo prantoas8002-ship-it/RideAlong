@@ -98,6 +98,7 @@ public class NotificationsFragment extends Fragment {
             case Constants.N_PARTICIPANT_LEFT: return R.drawable.ic_exit;
             case Constants.N_NEW_MESSAGE:
             case Constants.N_DIRECT_MESSAGE: return R.drawable.ic_chat;
+            case Constants.N_MISSED_CALL: return R.drawable.ic_call;
             case Constants.N_RIDE_STARTED: return R.drawable.ic_navigation;
             case Constants.N_RIDE_COMPLETED: return R.drawable.ic_star;
             default: return R.drawable.ic_notifications;
@@ -107,6 +108,12 @@ public class NotificationsFragment extends Fragment {
     private void open(NotificationsViewModel.Row row) {
         vm.open(row);
         AppNotification n = row.n;
+        if (Constants.N_MISSED_CALL.equals(n.type)) {
+            String chat = n.args != null && n.args.size() > 2 ? n.args.get(2) : "";
+            if (chat != null && !chat.isEmpty()) Nav.go(this, R.id.directChatFragment, Nav.chat(chat));
+            else if (n.rideId != null) Nav.go(this, R.id.chatFragment, Nav.ride(n.rideId));
+            return;
+        }
         if (Constants.N_DIRECT_MESSAGE.equals(n.type) && NotificationsViewModel.directChatId(n) != null) {
             Nav.go(this, R.id.directChatFragment, Nav.chat(NotificationsViewModel.directChatId(n)));
             return;

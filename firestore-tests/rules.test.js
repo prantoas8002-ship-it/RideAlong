@@ -287,6 +287,70 @@ describe('private chat between poster and requester', () => {
   });
 });
 
+describe('in-app voice calls', () => {
+  const CHAT = `${RIDE}_${BOB}`;
+  const call = (o = {}) => Object.assign({
+    callerId: BOB, callerName: 'Bob', calleeId: ALICE, calleeName: 'Alice', rideId: RIDE, chatId: CHAT,
+    status: 'RINGING', offer: { type: 'offer', sdp: 'v=0' }, createdAt: FieldValue.serverTimestamp(),
+  }, o);
+  async function seedChat() {
+    await seedPendingRequest();
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await ctx.firestore().doc(`directChats/${CHAT}`).set({
+        rideId: RIDE, ownerId: ALICE, requesterId: BOB, participants: [ALICE, BOB], lastReadAt: {},
+      });
+    });
+  }
+
+  it('requester can call the poster through their private chat; outsiders cannot', async () => {
+    await seedChat();
+    await assertSucceeds(db(BOB).doc('calls/c1').set(call()));
+    await assertSucceeds(db(ALICE).doc('calls/c1').get());
+    await assertFails(db(CAROL).doc('calls/c1').get());
+    await assertFails(db(CAROL).doc('calls/c2').set(call({ callerId: CAROL, callerName: 'Carol' })));
+    await assertFails(db(BOB).doc('calls/c3').set(call({ callerId: ALICE })));            // impersonation
+    await assertFails(db(BOB).doc('calls/c4').set(call({ calleeId: CAROL, chatId: 'nope' })));
+  });
+
+  it('ride members can call each other', async () => {
+    await seedPendingRequest(); await acceptBob();
+    await assertSucceeds(db(ALICE).doc('calls/c5').set(call({ callerId: ALICE, callerName: 'Alice', calleeId: BOB, chatId: '' })));
+  });
+
+  it('callee answers; caller cannot fake an answer; candidates are per side', async () => {
+    await seedChat();
+    await db(BOB).doc('calls/c1').set(call());
+    await assertFails(db(BOB).doc('calls/c1').update({ status: 'ACCEPTED', answer: { type: 'answer', sdp: 'x' } }));
+    await assertSucceeds(db(ALICE).doc('calls/c1').update({
+      status: 'ACCEPTED', answer: { type: 'answer', sdp: 'x' }, answeredAt: FieldValue.serverTimestamp(),
+    }));
+    await assertSucceeds(db(BOB).collection('calls/c1/callerCandidates').add({ candidate: 'a', sdpMid: '0', sdpMLineIndex: 0 }));
+    await assertFails(db(BOB).collection('calls/c1/calleeCandidates').add({ candidate: 'a', sdpMid: '0', sdpMLineIndex: 0 }));
+    await assertSucceeds(db(ALICE).collection('calls/c1/calleeCandidates').add({ candidate: 'b', sdpMid: '0', sdpMLineIndex: 0 }));
+    await assertFails(db(CAROL).collection('calls/c1/callerCandidates').get());
+    await assertSucceeds(db(BOB).doc('calls/c1').update({ status: 'ENDED', endedAt: FieldValue.serverTimestamp() }));
+    await assertFails(db(BOB).doc('calls/c1').update({ status: 'RINGING' }));
+  });
+
+  it('decline, cancel and missed transitions', async () => {
+    await seedChat();
+    await db(BOB).doc('calls/d1').set(call());
+    await assertSucceeds(db(ALICE).doc('calls/d1').update({ status: 'REJECTED', endedAt: FieldValue.serverTimestamp() }));
+    await db(BOB).doc('calls/d2').set(call());
+    await assertSucceeds(db(BOB).doc('calls/d2').update({ status: 'MISSED', endedAt: FieldValue.serverTimestamp() }));
+    await db(BOB).doc('calls/d3').set(call());
+    await assertFails(db(ALICE).doc('calls/d3').update({ status: 'CANCELLED' })); // only the caller cancels
+  });
+
+  it('blocked users cannot call', async () => {
+    await seedChat();
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await ctx.firestore().doc(`blocks/${ALICE}_${BOB}`).set({ blockerId: ALICE, blockedId: BOB });
+    });
+    await assertFails(db(BOB).doc('calls/b1').set(call()));
+  });
+});
+
 describe('chat and live location', () => {
   beforeEach(async () => { await seedPendingRequest(); await acceptBob(); });
   const msg = (uid) => ({ senderId: uid, senderName: uid, text: 'hi', type: 'TEXT', createdAt: FieldValue.serverTimestamp() });

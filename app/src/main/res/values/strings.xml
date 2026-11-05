@@ -499,4 +499,33 @@
     <string name="settings_theme_system">System default</string>
     <string name="settings_theme_light">Light</string>
     <string name="settings_theme_dark">Dark</string>
+    <!-- In-app voice calls -->
+    <string name="call_label">RideAlong voice call · end-to-end encrypted</string>
+    <string name="action_voice_call">Voice call</string>
+    <string name="action_phone_call">Phone call (dialer)</string>
+    <string name="call_status_calling">Calling…</string>
+    <string name="call_status_connecting">Connecting…</string>
+    <string name="call_status_connected">Connected</string>
+    <string name="call_incoming_title">Incoming voice call</string>
+    <string name="call_ongoing_title">Voice call in progress</string>
+    <string name="call_accept">Accept</string>
+    <string name="call_decline">Decline</string>
+    <string name="call_hang_up">Hang up</string>
+    <string name="call_mute">Mute</string>
+    <string name="call_speaker">Speaker</string>
+    <string name="call_end_ended">Call ended</string>
+    <string name="call_end_declined">Call declined</string>
+    <string name="call_end_busy">Busy on another call</string>
+    <string name="call_end_no_answer">No answer</string>
+    <string name="call_end_failed">Couldn\'t connect. Check your internet connection.</string>
+    <string name="call_mic_needed">Microphone permission is needed for voice calls</string>
+    <string name="call_log_voice">Voice call · %1$s</string>
+    <string name="call_log_missed">Missed voice call</string>
+    <string name="call_log_declined">Voice call declined</string>
+    <string name="channel_calls">Incoming calls</string>
+    <string name="channel_calls_desc">Rings when a co-rider calls you in the app</string>
+    <string name="channel_call_ongoing">Ongoing call</string>
+    <string name="channel_call_ongoing_desc">Shown while a voice call is active</string>
+    <string name="n_missed_call_title">Missed voice call</string>
+    <string name="n_missed_call_body">%1$s tried to call you</string>
 </resources>

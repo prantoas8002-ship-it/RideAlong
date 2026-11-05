@@ -12,6 +12,13 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- In-app voice calls (WebRTC) -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
     <!-- No CALL_PHONE / SEND_SMS: calls and SMS open the user's own apps (ACTION_DIAL / ACTION_SENDTO). -->
 
     <uses-feature android:name="android.hardware.camera" android:required="false" />
@@ -72,6 +79,27 @@
             android:exported="false"
             android:launchMode="singleTop"
             android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".ui.call.CallActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:showWhenLocked="true"
+            android:taskAffinity="com.example.ridealong.call"
+            android:theme="@style/Theme.RideAlong.Call"
+            android:turnScreenOn="true"
+            tools:ignore="LockedOrientationActivity" />
+
+        <service
+            android:name=".service.call.CallService"
+            android:exported="false"
+            android:foregroundServiceType="microphone" />
+
+        <receiver
+            android:name=".service.call.CallActionReceiver"
+            android:exported="false" />
 
         <service
             android:name=".service.LocationShareService"

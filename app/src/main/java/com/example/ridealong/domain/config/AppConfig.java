@@ -15,6 +15,15 @@ public final class AppConfig {
     public final MatchingConfig matching = new MatchingConfig();
     public final FareConfig fare = new FareConfig();
 
+    // In-app voice calls
+    public long callRingTimeoutMs = 45_000;
+    public long callReconnectGraceMs = 8_000;
+    /** Ignore RINGING calls older than this (stale docs after a crash). */
+    public long callStaleAfterMs = 60_000;
+    /** Free public STUN servers; TURN comes from local.properties (TURN_URLS / TURN_USERNAME / TURN_PASSWORD). */
+    public final java.util.List<String> callStunUrls = java.util.Arrays.asList(
+            "stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302", "stun:stun2.l.google.com:19302");
+
     // Live location
     public long locationUpdateIntervalMs = 10_000;
     public long locationFastestIntervalMs = 5_000;

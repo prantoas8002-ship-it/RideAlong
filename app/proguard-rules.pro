@@ -3,6 +3,10 @@
 -keepclassmembers class com.example.ridealong.data.model.** { public <init>(); }
 -keepattributes Signature, *Annotation*, InnerClasses, EnclosingMethod
 
+# WebRTC (JNI looks up these classes by name)
+-keep class org.webrtc.** { *; }
+-dontwarn org.webrtc.**
+
 # osmdroid
 -dontwarn org.osmdroid.**
 

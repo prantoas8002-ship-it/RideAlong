@@ -33,6 +33,12 @@ public final class NotificationHelper {
                 NotificationManager.IMPORTANCE_HIGH));
         nm.createNotificationChannel(channel(c, Constants.CHANNEL_SYNC, R.string.channel_sync, R.string.channel_sync_desc,
                 NotificationManager.IMPORTANCE_MIN));
+        NotificationChannel calls = channel(c, Constants.CHANNEL_CALLS, R.string.channel_calls, R.string.channel_calls_desc,
+                NotificationManager.IMPORTANCE_HIGH);
+        calls.setSound(null, null); // CallManager plays the ringtone itself (and stops it on answer)
+        nm.createNotificationChannel(calls);
+        nm.createNotificationChannel(channel(c, Constants.CHANNEL_CALL_ONGOING, R.string.channel_call_ongoing,
+                R.string.channel_call_ongoing_desc, NotificationManager.IMPORTANCE_LOW));
     }
 
     @androidx.annotation.RequiresApi(Build.VERSION_CODES.O)

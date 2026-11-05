@@ -121,6 +121,9 @@ public class NotificationRepository {
                         ? c.getString(R.string.n_message_body, sender)
                         : c.getString(R.string.n_message_body_ride, sender, dest)};
             }
+            case Constants.N_MISSED_CALL:
+                return new String[]{c.getString(R.string.n_missed_call_title),
+                        c.getString(R.string.n_missed_call_body, a0.isEmpty() ? c.getString(R.string.unknown_user) : a0)};
             case Constants.N_RIDE_STARTED:
                 return new String[]{c.getString(R.string.n_started_title), c.getString(R.string.n_started_body, a1)};
             case Constants.N_RIDE_COMPLETED:

@@ -97,4 +97,14 @@
     <string name="settings_theme_system">সিস্টেম অনুযায়ী</string>
     <string name="settings_theme_light">লাইট</string>
     <string name="settings_theme_dark">ডার্ক</string>
+    <string name="action_voice_call">ভয়েস কল</string>
+    <string name="call_status_calling">কল করা হচ্ছে…</string>
+    <string name="call_status_connecting">সংযোগ হচ্ছে…</string>
+    <string name="call_incoming_title">ইনকামিং ভয়েস কল</string>
+    <string name="call_accept">গ্রহণ</string>
+    <string name="call_decline">প্রত্যাখ্যান</string>
+    <string name="call_hang_up">কল কাটুন</string>
+    <string name="call_end_ended">কল শেষ</string>
+    <string name="n_missed_call_title">মিসড ভয়েস কল</string>
+    <string name="n_missed_call_body">%1$s আপনাকে কল করার চেষ্টা করেছেন</string>
 </resources>

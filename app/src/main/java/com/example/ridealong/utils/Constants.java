@@ -30,6 +30,8 @@ public final class Constants {
     public static final int NOTIF_ID_LOCATION_SERVICE = 1001;
     public static final int NOTIF_ID_SYNC_SERVICE = 1002;
     public static final int NOTIF_ID_GEOFENCE_BASE = 2000;
+    public static final int NOTIF_ID_CALL_ONGOING = 1003;
+    public static final int NOTIF_ID_CALL_INCOMING = 1004;
 
     // Notification channels
     public static final String CHANNEL_RIDES = "rides";
@@ -37,6 +39,8 @@ public final class Constants {
     public static final String CHANNEL_LOCATION = "location";
     public static final String CHANNEL_GEOFENCE = "geofence";
     public static final String CHANNEL_SYNC = "sync";
+    public static final String CHANNEL_CALLS = "calls_incoming";
+    public static final String CHANNEL_CALL_ONGOING = "calls_ongoing";
 
     // Map providers
     public static final String MAP_PROVIDER_OSM = "OSM";
@@ -59,6 +63,7 @@ public final class Constants {
     public static final String N_RIDE_CANCELLED = "RIDE_CANCELLED";
     public static final String N_RIDE_UPDATED = "RIDE_UPDATED";
     public static final String N_DIRECT_MESSAGE = "DIRECT_MESSAGE";
+    public static final String N_MISSED_CALL = "MISSED_CALL";
 
     // Emergency actions
     public static final String SOS_DIAL = "DIAL_OPENED";

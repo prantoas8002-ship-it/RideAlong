@@ -57,6 +57,14 @@
         <item name="android:windowLightStatusBar">false</item>
     </style>
 
+    <!-- Always-dark full-screen call UI -->
+    <style name="Theme.RideAlong.Call" parent="Theme.RideAlong">
+        <item name="android:windowBackground">@drawable/bg_call_screen</item>
+        <item name="android:statusBarColor">#1E3A8A</item>
+        <item name="android:navigationBarColor">#0B1220</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
     <style name="ThemeOverlay.RideAlong.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
         <item name="shapeAppearanceOverlay">@style/ShapeAppearance.RideAlong.Large</item>
         <item name="colorPrimary">@color/ra_primary</item>

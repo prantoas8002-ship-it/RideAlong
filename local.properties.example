@@ -8,6 +8,14 @@ MAPS_API_KEY=
 # OpenRouteService free key (https://openrouteservice.org/dev/#/signup). Empty = public OSRM server.
 ORS_API_KEY=
 
+# ---- In-app voice calls (optional but recommended) ----
+# Calls use free Google STUN servers by default. Phones on mobile data behind carrier NAT usually ALSO need
+# a TURN relay. Free tiers: https://www.metered.ca/stun-turn (Open Relay) or https://www.expressturn.com
+# Comma-separated URLs, e.g. turn:global.relay.metered.ca:80,turn:global.relay.metered.ca:443?transport=tcp
+TURN_URLS=
+TURN_USERNAME=
+TURN_PASSWORD=
+
 # ---- Development ----
 # true = connect Auth + Firestore to the Firebase Emulator Suite (see SETUP_GUIDE.md)
 USE_FIREBASE_EMULATOR=false

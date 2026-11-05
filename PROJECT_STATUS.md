@@ -67,7 +67,16 @@
 
 See [SETUP_GUIDE.md](SETUP_GUIDE.md). Emulator-only mode (no Firebase project) is also documented there.
 
+## Recent additions
+* **Private chat** poster <-> requester, **Home chat icon** with unread badge, Messages inbox.
+* **Message privacy:** notifications never contain message text.
+* **In-app voice calls** (WebRTC `com.dafruits:webrtc:123.0.0`, Firestore signaling, rules-protected
+  `calls` collection, foreground `microphone` service, full-screen incoming call). Rules tests: 38 passing.
+* **Dark mode** with Light / Dark / System setting.
+* ⚠️ Voice calls have not been tested between two real phones from this machine (no device attached).
+
 ## Known limitations
+* In-app calls between two phones on mobile data usually need a TURN relay (configure `TURN_*`, see SETUP_GUIDE).
 * No push to a killed app (needs FCM + Functions → Blaze). An optional background-sync foreground service is available.
 * Calls/SMS require the user to press Call/Send (an Android restriction). The app never claims an alert was sent.
 * Automatic center-square crop for avatars (no manual crop UI).

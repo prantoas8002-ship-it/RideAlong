@@ -78,6 +78,23 @@ Open the folder in Android Studio, let Gradle sync, and run the `app` configurat
 
 ---
 
+## In-app voice calls: TURN relay (recommended)
+
+Calls work out of the box with Google's free STUN servers when at least one phone has a reachable
+network (most Wi-Fi). When **both** phones are on mobile data (Grameenphone, Robi, Banglalink, Teletalk
+use carrier-grade NAT), a **TURN relay** is usually required:
+
+1. Create a free account, e.g. <https://www.metered.ca/stun-turn> (Open Relay free tier) or <https://www.expressturn.com>.
+2. Copy the TURN URLs, username and password into `local.properties`:
+   ```properties
+   TURN_URLS=turn:global.relay.metered.ca:80,turn:global.relay.metered.ca:443?transport=tcp
+   TURN_USERNAME=your-username
+   TURN_PASSWORD=your-password
+   ```
+3. Rebuild and re-share the APK.
+
+Audio is peer-to-peer and encrypted by WebRTC (DTLS-SRTP); a TURN server only relays encrypted packets.
+
 ## B. Emulator-only development mode
 
 1. Install the tools: `cd firestore-tests && npm install`.

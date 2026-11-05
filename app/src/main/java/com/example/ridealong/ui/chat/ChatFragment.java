@@ -66,9 +66,15 @@ public class ChatFragment extends Fragment {
 
             @Override
             public boolean onMenuItemSelected(@NonNull MenuItem item) {
-                if (item.getItemId() != R.id.action_call) return false;
-                chooseCallee();
-                return true;
+                if (item.getItemId() == R.id.action_voice_call) {
+                    chooseCallee(true);
+                    return true;
+                }
+                if (item.getItemId() == R.id.action_call) {
+                    chooseCallee(false);
+                    return true;
+                }
+                return false;
             }
         }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
 
@@ -119,7 +125,7 @@ public class ChatFragment extends Fragment {
         if (r.fromCache) b.banner.setText(getString(R.string.cached_data_notice));
     }
 
-    private void chooseCallee() {
+    private void chooseCallee(boolean voice) {
         Resource<Ride> rr = vm.ride().getValue();
         if (rr == null || rr.data == null) return;
         Ride ride = rr.data;
@@ -131,15 +137,23 @@ public class ChatFragment extends Fragment {
             return;
         }
         if (others.size() == 1) {
-            CallHelper.call(b.getRoot(), ride, others.get(0).uidOrId(), others.get(0).displayName());
+            callUser(voice, ride, others.get(0));
             return;
         }
         String[] names = new String[others.size()];
         for (int i = 0; i < others.size(); i++) names[i] = others.get(i).displayName();
         new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.call_who)
-                .setItems(names, (d, w) -> CallHelper.call(b.getRoot(), ride, others.get(w).uidOrId(), others.get(w).displayName()))
+                .setItems(names, (d, w) -> callUser(voice, ride, others.get(w)))
                 .show();
+    }
+
+    private void callUser(boolean voice, Ride ride, User u) {
+        if (voice) {
+            com.example.ridealong.ui.call.CallActivity.startOutgoing(requireContext(), u.uidOrId(), u.displayName(), ride.id, "");
+        } else {
+            CallHelper.call(b.getRoot(), ride, u.uidOrId(), u.displayName());
+        }
     }
 
     @Override

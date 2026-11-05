@@ -48,6 +48,7 @@ public final class RealtimeNotificationListener {
             stop();
             return;
         }
+        com.example.ridealong.service.call.IncomingCallWatcher.get(app).start();
         if (reg != null && me.equals(uid)) return;
         stop();
         uid = me;
@@ -104,6 +105,7 @@ public final class RealtimeNotificationListener {
     }
 
     public synchronized void stop() {
+        if (FirebaseProvider.uidOrNull() == null) com.example.ridealong.service.call.IncomingCallWatcher.get(app).stop();
         if (reg != null) {
             reg.remove();
             reg = null;

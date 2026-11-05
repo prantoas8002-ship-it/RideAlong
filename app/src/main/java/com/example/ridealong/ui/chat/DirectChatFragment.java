@@ -68,13 +68,20 @@ public class DirectChatFragment extends Fragment {
 
             @Override
             public boolean onMenuItemSelected(@NonNull MenuItem item) {
-                if (item.getItemId() != R.id.action_call) return false;
                 DirectChat c = vm.current();
-                if (c != null) {
-                    String me = Me.uid();
-                    CallHelper.dial(b.getRoot(), c.rideId, c.otherId(me), c.otherName(me), vm::logCall);
+                if (c == null) return false;
+                String me = Me.uid();
+                if (item.getItemId() == R.id.action_voice_call) {
+                    // In-app internet call: no phone number is shared or needed.
+                    com.example.ridealong.ui.call.CallActivity.startOutgoing(requireContext(), c.otherId(me), c.otherName(me),
+                            c.rideId, c.id);
+                    return true;
                 }
-                return true;
+                if (item.getItemId() == R.id.action_call) {
+                    CallHelper.dial(b.getRoot(), c.rideId, c.otherId(me), c.otherName(me), vm::logCall);
+                    return true;
+                }
+                return false;
             }
         }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
 
