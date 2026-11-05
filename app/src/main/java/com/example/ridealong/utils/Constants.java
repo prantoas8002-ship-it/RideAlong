@@ -39,7 +39,7 @@ public final class Constants {
     public static final String CHANNEL_LOCATION = "location";
     public static final String CHANNEL_GEOFENCE = "geofence";
     public static final String CHANNEL_SYNC = "sync";
-    public static final String CHANNEL_CALLS = "calls_incoming";
+    public static final String CHANNEL_CALLS = "calls_ring";
     public static final String CHANNEL_CALL_ONGOING = "calls_ongoing";
 
     // Map providers

@@ -38,6 +38,7 @@ import java.util.Map;
  */
 public class CallActivity extends AppCompatActivity {
     public static final String EXTRA_AUTO_ACCEPT = "auto_accept";
+    public static final String EXTRA_CALL_ID = "call_id";
     private static final String EXTRA_PEER_ID = "peer_id";
     private static final String EXTRA_PEER_NAME = "peer_name";
     private static final String EXTRA_RIDE_ID = "ride_id";
@@ -48,6 +49,10 @@ public class CallActivity extends AppCompatActivity {
     private CallManager calls;
     private PowerManager.WakeLock proximity;
     private boolean renderersReady;
+    /** Header shrunk to the top-left (video connected). */
+    private Boolean compactHeader;
+    /** Loading a ringing call from Firestore (app was closed when the push arrived). */
+    private boolean loadingCall;
     /** What to do once permissions are answered. */
     private Runnable afterPermission;
 
@@ -112,10 +117,28 @@ public class CallActivity extends AppCompatActivity {
             withPermissions(video, () -> {
                 if (!calls.startOutgoing(peerId, name, ride, chat, video)) finish();
             });
+        } else if (!calls.isBusy() && i.getStringExtra(EXTRA_CALL_ID) != null) {
+            recoverIncoming(i.getStringExtra(EXTRA_CALL_ID), i.getBooleanExtra(EXTRA_AUTO_ACCEPT, false));
         } else if (i.getBooleanExtra(EXTRA_AUTO_ACCEPT, false)) {
             CallManager.State s = calls.state().getValue();
             withPermissions(s != null && s.video, calls::accept);
         }
+    }
+
+    /** The call notification outlived the app process: load the call again and keep it ringing. */
+    private void recoverIncoming(String callId, boolean autoAccept) {
+        loadingCall = true;
+        new com.example.ridealong.data.repository.CallRepository().ref(callId).get().addOnCompleteListener(t -> {
+            loadingCall = false;
+            CallSession s = t.isSuccessful() && t.getResult() != null ? t.getResult().toObject(CallSession.class) : null;
+            if (s == null || !CallSession.RINGING.equals(s.status)) {
+                Toast.makeText(this, R.string.call_end_ended, Toast.LENGTH_SHORT).show();
+                finish();
+                return;
+            }
+            calls.onIncoming(s, !autoAccept);
+            if (autoAccept) withPermissions(s.video, calls::accept);
+        });
     }
 
     // ----- permissions: microphone required; camera optional (video falls back to voice-only sending) -----
@@ -199,7 +222,7 @@ public class CallActivity extends AppCompatActivity {
     private void render(CallManager.State s) {
         if (s == null) return;
         if (s.phase == CallManager.Phase.IDLE) {
-            if (afterPermission == null) finish();
+            if (afterPermission == null && !loadingCall) finish();
             return;
         }
         showPeer(s.peerId, s.peerName);
@@ -216,7 +239,7 @@ public class CallActivity extends AppCompatActivity {
         b.videoScrim.setVisibility(showRemote ? View.VISIBLE : View.GONE);
         b.localVideo.setVisibility(s.video && s.cameraOn && live ? View.VISIBLE : View.GONE);
         b.localVideo.setMirror(s.frontCamera);
-        b.avatar.setVisibility(showRemote ? View.GONE : View.VISIBLE);
+        setCompactHeader(showRemote);
         b.videoControls.setVisibility(s.video && live ? View.VISIBLE : View.GONE);
         b.cameraToggle.setImageResource(s.cameraOn ? R.drawable.ic_videocam : R.drawable.ic_videocam_off);
         b.switchCamera.setEnabled(s.cameraOn);
@@ -252,6 +275,37 @@ public class CallActivity extends AppCompatActivity {
         }
         // Ear-to-phone screen-off only makes sense for voice calls on the earpiece.
         updateProximity(s.phase == CallManager.Phase.CONNECTED && !s.speaker && !s.video);
+    }
+
+    /**
+     * Ringing: avatar, big name and status centered. Video live: the info slides to a small
+     * top-left label (name + timer) so it doesn't cover the other person's face.
+     */
+    private void setCompactHeader(boolean compact) {
+        if (compactHeader != null && compactHeader == compact) return;
+        boolean animate = compactHeader != null;
+        compactHeader = compact;
+        if (animate) {
+            android.transition.TransitionSet t = new android.transition.TransitionSet()
+                    .addTransition(new android.transition.ChangeBounds())
+                    .addTransition(new android.transition.Fade())
+                    .setDuration(350)
+                    .setInterpolator(new android.view.animation.DecelerateInterpolator());
+            android.transition.TransitionManager.beginDelayedTransition(b.overlay, t);
+        }
+        b.headerBlock.setGravity(compact ? android.view.Gravity.START : android.view.Gravity.CENTER_HORIZONTAL);
+        b.label.setVisibility(compact ? View.GONE : View.VISIBLE);
+        b.avatar.setVisibility(compact ? View.GONE : View.VISIBLE);
+        b.status.setVisibility(compact ? View.GONE : View.VISIBLE);
+        b.name.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, compact ? 17 : 24);
+        b.name.setMaxLines(compact ? 1 : 2);
+        b.name.setGravity(compact ? android.view.Gravity.START : android.view.Gravity.CENTER);
+        android.view.ViewGroup.MarginLayoutParams nameLp = (android.view.ViewGroup.MarginLayoutParams) b.name.getLayoutParams();
+        nameLp.topMargin = compact ? 0 : getResources().getDimensionPixelSize(R.dimen.space_l);
+        b.name.setLayoutParams(nameLp);
+        b.timer.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, compact ? 13 : 18);
+        // Leave room on the right for my camera preview.
+        b.headerBlock.setPadding(0, 0, compact ? getResources().getDimensionPixelSize(R.dimen.call_pip_width) : 0, 0);
     }
 
     private int endText(@Nullable String reason) {

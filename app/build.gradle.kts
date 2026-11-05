@@ -40,6 +40,8 @@ android {
         buildConfigField("String", "MAPS_API_KEY", "\"$mapsKey\"")
         buildConfigField("String", "ORS_API_KEY", "\"${localProp("ORS_API_KEY")}\"")
         // Optional TURN relay for in-app calls (needed when both phones are behind strict mobile NAT).
+        // Optional push relay (push-relay/README.md): wakes closed apps for calls and notifications.
+        buildConfigField("String", "PUSH_RELAY_URL", "\"${localProp("PUSH_RELAY_URL")}\"")
         buildConfigField("String", "TURN_URLS", "\"${localProp("TURN_URLS")}\"")
         buildConfigField("String", "TURN_USERNAME", "\"${localProp("TURN_USERNAME")}\"")
         buildConfigField("String", "TURN_PASSWORD", "\"${localProp("TURN_PASSWORD")}\"")
@@ -103,6 +105,7 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
+    implementation(libs.firebase.messaging)
     implementation(libs.play.services.auth)
     implementation(libs.play.services.location)
     implementation(libs.play.services.maps)

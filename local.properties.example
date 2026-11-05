@@ -8,6 +8,10 @@ MAPS_API_KEY=
 # OpenRouteService free key (https://openrouteservice.org/dev/#/signup). Empty = public OSRM server.
 ORS_API_KEY=
 
+# ---- Push relay (optional but recommended) ----
+# Lets calls and notifications reach phones where RideAlong is fully closed. See push-relay/README.md
+PUSH_RELAY_URL=
+
 # ---- In-app voice calls (optional but recommended) ----
 # Calls use free Google STUN servers by default. Phones on mobile data behind carrier NAT usually ALSO need
 # a TURN relay. Free tiers: https://www.metered.ca/stun-turn (Open Relay) or https://www.expressturn.com

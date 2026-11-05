@@ -1,0 +1,12 @@
+{
+  "name": "ridealong-push-relay",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "test": "node --test test/relay.test.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "3.80.0"
+  }
+}

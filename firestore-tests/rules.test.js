@@ -351,6 +351,16 @@ describe('in-app voice calls', () => {
   });
 });
 
+describe('push tokens', () => {
+  it('owner writes their own token; nobody can read tokens or overwrite others', async () => {
+    await assertSucceeds(db(BOB).doc(`pushTokens/${BOB}`).set({ token: 'fcm-abc', platform: 'android' }));
+    await assertFails(db(BOB).doc(`pushTokens/${BOB}`).get());
+    await assertFails(db(ALICE).doc(`pushTokens/${BOB}`).get());
+    await assertFails(db(CAROL).doc(`pushTokens/${BOB}`).set({ token: 'hijack' }));
+    await assertSucceeds(db(BOB).doc(`pushTokens/${BOB}`).delete());
+  });
+});
+
 describe('chat and live location', () => {
   beforeEach(async () => { await seedPendingRequest(); await acceptBob(); });
   const msg = (uid) => ({ senderId: uid, senderName: uid, text: 'hi', type: 'TEXT', createdAt: FieldValue.serverTimestamp() });

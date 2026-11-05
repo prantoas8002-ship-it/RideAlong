@@ -53,7 +53,10 @@ public class NotificationRepository {
         m.put("args", Arrays.asList(args));
         m.put("read", false);
         m.put("createdAt", FieldValue.serverTimestamp());
-        return col().add(m).continueWith(t -> {
+        Task<com.google.firebase.firestore.DocumentReference> add = col().add(m);
+        // Wake the recipient's phone if RideAlong is closed there (no-op without the push relay).
+        add.addOnSuccessListener(ref -> com.example.ridealong.service.push.PushClient.send("notification", ref.getId()));
+        return add.continueWith(t -> {
             if (!t.isSuccessful()) Log.w(TAG, "notification not delivered: " + type, t.getException());
             return null;
         });

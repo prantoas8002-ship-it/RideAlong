@@ -80,6 +80,19 @@ public final class RealtimeNotificationListener {
         });
     }
 
+    /** A notification delivered by FCM while the app was closed. */
+    public static void showFromPush(Context c, AppNotification n) {
+        RealtimeNotificationListener l = get(c);
+        SettingsRepository settings = ServiceLocator.get().settings();
+        String me = FirebaseProvider.uidOrNull();
+        long created = n.createdAt == null ? System.currentTimeMillis() : n.createdAt.toDate().getTime();
+        if (me != null) {
+            if (created <= settings.lastNotificationSeen(me)) return; // already shown by the live listener
+            settings.setLastNotificationSeen(me, created);
+        }
+        l.maybeShow(n, settings);
+    }
+
     private void maybeShow(AppNotification n, SettingsRepository settings) {
         boolean direct = Constants.N_DIRECT_MESSAGE.equals(n.type);
         boolean isMessage = direct || Constants.N_NEW_MESSAGE.equals(n.type);

@@ -222,6 +222,7 @@ public final class CallManager {
                     public void onSetSuccess() {
                         AppExecutors.main(() -> repo.create(ref, calleeId, calleeName, Me.name(), rideId, CallManager.this.chatId,
                                         withVideo, sdp.type.canonicalForm(), sdp.description)
+                                .addOnSuccessListener(v -> com.example.ridealong.service.push.PushClient.send("call", ref.getId()))
                                 .addOnFailureListener(e -> {
                                     Log.w(TAG, "call create failed", e);
                                     finish(END_FAILED, false);
@@ -254,14 +255,24 @@ public final class CallManager {
         }
         if (current().phase != Phase.OUTGOING || callId == null) return;
         repo.setStatus(callId, CallSession.MISSED);
-        ServiceLocator.get().notifications().send(peerId, Constants.N_MISSED_CALL, rideId, Me.name(), "", chatId);
+        notifyMissed();
         finish(END_NO_ANSWER, false);
+    }
+
+    /** "Missed call from X" in the callee's Alerts (and as a push when the relay is configured). */
+    private void notifyMissed() {
+        if (peerId == null || rideId == null) return;
+        ServiceLocator.get().notifications().send(peerId, Constants.N_MISSED_CALL, rideId, Me.name(), video ? "video" : "",
+                chatId == null ? "" : chatId);
     }
 
     // ------------------------------------------------------------------ incoming
 
-    /** Called by IncomingCallWatcher for a new RINGING call addressed to me. */
-    public void onIncoming(CallSession s) {
+    /**
+     * Called for a new RINGING call addressed to me (live listener or push).
+     * @param ringInApp play the ringtone here (app visible); otherwise the call notification rings.
+     */
+    public void onIncoming(CallSession s, boolean ringInApp) {
         if (isBusy()) {
             if (!s.id.equals(callId)) repo.setStatus(s.id, CallSession.BUSY);
             return;
@@ -277,7 +288,7 @@ public final class CallManager {
         video = s.video;
         speaker = s.video;
         publish(Phase.INCOMING, null);
-        audio.startRinging();
+        if (ringInApp) audio.startRinging();
         callReg = repo.ref(callId).addSnapshotListener((snap, err) -> {
             if (err != null || snap == null || !snap.exists()) return;
             CallSession cur = snap.toObject(CallSession.class);
@@ -339,6 +350,7 @@ public final class CallManager {
         }
         String status = p == Phase.OUTGOING ? CallSession.CANCELLED : CallSession.ENDED;
         repo.setStatus(callId, status);
+        if (p == Phase.OUTGOING) notifyMissed(); // they never picked up: make sure they can find the call later
         finish(status, false);
     }
 
@@ -603,6 +615,7 @@ public final class CallManager {
         }
         AppExecutors.cancelMain(ringTimeout);
         AppExecutors.cancelMain(disconnectGrace);
+        IncomingCallWatcher.cancelIncomingNotification(app); // stops the ringing notification too
         logToChat(reason);
         releaseMedia();
         audio.exitCallMode();
@@ -624,7 +637,7 @@ public final class CallManager {
             long secs = (System.currentTimeMillis() - connectedAt) / 1000;
             String dur = String.format(Locale.US, "%d:%02d", secs / 60, secs % 60);
             text = app.getString(video ? R.string.call_log_video : R.string.call_log_voice, dur);
-        } else if (END_NO_ANSWER.equals(reason) || CallSession.MISSED.equals(reason)) {
+        } else if (END_NO_ANSWER.equals(reason) || CallSession.MISSED.equals(reason) || CallSession.CANCELLED.equals(reason)) {
             text = app.getString(video ? R.string.call_log_missed_video : R.string.call_log_missed);
         } else if (CallSession.REJECTED.equals(reason) || CallSession.BUSY.equals(reason)) {
             text = app.getString(R.string.call_log_declined);

@@ -28,6 +28,7 @@ public class RideAlongApp extends Application {
                 RealtimeNotificationListener listener = RealtimeNotificationListener.get(this);
                 if (auth.getCurrentUser() != null) {
                     listener.start();
+                    com.example.ridealong.service.push.PushTokens.registerCurrentDevice();
                     ServiceLocator.get().config().loadOnce();
                     ServiceLocator.get().emergency().syncPending();
                 } else {

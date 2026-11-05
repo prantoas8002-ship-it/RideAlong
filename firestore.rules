@@ -422,6 +422,14 @@ service cloud.firestore {
       allow update: if false;
     }
 
+    // ---------- FCM device tokens (written by the owner, read only by the push relay's service account) ----------
+    match /pushTokens/{userId} {
+      allow create, update: if signedIn() && userId == uid()
+        && newData().token is string && newData().token.size() > 0 && newData().token.size() < 4096;
+      allow delete: if signedIn() && userId == uid();
+      allow read: if false;
+    }
+
     // ---------- reports (write-only; reviewed by admins in the console) ----------
     match /reports/{reportId} {
       allow create: if signedIn()

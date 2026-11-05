@@ -33,9 +33,18 @@ public final class NotificationHelper {
                 NotificationManager.IMPORTANCE_HIGH));
         nm.createNotificationChannel(channel(c, Constants.CHANNEL_SYNC, R.string.channel_sync, R.string.channel_sync_desc,
                 NotificationManager.IMPORTANCE_MIN));
+        nm.deleteNotificationChannel("calls_incoming"); // replaced by the ringing channel below
         NotificationChannel calls = channel(c, Constants.CHANNEL_CALLS, R.string.channel_calls, R.string.channel_calls_desc,
                 NotificationManager.IMPORTANCE_HIGH);
-        calls.setSound(null, null); // CallManager plays the ringtone itself (and stops it on answer)
+        // The notification itself rings, so a call still rings if Android stops the app process meanwhile.
+        calls.setSound(android.media.RingtoneManager.getDefaultUri(android.media.RingtoneManager.TYPE_RINGTONE),
+                new android.media.AudioAttributes.Builder()
+                        .setUsage(android.media.AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
+                        .setContentType(android.media.AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .build());
+        calls.enableVibration(true);
+        calls.setVibrationPattern(new long[]{0, 800, 1200});
+        calls.setLockscreenVisibility(android.app.Notification.VISIBILITY_PUBLIC);
         nm.createNotificationChannel(calls);
         nm.createNotificationChannel(channel(c, Constants.CHANNEL_CALL_ONGOING, R.string.channel_call_ongoing,
                 R.string.channel_call_ongoing_desc, NotificationManager.IMPORTANCE_LOW));

@@ -59,20 +59,25 @@ public final class IncomingCallWatcher {
                     new CallRepository().setStatus(s.id, CallSession.REJECTED);
                     continue;
                 }
-                CallManager.get(app).onIncoming(s);
-                if (s.id.equals(currentCallId())) present(s);
+                deliver(app, s);
             }
         });
     }
 
-    private String currentCallId() {
-        CallManager.State st = CallManager.get(app).state().getValue();
-        return st == null ? null : st.callId;
-    }
-
-    private void present(CallSession s) {
+    /**
+     * Hands a ringing call to CallManager and shows it: call screen when the app is visible, otherwise a
+     * ringing full-screen notification (used by both the live listener and the FCM push path).
+     */
+    public static void deliver(Context c, CallSession s) {
+        Context app = c.getApplicationContext();
         boolean foreground = ProcessLifecycleOwner.get().getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED);
-        Intent open = new Intent(app, CallActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        CallManager cm = CallManager.get(app);
+        cm.onIncoming(s, foreground);
+        CallManager.State st = cm.state().getValue();
+        if (st == null || !s.id.equals(st.callId)) return; // busy on another call
+        Intent open = new Intent(app, CallActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                .putExtra(CallActivity.EXTRA_CALL_ID, s.id);
         if (foreground) {
             app.startActivity(open);
             return;
@@ -82,7 +87,8 @@ public final class IncomingCallWatcher {
         PendingIntent accept = PendingIntent.getActivity(app, 22, new Intent(open).putExtra(CallActivity.EXTRA_AUTO_ACCEPT, true),
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         PendingIntent decline = PendingIntent.getBroadcast(app, 23, new Intent(app, CallActionReceiver.class)
-                .setAction(CallActionReceiver.ACTION_DECLINE), PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+                .setAction(CallActionReceiver.ACTION_DECLINE).putExtra(CallActivity.EXTRA_CALL_ID, s.id),
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         String name = s.callerName == null || s.callerName.isEmpty() ? app.getString(R.string.unknown_user) : s.callerName;
         NotificationCompat.Builder b = new NotificationCompat.Builder(app, Constants.CHANNEL_CALLS)
                 .setSmallIcon(R.drawable.ic_call)
@@ -98,8 +104,10 @@ public final class IncomingCallWatcher {
                 .setContentIntent(full)
                 .addAction(R.drawable.ic_close, app.getString(R.string.call_decline), decline)
                 .addAction(R.drawable.ic_call, app.getString(R.string.call_accept), accept);
+        android.app.Notification n = b.build();
+        n.flags |= android.app.Notification.FLAG_INSISTENT; // keep ringing until answered/declined/timeout
         try {
-            NotificationManagerCompat.from(app).notify(Constants.NOTIF_ID_CALL_INCOMING, b.build());
+            NotificationManagerCompat.from(app).notify(Constants.NOTIF_ID_CALL_INCOMING, n);
         } catch (SecurityException ignored) {
             // notification permission revoked
         }

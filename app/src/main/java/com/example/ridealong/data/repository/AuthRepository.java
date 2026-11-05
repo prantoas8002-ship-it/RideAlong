@@ -117,6 +117,7 @@ public class AuthRepository {
 
     public void signOut() {
         stopServices();
+        com.example.ridealong.service.push.PushTokens.unregisterCurrentDevice();
         FirebaseUser u = currentUser();
         if (u != null) {
             try {
