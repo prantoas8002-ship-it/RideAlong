@@ -22,7 +22,15 @@ import java.util.Objects;
 
 final class MessagesAdapter extends ListAdapter<ChatMessage, RecyclerView.ViewHolder> {
     private static final int OUT = 1, IN = 2, SYSTEM = 3;
+    /** Long-press on a message bubble. */
+    interface OnMessageLongPress {
+        void onLongPress(ChatMessage message, boolean mine);
+    }
+
     private final String myUid;
+    private OnMessageLongPress longPress;
+
+    void setOnMessageLongPress(OnMessageLongPress l) { longPress = l; }
 
     MessagesAdapter(String myUid) {
         super(new DiffUtil.ItemCallback<ChatMessage>() {
@@ -31,7 +39,8 @@ final class MessagesAdapter extends ListAdapter<ChatMessage, RecyclerView.ViewHo
 
             @Override
             public boolean areContentsTheSame(@NonNull ChatMessage a, @NonNull ChatMessage b) {
-                return Objects.equals(a.text, b.text) && a.createdMillis() == b.createdMillis();
+                return Objects.equals(a.text, b.text) && a.createdMillis() == b.createdMillis()
+                        && a.deleted == b.deleted && Objects.equals(a.editedAt, b.editedAt);
             }
         });
         this.myUid = myUid;
@@ -58,13 +67,17 @@ final class MessagesAdapter extends ListAdapter<ChatMessage, RecyclerView.ViewHo
         ChatMessage m = getItem(position);
         Context c = holder.itemView.getContext();
         String time = DateTimeUtils.chatTime(c, m.createdMillis());
+        if (m.isEdited()) time = c.getString(R.string.msg_time_edited, time);
         if (holder instanceof Out) {
-            ((Out) holder).b.text.setText(m.text);
-            ((Out) holder).b.time.setText(time);
+            Out h = (Out) holder;
+            bindText(h.b.text, m, true);
+            h.b.time.setText(time);
+            h.b.text.setOnLongClickListener(v -> fireLongPress(m, true));
         } else if (holder instanceof In) {
             In h = (In) holder;
-            h.b.text.setText(m.text);
+            bindText(h.b.text, m, false);
             h.b.time.setText(time);
+            h.b.text.setOnLongClickListener(v -> fireLongPress(m, false));
             h.b.sender.setText(m.senderName);
             // Hide repeated sender names in a run of messages from the same person.
             boolean sameAsPrev = position > 0 && Objects.equals(getItem(position - 1).senderId, m.senderId)
@@ -81,6 +94,27 @@ final class MessagesAdapter extends ListAdapter<ChatMessage, RecyclerView.ViewHo
             h.b.text.setText(c.getString(R.string.chat_system_line, text, time));
             h.b.text.setCompoundDrawablesRelativeWithIntrinsicBounds(
                     Constants.MSG_CALL.equals(m.type) ? R.drawable.ic_call : R.drawable.ic_info, 0, 0, 0);
+        }
+    }
+
+    private boolean fireLongPress(ChatMessage m, boolean mine) {
+        if (longPress == null || m.deleted) return false;
+        longPress.onLongPress(m, mine);
+        return true;
+    }
+
+    /** Deleted messages show an italic, dimmed placeholder instead of the text. */
+    private static void bindText(android.widget.TextView tv, ChatMessage m, boolean mine) {
+        if (m.deleted) {
+            tv.setText(mine ? R.string.msg_deleted_by_you : R.string.msg_deleted);
+            tv.setTypeface(null, android.graphics.Typeface.ITALIC);
+            tv.setAlpha(0.7f);
+            tv.setTextIsSelectable(false);
+        } else {
+            tv.setText(m.text);
+            tv.setTypeface(null, android.graphics.Typeface.NORMAL);
+            tv.setAlpha(1f);
+            tv.setTextIsSelectable(false); // long-press opens the action menu (Copy is in it)
         }
     }
 

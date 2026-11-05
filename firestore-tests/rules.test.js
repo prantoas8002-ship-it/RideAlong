@@ -351,6 +351,49 @@ describe('in-app voice calls', () => {
   });
 });
 
+describe('editing and deleting messages', () => {
+  beforeEach(async () => { await seedPendingRequest(); await acceptBob(); });
+  const msg = (uid, text = 'hello') => ({ senderId: uid, senderName: uid, text, type: 'TEXT', createdAt: FieldValue.serverTimestamp() });
+  const edit = (text) => ({ text, editedAt: FieldValue.serverTimestamp() });
+  const del = () => ({ text: '', deleted: true, editedAt: FieldValue.serverTimestamp() });
+
+  it('sender can edit and soft-delete their own ride-chat message', async () => {
+    const ref = await db(BOB).collection(`chats/${RIDE}/messages`).add(msg(BOB));
+    await assertSucceeds(db(BOB).doc(ref.path).update(edit('hello (fixed)')));
+    await assertFails(db(ALICE).doc(ref.path).update(edit('not yours')));
+    await assertFails(db(BOB).doc(ref.path).update({ text: 'x', senderId: ALICE, editedAt: FieldValue.serverTimestamp() }));
+    await assertSucceeds(db(BOB).doc(ref.path).update(del()));
+    await assertFails(db(BOB).doc(ref.path).update(edit('undelete?')));       // deleted is final
+    await assertFails(db(BOB).doc(ref.path).delete());                          // no hard delete
+  });
+
+  it('cannot edit after 15 minutes, but can still delete', async () => {
+    const path = `chats/${RIDE}/messages/old1`;
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await ctx.firestore().doc(path).set(Object.assign(msg(BOB), { createdAt: Timestamp.fromMillis(Date.now() - 20 * 60000) }));
+    });
+    await assertFails(db(BOB).doc(path).update(edit('too late')));
+    await assertSucceeds(db(BOB).doc(path).update(del()));
+  });
+
+  it('call/system entries cannot be edited', async () => {
+    const ref = await db(BOB).collection(`chats/${RIDE}/messages`).add(Object.assign(msg(BOB, 'Bob called Alice'), { type: 'CALL' }));
+    await assertFails(db(BOB).doc(ref.path).update(edit('fake')));
+  });
+
+  it('private chat: sender edits/deletes; the other side cannot', async () => {
+    const CHAT = `${RIDE}_${BOB}`;
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await ctx.firestore().doc(`directChats/${CHAT}`).set({ rideId: RIDE, ownerId: ALICE, requesterId: BOB, participants: [ALICE, BOB], lastReadAt: {} });
+    });
+    const ref = await db(BOB).collection(`directChats/${CHAT}/messages`).add(msg(BOB));
+    await assertFails(db(ALICE).doc(ref.path).update(del()));
+    await assertSucceeds(db(BOB).doc(ref.path).update(edit('edited')));
+    await assertSucceeds(db(BOB).doc(ref.path).update(del()));
+    await assertFails(db(CAROL).doc(ref.path).update(edit('x')));
+  });
+});
+
 describe('push tokens', () => {
   it('owner writes their own token; nobody can read tokens or overwrite others', async () => {
     await assertSucceeds(db(BOB).doc(`pushTokens/${BOB}`).set({ token: 'fcm-abc', platform: 'android' }));

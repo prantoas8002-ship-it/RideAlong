@@ -56,6 +56,20 @@ public class DirectChatFragment extends Fragment {
         vm = new ViewModelProvider(this).get(DirectChatViewModel.class);
         vm.init(chatId);
         adapter = new MessagesAdapter(Me.uid());
+        adapter.setOnMessageLongPress((m, mine) -> MessageActions.show(b.getRoot(), m, mine, new MessageActions.Handler() {
+            @Override
+            public void edit(ChatMessage msg, String newText) {
+                com.example.ridealong.ServiceLocator.get().directChats().editMessage(chatId, msg.id, newText, isLatest(msg))
+                        .addOnFailureListener(e -> { if (b != null) Ui.error(b.getRoot(), e); });
+            }
+
+            @Override
+            public void delete(ChatMessage msg) {
+                com.example.ridealong.ServiceLocator.get().directChats()
+                        .deleteMessage(chatId, msg.id, isLatest(msg), getString(R.string.msg_deleted))
+                        .addOnFailureListener(e -> { if (b != null) Ui.error(b.getRoot(), e); });
+            }
+        }));
         LinearLayoutManager lm = new LinearLayoutManager(requireContext());
         lm.setStackFromEnd(true);
         b.messages.setLayoutManager(lm);
@@ -145,6 +159,14 @@ public class DirectChatFragment extends Fragment {
         } else {
             b.state.hide();
         }
+    }
+
+    /** True when the message is the newest one (its text is the conversation preview). */
+    private boolean isLatest(ChatMessage m) {
+        Resource<List<ChatMessage>> r = vm.messages().getValue();
+        if (r == null || r.data == null || r.data.isEmpty()) return false;
+        ChatMessage last = r.data.get(r.data.size() - 1);
+        return last.id != null && last.id.equals(m.id);
     }
 
     @Override

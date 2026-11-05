@@ -34,6 +34,21 @@ service cloud.firestore {
     function isLat(v) { return v is number && v >= -90 && v <= 90; }
     function isLng(v) { return v is number && v >= -180 && v <= 180; }
 
+    // Sender edits (within 15 min) or soft-deletes their own TEXT message. Keep in sync with
+    // AppConfig.messageEditWindowMs. Deleted = text "" + deleted true; nobody can undo or edit it after.
+    function validMessageEdit() {
+      let wasDeleted = resource.data.get('deleted', false) == true;
+      let deleting = newData().get('deleted', false) == true;
+      return resource.data.senderId == uid()
+        && resource.data.type == 'TEXT'
+        && !wasDeleted
+        && changed().hasOnly(['text', 'editedAt', 'deleted'])
+        && newData().editedAt == request.time
+        && ((deleting && newData().text == '')
+            || (!deleting && newData().text is string && newData().text.size() > 0 && newData().text.size() <= 2000
+                && request.time < resource.data.createdAt + duration.value(15, 'm')));
+    }
+
     // Allowed ride status transitions. Keep in sync with domain/RideStateMachine.java
     function manualTransition(from, to) {
       return from == to
@@ -248,7 +263,8 @@ service cloud.firestore {
         && newData().type in ['TEXT', 'CALL', 'SYSTEM']
         && newData().text is string && newData().text.size() > 0 && newData().text.size() <= 2000
         && newData().createdAt == request.time;
-      allow update, delete: if false;
+      allow update: if isRideMember(rideId) && validMessageEdit();
+      allow delete: if false; // soft delete only, so the history stays consistent
     }
     match /chats/{rideId}/readStates/{userId} {
       allow read, write: if isRideMember(rideId) && userId == uid();
@@ -290,7 +306,8 @@ service cloud.firestore {
           && newData().text is string && newData().text.size() > 0 && newData().text.size() <= 2000
           && newData().createdAt == request.time
           && !isBlockedBetween(chatAfter().data.ownerId, chatAfter().data.requesterId);
-        allow update, delete: if false;
+        allow update: if signedIn() && uid() in get(docPath('directChats', chatId)).data.participants && validMessageEdit();
+        allow delete: if false; // soft delete only
       }
     }
 

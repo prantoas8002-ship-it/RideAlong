@@ -538,4 +538,17 @@
     <string name="call_log_video">Video call · %1$s</string>
     <string name="call_log_missed_video">Missed video call</string>
     <string name="photo_camera_denied">Camera permission is needed to take a photo</string>
+    <!-- Message actions -->
+    <string name="msg_deleted">This message was deleted</string>
+    <string name="msg_deleted_by_you">You deleted this message</string>
+    <string name="msg_edited">edited</string>
+    <string name="msg_time_edited">%1$s · edited</string>
+    <string name="msg_action_edit">Edit</string>
+    <string name="msg_action_delete">Delete for everyone</string>
+    <string name="msg_action_copy">Copy text</string>
+    <string name="msg_copied">Message copied</string>
+    <string name="msg_edit_title">Edit message</string>
+    <string name="msg_delete_title">Delete this message?</string>
+    <string name="msg_delete_body">It will be removed for everyone in this chat. This can\'t be undone.</string>
+    <string name="msg_edit_expired">Messages can only be edited within 15 minutes of sending</string>
 </resources>

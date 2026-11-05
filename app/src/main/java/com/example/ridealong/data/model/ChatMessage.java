@@ -14,9 +14,15 @@ public class ChatMessage {
     public String text;
     public String type;
     public Timestamp createdAt;
+    /** Set when the sender edited or deleted the message. */
+    public Timestamp editedAt;
+    /** Soft delete: text is emptied and the bubble shows "This message was deleted". */
+    public boolean deleted;
     @Exclude public boolean pending;
 
     public ChatMessage() { }
+
+    @Exclude public boolean isEdited() { return editedAt != null && !deleted; }
 
     @Exclude public long createdMillis() { return createdAt == null ? System.currentTimeMillis() : createdAt.toDate().getTime(); }
 }

@@ -50,6 +50,8 @@ public final class AppConfig {
     public long feedGraceAfterDepartureMs = 15 * 60_000L;
 
     // Chat / lists
+    /** How long a sent message stays editable (firestore.rules enforces the same 15 minutes). */
+    public long messageEditWindowMs = 15 * 60_000L;
     public int chatPageSize = 200;
     public int notificationPageSize = 100;
     public int historyPageSize = 100;

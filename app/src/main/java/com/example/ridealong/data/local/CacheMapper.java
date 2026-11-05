@@ -130,6 +130,8 @@ public final class CacheMapper {
         e.text = m.text;
         e.type = m.type;
         e.createdMillis = m.createdMillis();
+        e.editedMillis = m.editedAt == null ? 0 : m.editedAt.toDate().getTime();
+        e.deleted = m.deleted;
         return e;
     }
 
@@ -141,6 +143,8 @@ public final class CacheMapper {
         m.text = e.text;
         m.type = e.type;
         m.createdAt = new Timestamp(new Date(e.createdMillis));
+        if (e.editedMillis > 0) m.editedAt = new Timestamp(new Date(e.editedMillis));
+        m.deleted = e.deleted;
         return m;
     }
 

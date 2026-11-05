@@ -18,7 +18,7 @@
         android:paddingVertical="@dimen/space_s"
         android:textAppearance="@style/TextAppearance.RideAlong.BodyLarge"
         android:textColor="@color/ra_white"
-        android:textIsSelectable="true" />
+        android:textIsSelectable="false" />
 
     <TextView
         android:id="@+id/time"

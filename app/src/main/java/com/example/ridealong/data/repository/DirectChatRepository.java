@@ -165,6 +165,33 @@ public class DirectChatRepository {
         return m;
     }
 
+    /**
+     * Edit my message. If it is the newest message, the conversation preview in the Messages list
+     * is updated in the same batch.
+     */
+    public Task<Void> editMessage(String chatId, String messageId, String newText, boolean isLatest) {
+        String text = newText.trim();
+        WriteBatch b = FirebaseProvider.db().batch();
+        Map<String, Object> m = new HashMap<>();
+        m.put("text", text);
+        m.put("editedAt", FieldValue.serverTimestamp());
+        b.update(messages(chatId).document(messageId), m);
+        if (isLatest) b.update(ref(chatId), "lastMessage", preview(text));
+        return b.commit();
+    }
+
+    /** Soft delete for both people; updates the preview when it was the newest message. */
+    public Task<Void> deleteMessage(String chatId, String messageId, boolean isLatest, String deletedLabel) {
+        WriteBatch b = FirebaseProvider.db().batch();
+        Map<String, Object> m = new HashMap<>();
+        m.put("text", "");
+        m.put("deleted", true);
+        m.put("editedAt", FieldValue.serverTimestamp());
+        b.update(messages(chatId).document(messageId), m);
+        if (isLatest) b.update(ref(chatId), "lastMessage", preview(deletedLabel));
+        return b.commit();
+    }
+
     public Task<Void> markRead(String chatId, String uid) {
         Map<String, Object> u = new HashMap<>();
         u.put("lastReadAt." + uid, FieldValue.serverTimestamp());

@@ -106,6 +106,23 @@ public class ChatRepository {
         });
     }
 
+    /** Sender edits their own TEXT message (rules: within 15 minutes, not deleted). */
+    public Task<Void> editMessage(String rideId, String messageId, String newText) {
+        Map<String, Object> m = new HashMap<>();
+        m.put("text", newText.trim());
+        m.put("editedAt", FieldValue.serverTimestamp());
+        return messages(rideId).document(messageId).update(m);
+    }
+
+    /** Soft delete for everyone: the text is removed, the bubble shows a placeholder. */
+    public Task<Void> deleteMessage(String rideId, String messageId) {
+        Map<String, Object> m = new HashMap<>();
+        m.put("text", "");
+        m.put("deleted", true);
+        m.put("editedAt", FieldValue.serverTimestamp());
+        return messages(rideId).document(messageId).update(m);
+    }
+
     public Task<Void> markRead(String rideId, String uid) {
         Map<String, Object> m = new HashMap<>();
         m.put("lastReadAt", FieldValue.serverTimestamp());

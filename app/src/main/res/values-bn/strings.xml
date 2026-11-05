@@ -109,4 +109,9 @@
     <string name="n_missed_call_body">%1$s আপনাকে কল করার চেষ্টা করেছেন</string>
     <string name="action_video_call">ভিডিও কল</string>
     <string name="call_incoming_video_title">ইনকামিং ভিডিও কল</string>
+    <string name="msg_deleted">এই বার্তাটি মুছে ফেলা হয়েছে</string>
+    <string name="msg_edited">সম্পাদিত</string>
+    <string name="msg_action_edit">সম্পাদনা</string>
+    <string name="msg_action_delete">সবার জন্য মুছুন</string>
+    <string name="msg_action_copy">কপি করুন</string>
 </resources>

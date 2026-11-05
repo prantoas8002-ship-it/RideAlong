@@ -14,4 +14,6 @@ public class CachedMessageEntity {
     public String text;
     public String type;
     public long createdMillis;
+    public long editedMillis;
+    public boolean deleted;
 }

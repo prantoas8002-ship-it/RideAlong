@@ -54,6 +54,19 @@ public class ChatFragment extends Fragment {
         vm = new ViewModelProvider(this).get(ChatViewModel.class);
         vm.init(rideId);
         adapter = new MessagesAdapter(Me.uid());
+        adapter.setOnMessageLongPress((m, mine) -> MessageActions.show(b.getRoot(), m, mine, new MessageActions.Handler() {
+            @Override
+            public void edit(ChatMessage msg, String newText) {
+                com.example.ridealong.ServiceLocator.get().chat().editMessage(rideId, msg.id, newText)
+                        .addOnFailureListener(e -> { if (b != null) Ui.error(b.getRoot(), e); });
+            }
+
+            @Override
+            public void delete(ChatMessage msg) {
+                com.example.ridealong.ServiceLocator.get().chat().deleteMessage(rideId, msg.id)
+                        .addOnFailureListener(e -> { if (b != null) Ui.error(b.getRoot(), e); });
+            }
+        }));
         LinearLayoutManager lm = new LinearLayoutManager(requireContext());
         lm.setStackFromEnd(true);
         b.messages.setLayoutManager(lm);
