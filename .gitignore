@@ -30,7 +30,9 @@ ui-debug.log
 .firebase/
 emulator-data/
 .firebaserc
-share/
+# Shareable build: only the published APK in share/ is tracked
+share/*
+!share/RideAlong-1.0.0.apk
 
 # Original build prompt (kept locally, not published)
 RideAlong_Master_Prompt.md

@@ -10,6 +10,9 @@ dialer, share live location, use an SOS screen, and rate each other after the ri
 Everything runs on **free tiers**: Firebase Spark plan (Auth + Firestore only), OpenStreetMap,
 OSRM and Nominatim. No Cloud Functions, no Firebase Storage, no Google Maps billing.
 
+**Try it:** install [`share/RideAlong-1.0.0.apk`](share/RideAlong-1.0.0.apk) (debug build, Android 7.0+;
+allow "install unknown apps"). It installs over an earlier copy without losing your sign-in.
+
 Setup steps are in **[SETUP_GUIDE.md](SETUP_GUIDE.md)**; build status and limitations are in
 **[PROJECT_STATUS.md](PROJECT_STATUS.md)**.
 
