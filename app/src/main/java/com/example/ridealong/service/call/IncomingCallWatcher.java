@@ -66,8 +66,23 @@ public final class IncomingCallWatcher {
                 deliver(app, s);
             }
         });
+        listenGroupInvites(me);
+    }
+
+    /**
+     * Group invites. A failed listener (e.g. the index is still building right after a deploy, or a
+     * network error) is dead for good, so retry instead of silently never ringing again.
+     */
+    private synchronized void listenGroupInvites(String me) {
+        if (!me.equals(uid)) return;
+        if (groupReg != null) groupReg.remove();
         groupReg = new GroupCallRepository().activeForMe(me).addSnapshotListener((snap, err) -> {
-            if (err != null || snap == null) return;
+            if (err != null) {
+                android.util.Log.w("IncomingCallWatcher", "group invite listener failed, retrying", err);
+                com.example.ridealong.utils.AppExecutors.mainDelayed(() -> listenGroupInvites(me), 30_000);
+                return;
+            }
+            if (snap == null) return;
             for (DocumentChange ch : snap.getDocumentChanges()) {
                 if (ch.getType() != DocumentChange.Type.ADDED) continue;
                 GroupCall g = ch.getDocument().toObject(GroupCall.class);

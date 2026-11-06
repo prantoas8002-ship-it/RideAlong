@@ -24,6 +24,7 @@ import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.MetadataChanges;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import org.webrtc.AudioSource;
@@ -407,7 +408,10 @@ public final class GroupCallManager {
     private void listenMembers() {
         firstMembersSnapshot = true;
         String id = callId;
-        membersReg = repo.members(id).addSnapshotListener((snap, err) -> {
+        // INCLUDE metadata changes: the room check in joinNow() already cached everyone who is here, so
+        // the server-confirmed snapshot may differ only in metadata (fromCache → false). Without this
+        // flag that snapshot is never delivered and nobody would ever be sent an offer.
+        membersReg = repo.members(id).addSnapshotListener(MetadataChanges.INCLUDE, (snap, err) -> {
             if (err != null || snap == null || !id.equals(callId)) return;
             onMembers(snap);
         });
