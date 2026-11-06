@@ -137,14 +137,30 @@
             android:textColor="@color/ra_error"
             android:visibility="gone" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/add_contact"
-            style="@style/Widget.RideAlong.Button.Tonal"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_s"
-            android:text="@string/action_add_contact"
-            app:icon="@drawable/ic_add" />
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/add_contact"
+                style="@style/Widget.RideAlong.Button.Tonal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/action_add_contact"
+                app:icon="@drawable/ic_add" />
+
+            <!-- Reads the picked contact through the Contacts Content Provider (READ_CONTACTS). -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/import_contact"
+                style="@style/Widget.RideAlong.Button.Tonal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_s"
+                android:text="@string/action_import_contact"
+                app:icon="@drawable/ic_contacts" />
+        </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
