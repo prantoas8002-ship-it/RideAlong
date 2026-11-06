@@ -28,4 +28,8 @@
         <item quantity="one">View requests · %1$d pending</item>
         <item quantity="other">View requests · %1$d pending</item>
     </plurals>
+    <plurals name="group_call_people">
+        <item quantity="one">%1$d person</item>
+        <item quantity="other">%1$d people</item>
+    </plurals>
 </resources>

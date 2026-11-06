@@ -13,6 +13,7 @@ public final class FirestorePaths {
     public static final String READ_STATES = "readStates";
     public static final String DIRECT_CHATS = "directChats";
     public static final String CALLS = "calls";
+    public static final String GROUP_CALLS = "groupCalls";
     public static final String LIVE_LOCATIONS = "liveLocations";
     public static final String MEMBERS = "members";
     public static final String NOTIFICATIONS = "notifications";

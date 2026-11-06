@@ -12,10 +12,13 @@ import androidx.lifecycle.ProcessLifecycleOwner;
 import com.example.ridealong.R;
 import com.example.ridealong.ServiceLocator;
 import com.example.ridealong.data.model.CallSession;
+import com.example.ridealong.data.model.GroupCall;
 import com.example.ridealong.data.remote.FirebaseProvider;
 import com.example.ridealong.data.repository.CallRepository;
+import com.example.ridealong.data.repository.GroupCallRepository;
 import com.example.ridealong.domain.config.AppConfig;
 import com.example.ridealong.ui.call.CallActivity;
+import com.example.ridealong.ui.call.GroupCallActivity;
 import com.example.ridealong.utils.Constants;
 import com.example.ridealong.utils.PermissionUtils;
 import com.google.firebase.firestore.DocumentChange;
@@ -30,6 +33,7 @@ public final class IncomingCallWatcher {
     private static IncomingCallWatcher instance;
     private final Context app;
     private ListenerRegistration reg;
+    private ListenerRegistration groupReg;
     private String uid;
 
     private IncomingCallWatcher(Context c) { app = c.getApplicationContext(); }
@@ -62,6 +66,68 @@ public final class IncomingCallWatcher {
                 deliver(app, s);
             }
         });
+        groupReg = new GroupCallRepository().activeForMe(me).addSnapshotListener((snap, err) -> {
+            if (err != null || snap == null) return;
+            for (DocumentChange ch : snap.getDocumentChanges()) {
+                if (ch.getType() != DocumentChange.Type.ADDED) continue;
+                GroupCall g = ch.getDocument().toObject(GroupCall.class);
+                if (me.equals(g.hostId) || g.createdAt == null) continue;
+                long age = System.currentTimeMillis() - g.createdAt.toDate().getTime();
+                if (age > AppConfig.get().callStaleAfterMs) continue; // can still join from the ride chat
+                if (ServiceLocator.get().safety().hiddenUserIds().contains(g.hostId)) continue;
+                deliverGroup(app, g);
+            }
+        });
+    }
+
+    /** Rings for a group video call I was invited to (live listener and FCM push). */
+    public static void deliverGroup(Context c, GroupCall g) {
+        Context app = c.getApplicationContext();
+        boolean foreground = ProcessLifecycleOwner.get().getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED);
+        GroupCallManager gm = GroupCallManager.get(app);
+        gm.onInvite(g, foreground);
+        GroupCall pending = gm.pendingInvite();
+        if (pending == null || !g.id.equals(pending.id)) return; // busy on another call
+        Intent open = new Intent(app, GroupCallActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                .putExtra(GroupCallActivity.EXTRA_CALL_ID, g.id);
+        if (foreground) {
+            app.startActivity(open);
+            return;
+        }
+        if (!PermissionUtils.hasNotificationPermission(app)) return;
+        PendingIntent full = PendingIntent.getActivity(app, 31, open, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent join = PendingIntent.getActivity(app, 32, new Intent(open).putExtra(GroupCallActivity.EXTRA_AUTO_JOIN, true),
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent decline = PendingIntent.getBroadcast(app, 33, new Intent(app, CallActionReceiver.class)
+                .setAction(CallActionReceiver.ACTION_DECLINE_GROUP),
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        String name = g.hostName == null || g.hostName.isEmpty() ? app.getString(R.string.unknown_user) : g.hostName;
+        NotificationCompat.Builder b = new NotificationCompat.Builder(app, Constants.CHANNEL_CALLS)
+                .setSmallIcon(R.drawable.ic_group)
+                .setColor(app.getColor(R.color.ra_primary))
+                .setContentTitle(app.getString(R.string.group_call_incoming_title))
+                .setContentText(app.getString(R.string.group_call_incoming_body, name))
+                .setCategory(NotificationCompat.CATEGORY_CALL)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setOngoing(true)
+                .setAutoCancel(true)
+                .setTimeoutAfter(AppConfig.get().callRingTimeoutMs)
+                .setFullScreenIntent(full, true)
+                .setContentIntent(full)
+                .addAction(R.drawable.ic_close, app.getString(R.string.call_decline), decline)
+                .addAction(R.drawable.ic_videocam, app.getString(R.string.group_call_join), join);
+        android.app.Notification n = b.build();
+        n.flags |= android.app.Notification.FLAG_INSISTENT; // keep ringing until joined/declined/timeout
+        try {
+            NotificationManagerCompat.from(app).notify(Constants.NOTIF_ID_GROUP_CALL_INCOMING, n);
+        } catch (SecurityException ignored) {
+            // notification permission revoked
+        }
+    }
+
+    public static void cancelGroupInviteNotification(Context c) {
+        NotificationManagerCompat.from(c).cancel(Constants.NOTIF_ID_GROUP_CALL_INCOMING);
     }
 
     /**
@@ -119,7 +185,9 @@ public final class IncomingCallWatcher {
 
     public synchronized void stop() {
         if (reg != null) reg.remove();
+        if (groupReg != null) groupReg.remove();
         reg = null;
+        groupReg = null;
         uid = null;
     }
 }

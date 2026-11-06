@@ -24,6 +24,17 @@ public final class AppConfig {
     public int callVideoWidth = 640;
     public int callVideoHeight = 480;
     public int callVideoFps = 24;
+    /**
+     * Group video calls are a full mesh (every phone sends its camera to every other phone), so the
+     * size is capped: 6 people = 5 uploads per phone at the per-call resolution below.
+     */
+    public int groupCallMaxParticipants = 6;
+    public int groupCallVideoWidth = 480;
+    public int groupCallVideoHeight = 360;
+    public int groupCallVideoFps = 20;
+    /** Presence heartbeat; a member not seen for groupCallMemberStaleMs is treated as gone. */
+    public long groupCallHeartbeatMs = 15_000;
+    public long groupCallMemberStaleMs = 45_000;
     /** Free public STUN servers; TURN comes from local.properties (TURN_URLS / TURN_USERNAME / TURN_PASSWORD). */
     public final java.util.List<String> callStunUrls = java.util.Arrays.asList(
             "stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302", "stun:stun2.l.google.com:19302");

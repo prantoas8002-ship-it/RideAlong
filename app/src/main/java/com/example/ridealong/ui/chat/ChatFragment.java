@@ -18,11 +18,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.ridealong.R;
 import com.example.ridealong.data.model.ChatMessage;
+import com.example.ridealong.data.model.GroupCall;
 import com.example.ridealong.data.model.Ride;
 import com.example.ridealong.data.model.User;
+import com.example.ridealong.data.repository.GroupCallRepository;
 import com.example.ridealong.data.repository.Resource;
 import com.example.ridealong.databinding.FragmentChatBinding;
+import com.example.ridealong.domain.config.AppConfig;
 import com.example.ridealong.service.RealtimeNotificationListener;
+import com.example.ridealong.service.call.GroupCallManager;
+import com.example.ridealong.ui.call.GroupCallActivity;
 import com.example.ridealong.ui.common.CallHelper;
 import com.example.ridealong.ui.common.Me;
 import com.example.ridealong.ui.common.Ui;
@@ -30,6 +35,8 @@ import com.example.ridealong.ui.common.UiErrors;
 import com.example.ridealong.utils.Constants;
 import com.example.ridealong.utils.DateTimeUtils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +47,8 @@ public class ChatFragment extends Fragment {
     private ChatViewModel vm;
     private MessagesAdapter adapter;
     private String rideId;
+    private ListenerRegistration groupCallsReg;
+    @Nullable private GroupCall activeGroupCall;
 
     @Nullable
     @Override
@@ -87,6 +96,10 @@ public class ChatFragment extends Fragment {
                     chooseCallee(false);
                     return true;
                 }
+                if (item.getItemId() == R.id.action_group_call) {
+                    groupCall();
+                    return true;
+                }
                 return false;
             }
         }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
@@ -110,6 +123,10 @@ public class ChatFragment extends Fragment {
             b.closedNote.setVisibility(member && closed ? View.VISIBLE : View.GONE);
             if (!member) b.state.showEmpty(R.drawable.ic_lock, R.string.title_chat, R.string.chat_not_member);
         });
+        b.groupCallJoin.setOnClickListener(v -> {
+            if (activeGroupCall != null) GroupCallActivity.join(requireContext(), activeGroupCall.id);
+        });
+        watchGroupCalls();
         vm.messages().observe(getViewLifecycleOwner(), this::render);
         vm.error().observe(getViewLifecycleOwner(), e -> {
             Throwable t = e.consume();
@@ -169,6 +186,72 @@ public class ChatFragment extends Fragment {
         }
     }
 
+    // ----- group video call -----
+
+    /** Shows the "join" bar while a group call with someone actually in it is running for this ride. */
+    private void watchGroupCalls() {
+        String me = Me.uid();
+        if (me == null) return;
+        GroupCallRepository repo = new GroupCallRepository();
+        groupCallsReg = repo.activeForMe(me).addSnapshotListener((snap, err) -> {
+            if (b == null || err != null || snap == null) return;
+            GroupCall newest = null;
+            for (DocumentSnapshot d : snap.getDocuments()) {
+                GroupCall g = d.toObject(GroupCall.class);
+                if (g == null || !rideId.equals(g.rideId) || g.createdAt == null) continue;
+                if (newest == null || g.createdAt.compareTo(newest.createdAt) > 0) newest = g;
+            }
+            GroupCall candidate = newest;
+            if (candidate == null) {
+                showGroupCall(null);
+                return;
+            }
+            // Ignore calls everyone abandoned without hanging up (app killed): nobody fresh in members.
+            repo.members(candidate.id).get().addOnSuccessListener(ms -> {
+                long now = System.currentTimeMillis();
+                boolean someone = false;
+                for (DocumentSnapshot m : ms.getDocuments()) {
+                    com.google.firebase.Timestamp seen = m.getTimestamp("seenAt");
+                    if (seen != null && now - seen.toDate().getTime() < AppConfig.get().groupCallMemberStaleMs) someone = true;
+                }
+                showGroupCall(someone ? candidate : null);
+            });
+        });
+    }
+
+    private void showGroupCall(@Nullable GroupCall g) {
+        if (b == null) return;
+        activeGroupCall = g;
+        Resource<Ride> rr = vm.ride().getValue();
+        boolean member = rr != null && rr.data != null && rr.data.isMember(Me.uid());
+        GroupCallManager.State cur = GroupCallManager.get(requireContext()).state().getValue();
+        boolean alreadyIn = g != null && cur != null && g.id.equals(cur.callId) && GroupCallManager.get(requireContext()).isInCall();
+        b.groupCallBar.setVisibility(g != null && member && !alreadyIn ? View.VISIBLE : View.GONE);
+    }
+
+    /** Join the running call for this ride, or start one with every ride member invited. */
+    private void groupCall() {
+        if (activeGroupCall != null) {
+            GroupCallActivity.join(requireContext(), activeGroupCall.id);
+            return;
+        }
+        Resource<Ride> rr = vm.ride().getValue();
+        if (rr == null || rr.data == null) return;
+        Ride ride = rr.data;
+        if (!ride.isMember(Me.uid()) || ride.statusEnum().isTerminal()) return;
+        ArrayList<String> invited = new ArrayList<>();
+        invited.add(Me.uid());
+        java.util.Set<String> hidden = com.example.ridealong.ServiceLocator.get().safety().hiddenUserIds();
+        for (String m : ride.memberIds) {
+            if (!m.equals(Me.uid()) && !hidden.contains(m) && invited.size() < 8) invited.add(m);
+        }
+        if (invited.size() < 2) {
+            Ui.snack(b.getRoot(), R.string.group_call_no_members);
+            return;
+        }
+        GroupCallActivity.start(requireContext(), ride.id, invited);
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -184,6 +267,8 @@ public class ChatFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
+        if (groupCallsReg != null) groupCallsReg.remove();
+        groupCallsReg = null;
         super.onDestroyView();
         b = null;
     }

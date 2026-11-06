@@ -114,4 +114,25 @@
     <string name="msg_action_edit">সম্পাদনা</string>
     <string name="msg_action_delete">সবার জন্য মুছুন</string>
     <string name="msg_action_copy">কপি করুন</string>
+    <string name="action_group_call">গ্রুপ ভিডিও কল</string>
+    <string name="group_call_label">RideAlong গ্রুপ কল · এন্ড-টু-এন্ড এনক্রিপ্টেড</string>
+    <string name="group_call_title">গ্রুপ ভিডিও কল</string>
+    <string name="group_call_incoming_title">গ্রুপ ভিডিও কল</string>
+    <string name="group_call_incoming_body">%1$s আপনার রাইডের জন্য একটি গ্রুপ ভিডিও কল শুরু করেছেন</string>
+    <string name="group_call_join">যোগ দিন</string>
+    <string name="group_call_leave">বের হন</string>
+    <string name="group_call_joining">যোগ দেওয়া হচ্ছে…</string>
+    <string name="group_call_waiting">অন্যদের যোগ দেওয়ার অপেক্ষা…</string>
+    <string name="group_call_connecting_peer">সংযোগ হচ্ছে…</string>
+    <string name="group_call_you">আপনি</string>
+    <string name="group_call_muted">মিউট করা</string>
+    <string name="group_call_ongoing_title">গ্রুপ ভিডিও কল চলছে</string>
+    <string name="group_call_banner">গ্রুপ ভিডিও কল চলছে</string>
+    <string name="group_call_end_left">আপনি কল থেকে বের হয়েছেন</string>
+    <string name="group_call_end_full">এই কলে আর জায়গা নেই</string>
+    <string name="group_call_end_missed">মিসড গ্রুপ কল</string>
+    <string name="group_call_busy">আপনি ইতিমধ্যে একটি কলে আছেন</string>
+    <string name="group_call_no_members">এই রাইডে এখনও অন্য কোনো সদস্য নেই</string>
+    <string name="group_call_log_started">%1$s একটি গ্রুপ ভিডিও কল শুরু করেছেন</string>
+    <string name="group_call_log_ended">গ্রুপ ভিডিও কল শেষ · %1$s</string>
 </resources>

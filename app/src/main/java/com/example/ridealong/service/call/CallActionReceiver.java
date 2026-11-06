@@ -11,9 +11,16 @@ import com.example.ridealong.ui.call.CallActivity;
 /** Decline action on the incoming-call notification. */
 public class CallActionReceiver extends BroadcastReceiver {
     public static final String ACTION_DECLINE = "com.example.ridealong.action.DECLINE_CALL";
+    public static final String ACTION_DECLINE_GROUP = "com.example.ridealong.action.DECLINE_GROUP_CALL";
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        if (ACTION_DECLINE_GROUP.equals(intent.getAction())) {
+            // A group call carries on without me: just stop ringing here.
+            GroupCallManager.get(context).declineInvite();
+            IncomingCallWatcher.cancelGroupInviteNotification(context);
+            return;
+        }
         if (!ACTION_DECLINE.equals(intent.getAction())) return;
         CallManager cm = CallManager.get(context);
         if (cm.isBusy()) {

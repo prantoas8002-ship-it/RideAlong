@@ -74,6 +74,9 @@ See [SETUP_GUIDE.md](SETUP_GUIDE.md). Emulator-only mode (no Firebase project) i
   `calls` collection, foreground `microphone` service, full-screen incoming call). Rules tests: 38 passing.
 * **Dark mode** with Light / Dark / System setting.
 * **Video calls** in the private chat (camera optional; falls back to voice-only sending if the camera is denied).
+* **Group video calls** for ride members (mesh WebRTC, max 6, `groupCalls` collection with presence heartbeat and
+  per-pair `links`; rings everyone, late join from the ride chat; push relay `groupCall` kind). Rules tests: 48 passing.
+  Needs `firebase deploy --only firestore:rules,firestore:indexes` (new `groupCalls` index) and a relay redeploy.
 * ⚠️ Voice calls have not been tested between two real phones from this machine (no device attached).
 
 ## Known limitations

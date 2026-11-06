@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat;
 
 import com.example.ridealong.R;
 import com.example.ridealong.ui.call.CallActivity;
+import com.example.ridealong.ui.call.GroupCallActivity;
 import com.example.ridealong.utils.Constants;
 
 /**
@@ -42,9 +43,13 @@ public class CallService extends Service {
     @Override
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
         if (intent != null && ACTION_HANGUP.equals(intent.getAction())) {
-            CallManager.get(this).hangUp();
+            GroupCallManager group = GroupCallManager.get(this);
+            if (group.isInCall()) group.leave();
+            else CallManager.get(this).hangUp();
             return START_NOT_STICKY;
         }
+        GroupCallManager group = GroupCallManager.get(this);
+        if (group.isInCall()) return startGroup(group.state().getValue());
         CallManager.State s = CallManager.get(this).state().getValue();
         String peer = s == null || s.peerName == null ? getString(R.string.unknown_user) : s.peerName;
         boolean connected = s != null && s.phase == CallManager.Phase.CONNECTED;
@@ -63,7 +68,30 @@ public class CallService extends Service {
                 .setContentIntent(open)
                 .addAction(R.drawable.ic_close, getString(R.string.call_hang_up), hang);
         if (connected && s.connectedAt > 0) b.setUsesChronometer(true).setWhen(s.connectedAt);
-        Notification n = b.build();
+        return goForeground(b.build());
+    }
+
+    /** Ongoing notification for a group video call. */
+    private int startGroup(@Nullable GroupCallManager.State s) {
+        int people = s == null ? 1 : s.peers.size() + 1;
+        PendingIntent open = PendingIntent.getActivity(this, 13, new Intent(this, GroupCallActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP), PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent hang = PendingIntent.getService(this, 12, new Intent(this, CallService.class).setAction(ACTION_HANGUP),
+                PendingIntent.FLAG_IMMUTABLE);
+        NotificationCompat.Builder b = new NotificationCompat.Builder(this, Constants.CHANNEL_CALL_ONGOING)
+                .setSmallIcon(R.drawable.ic_group)
+                .setColor(getColor(R.color.ra_primary))
+                .setContentTitle(getString(R.string.group_call_ongoing_title))
+                .setContentText(getResources().getQuantityString(R.plurals.group_call_people, people, people))
+                .setOngoing(true)
+                .setCategory(NotificationCompat.CATEGORY_CALL)
+                .setContentIntent(open)
+                .addAction(R.drawable.ic_close, getString(R.string.group_call_leave), hang);
+        if (s != null && s.joinedAt > 0) b.setUsesChronometer(true).setWhen(s.joinedAt);
+        return goForeground(b.build());
+    }
+
+    private int goForeground(Notification n) {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 startForeground(Constants.NOTIF_ID_CALL_ONGOING, n, ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE);

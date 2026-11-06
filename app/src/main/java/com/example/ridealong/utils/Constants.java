@@ -32,6 +32,7 @@ public final class Constants {
     public static final int NOTIF_ID_GEOFENCE_BASE = 2000;
     public static final int NOTIF_ID_CALL_ONGOING = 1003;
     public static final int NOTIF_ID_CALL_INCOMING = 1004;
+    public static final int NOTIF_ID_GROUP_CALL_INCOMING = 1005;
 
     // Notification channels
     public static final String CHANNEL_RIDES = "rides";

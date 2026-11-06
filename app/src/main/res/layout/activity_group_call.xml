@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_call_screen">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:orientation="vertical">
+
+        <!-- Header: title + timer / waiting text -->
+        <LinearLayout
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/space_l"
+            android:paddingVertical="@dimen/space_s">
+
+            <ImageView
+                android:layout_width="@dimen/icon_l"
+                android:layout_height="@dimen/icon_l"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_group"
+                app:tint="@color/ra_white" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_s"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="@string/group_call_title"
+                    android:textColor="@color/ra_white"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/subtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="#CCFFFFFF"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <Chronometer
+                android:id="@+id/timer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/ra_white"
+                android:textSize="15sp"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <!-- Video tiles (built in code: me + everyone else) -->
+        <LinearLayout
+            android:id="@+id/grid"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:padding="@dimen/space_xs" />
+
+        <!-- In call: mute, camera, leave, flip, speaker -->
+        <LinearLayout
+            android:id="@+id/call_controls"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingVertical="@dimen/space_l">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/mute"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/call_mute"
+                app:backgroundTint="#33FFFFFF"
+                app:elevation="0dp"
+                app:fabCustomSize="52dp"
+                app:srcCompat="@drawable/ic_mic"
+                app:tint="@color/ra_white" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/camera_toggle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_m"
+                android:contentDescription="@string/call_camera"
+                app:backgroundTint="#33FFFFFF"
+                app:elevation="0dp"
+                app:fabCustomSize="52dp"
+                app:srcCompat="@drawable/ic_videocam"
+                app:tint="@color/ra_white" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/leave"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/space_m"
+                android:contentDescription="@string/group_call_leave"
+                app:backgroundTint="#DC2626"
+                app:fabCustomSize="64dp"
+                app:maxImageSize="30dp"
+                app:srcCompat="@drawable/ic_call_end"
+                app:tint="@color/ra_white" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/switch_camera"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/space_m"
+                android:contentDescription="@string/call_switch_camera"
+                app:backgroundTint="#33FFFFFF"
+                app:elevation="0dp"
+                app:fabCustomSize="52dp"
+                app:srcCompat="@drawable/ic_flip_camera"
+                app:tint="@color/ra_white" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/speaker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/call_speaker"
+                app:backgroundTint="#33FFFFFF"
+                app:elevation="0dp"
+                app:fabCustomSize="52dp"
+                app:srcCompat="@drawable/ic_volume_up"
+                app:tint="@color/ra_white" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Invite: who started it + Decline / Join -->
+    <LinearLayout
+        android:id="@+id/invite"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_call_screen"
+        android:fitsSystemWindows="true"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="@dimen/space_xl"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xl"
+            android:drawablePadding="@dimen/space_xs"
+            android:gravity="center_vertical"
+            android:text="@string/group_call_label"
+            android:textAppearance="@style/TextAppearance.RideAlong.Caption"
+            android:textColor="#B3FFFFFF"
+            app:drawableStartCompat="@drawable/ic_lock"
+            app:drawableTint="#B3FFFFFF" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/invite_avatar"
+            style="@style/Widget.RideAlong.Avatar"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginTop="@dimen/space_xxl"
+            android:contentDescription="@string/cd_avatar"
+            app:strokeColor="#40FFFFFF"
+            app:strokeWidth="3dp" />
+
+        <TextView
+            android:id="@+id/invite_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_l"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.RideAlong.Headline"
+            android:textColor="@color/ra_white" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
+            android:layout_marginBottom="@dimen/space_xxl"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/decline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/call_decline"
+                    app:backgroundTint="#DC2626"
+                    app:fabCustomSize="72dp"
+                    app:maxImageSize="32dp"
+                    app:srcCompat="@drawable/ic_call_end"
+                    app:tint="@color/ra_white" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_s"
+                    android:text="@string/call_decline"
+                    android:textColor="@color/ra_white" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/join"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/group_call_join"
+                    app:backgroundTint="#16A34A"
+                    app:fabCustomSize="72dp"
+                    app:maxImageSize="32dp"
+                    app:srcCompat="@drawable/ic_videocam"
+                    app:tint="@color/ra_white" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_s"
+                    android:text="@string/group_call_join"
+                    android:textColor="@color/ra_white" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- End message -->
+    <TextView
+        android:id="@+id/ended"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/bg_pill"
+        android:paddingHorizontal="@dimen/space_l"
+        android:paddingVertical="@dimen/space_s"
+        android:textColor="@color/ra_text"
+        android:visibility="gone" />
+</FrameLayout>

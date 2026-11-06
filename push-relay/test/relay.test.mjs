@@ -1,7 +1,7 @@
 // node --test test/relay.test.mjs   (Node 18+: global WebCrypto)
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { verifyIdToken } from '../src/index.js';
+import { verifyIdToken, groupRecipients } from '../src/index.js';
 
 const PROJECT = 'demo-ridealong';
 const b64url = (bytes) => Buffer.from(bytes).toString('base64url');
@@ -38,4 +38,10 @@ test('rejects tampered, wrong-project, expired and unknown-key tokens', async ()
   await assert.rejects(verifyIdToken(await sign({ ...good(), iss: 'https://evil.example' }), PROJECT, keys));
   await assert.rejects(verifyIdToken(await sign({ ...good(), exp: now() - 10 }), PROJECT, keys));
   await assert.rejects(verifyIdToken(await sign(good(), 'unknown'), PROJECT, keys));
+});
+
+test('group call rings every invited member except the host, once each', () => {
+  assert.deepEqual(groupRecipients({ invited: ['alice', 'bob', 'carol', 'bob'] }, 'alice'), ['bob', 'carol']);
+  assert.deepEqual(groupRecipients({}, 'alice'), []);
+  assert.equal(groupRecipients({ invited: Array.from({ length: 20 }, (_, i) => `u${i}`) }, 'x').length, 8);
 });

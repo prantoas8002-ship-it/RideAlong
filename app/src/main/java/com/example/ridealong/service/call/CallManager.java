@@ -197,7 +197,8 @@ public final class CallManager {
 
     /** Starts a call. Caller must already hold RECORD_AUDIO (and CAMERA for video, else video is receive-only). */
     public boolean startOutgoing(String calleeId, String calleeName, String rideId, @Nullable String chatId, boolean withVideo) {
-        if (isBusy() || FirebaseProvider.uidOrNull() == null) return false;
+        if (isBusy() || GroupCallManager.get(app).isInCall() || FirebaseProvider.uidOrNull() == null) return false;
+        GroupCallManager.get(app).declineInvite();
         reset();
         DocumentReference ref = repo.newCall();
         this.callId = ref.getId();
@@ -273,6 +274,11 @@ public final class CallManager {
      * @param ringInApp play the ringtone here (app visible); otherwise the call notification rings.
      */
     public void onIncoming(CallSession s, boolean ringInApp) {
+        if (GroupCallManager.get(app).isInCall()) {
+            repo.setStatus(s.id, CallSession.BUSY);
+            return;
+        }
+        GroupCallManager.get(app).declineInvite(); // a direct call takes over a ringing group invite
         if (isBusy()) {
             if (!s.id.equals(callId)) repo.setStatus(s.id, CallSession.BUSY);
             return;
@@ -411,6 +417,12 @@ public final class CallManager {
 
     // ------------------------------------------------------------------ WebRTC
 
+    /** Shared with {@link GroupCallManager}: one WebRTC factory + GL context per process. */
+    PeerConnectionFactory factory() {
+        ensureFactory();
+        return factory;
+    }
+
     private void ensureFactory() {
         if (factory != null) return;
         PeerConnectionFactory.initialize(PeerConnectionFactory.InitializationOptions.builder(app)
@@ -427,7 +439,7 @@ public final class CallManager {
                 .createPeerConnectionFactory();
     }
 
-    private static List<PeerConnection.IceServer> iceServers() {
+    static List<PeerConnection.IceServer> iceServers() {
         List<PeerConnection.IceServer> list = new ArrayList<>();
         for (String stun : AppConfig.get().callStunUrls) list.add(PeerConnection.IceServer.builder(stun).createIceServer());
         String turn = BuildConfig.TURN_URLS.trim();

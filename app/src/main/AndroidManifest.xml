@@ -94,6 +94,18 @@
             android:turnScreenOn="true"
             tools:ignore="LockedOrientationActivity" />
 
+        <activity
+            android:name=".ui.call.GroupCallActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:showWhenLocked="true"
+            android:taskAffinity="com.example.ridealong.groupcall"
+            android:theme="@style/Theme.RideAlong.Call"
+            android:turnScreenOn="true"
+            tools:ignore="LockedOrientationActivity" />
+
         <service
             android:name=".service.call.CallService"
             android:exported="false"

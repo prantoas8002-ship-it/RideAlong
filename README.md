@@ -29,6 +29,7 @@ Setup steps are in **[SETUP_GUIDE.md](SETUP_GUIDE.md)**; build status and limita
 | Private chat | 1-to-1 chat between a poster and each requester (works before acceptance), Messages inbox with unread badge on Home |
 | In-app voice calls | Messenger-style internet calls (WebRTC, peer-to-peer, encrypted), no phone number needed: ringing screen over the lock screen, accept/decline, mute, speaker, proximity screen-off, missed-call notification, call log in chat. Phone-dialer calling is still available as an option |
 | Video calls | In the private chat: camera + voice over WebRTC, remote video full screen with my camera preview, camera on/off, front/back switch, speaker on by default, camera paused when the call screen is hidden |
+| Group video calls | In the ride chat: every ride member is rung at once (Join / Decline), up to 6 people in a video grid (WebRTC mesh, encrypted), join late from the "call in progress" bar, mute / camera / flip / speaker, start and end logged in the chat |
 | Dark mode | Light / Dark / System setting, full night palette, dark-tinted map |
 | Live location | Foreground service (`location` type), consent dialog, throttled writes, members-only markers, auto-stop on completion/cancellation |
 | Geofencing | Pickup proximity + arrival alerts via the Geofencing API; falls back to in-app distance checks without background location |

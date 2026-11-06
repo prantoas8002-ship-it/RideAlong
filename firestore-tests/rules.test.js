@@ -351,6 +351,81 @@ describe('in-app voice calls', () => {
   });
 });
 
+describe('group video calls', () => {
+  const DAN = 'dan';
+  const GC = 'groupCalls/g1';
+  const groupCall = (o = {}) => Object.assign({
+    rideId: RIDE, hostId: ALICE, hostName: 'Alice', status: 'ACTIVE', video: true,
+    invited: [ALICE, BOB, DAN], createdAt: FieldValue.serverTimestamp(),
+  }, o);
+  const member = (session = 's1') => ({ name: 'x', session, seenAt: FieldValue.serverTimestamp() });
+  const link = (from, to, o = {}) => Object.assign({
+    from, to, session: 's1', toSession: 's2', offer: { type: 'offer', sdp: 'v=0' },
+  }, o);
+  beforeEach(async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      const a = ctx.firestore();
+      await a.doc(`users/${DAN}`).set(profile(DAN));
+      await a.doc(`rides/${RIDE}`).update({ memberIds: [ALICE, BOB, DAN], seatsAvailable: 1 });
+    });
+  });
+
+  it('a ride member starts a call for ride members only; outsiders cannot read or start', async () => {
+    await assertSucceeds(db(ALICE).doc(GC).set(groupCall()));
+    await assertSucceeds(db(BOB).doc(GC).get());
+    await assertFails(db(CAROL).doc(GC).get());
+    await assertFails(db(CAROL).doc('groupCalls/g2').set(groupCall({ hostId: CAROL, invited: [CAROL, ALICE] })));
+    await assertFails(db(BOB).doc('groupCalls/g3').set(groupCall()));                                    // impersonation
+    await assertFails(db(ALICE).doc('groupCalls/g4').set(groupCall({ invited: [ALICE, BOB, CAROL] })));  // non-member invited
+    await assertFails(db(ALICE).doc('groupCalls/g5').set(groupCall({ invited: [ALICE] })));              // nobody to call
+  });
+
+  it('invited members can list their active calls', async () => {
+    await db(ALICE).doc(GC).set(groupCall());
+    await assertSucceeds(db(BOB).collection('groupCalls').where('invited', 'array-contains', BOB).where('status', '==', 'ACTIVE').get());
+    await assertFails(db(CAROL).collection('groupCalls').where('status', '==', 'ACTIVE').get());
+  });
+
+  it('presence: each member writes only their own doc, only while the call is active', async () => {
+    await db(ALICE).doc(GC).set(groupCall());
+    await assertSucceeds(db(BOB).doc(`${GC}/members/${BOB}`).set(member()));
+    await assertSucceeds(db(DAN).doc(`${GC}/members/${BOB}`).get());
+    await assertFails(db(BOB).doc(`${GC}/members/${DAN}`).set(member()));
+    await assertFails(db(CAROL).doc(`${GC}/members/${CAROL}`).set(member()));
+    await assertFails(db(CAROL).doc(`${GC}/members/${BOB}`).get());
+    await assertSucceeds(db(BOB).doc(`${GC}/members/${BOB}`).delete());
+    await assertSucceeds(db(DAN).doc(GC).update({ status: 'ENDED', endedAt: FieldValue.serverTimestamp() }));
+    await assertFails(db(DAN).doc(GC).update({ status: 'ACTIVE' }));
+    await assertFails(db(BOB).doc(`${GC}/members/${BOB}`).set(member()));                              // call is over
+  });
+
+  it('links: offerer writes the offer, only the other side answers; candidates per side', async () => {
+    await db(ALICE).doc(GC).set(groupCall());
+    const L = `${GC}/links/${BOB}_${DAN}_s1`;
+    await assertFails(db(BOB).doc(`${GC}/links/wrong`).set(link(BOB, DAN)));                            // id must match
+    await assertFails(db(BOB).doc(`${GC}/links/${BOB}_${CAROL}_s1`).set(link(BOB, CAROL)));             // not invited
+    await assertFails(db(BOB).doc(`${GC}/links/${ALICE}_${DAN}_s1`).set(link(ALICE, DAN)));             // impersonation
+    await assertSucceeds(db(BOB).doc(L).set(link(BOB, DAN)));
+    await assertSucceeds(db(DAN).collection(`${GC}/links`).where('to', '==', DAN).where('toSession', '==', 's2').get());
+    await assertFails(db(ALICE).doc(L).get());                                                           // not in this link
+    await assertFails(db(BOB).doc(L).update({ answer: { type: 'answer', sdp: 'x' } }));
+    await assertSucceeds(db(DAN).doc(L).update({ answer: { type: 'answer', sdp: 'x' } }));
+    await assertFails(db(DAN).doc(L).update({ answer: { type: 'answer', sdp: 'y' } }));                // answered once
+    await assertSucceeds(db(BOB).collection(`${L}/fromCandidates`).add({ candidate: 'a', sdpMid: '0', sdpMLineIndex: 0 }));
+    await assertFails(db(BOB).collection(`${L}/toCandidates`).add({ candidate: 'a', sdpMid: '0', sdpMLineIndex: 0 }));
+    await assertSucceeds(db(DAN).collection(`${L}/toCandidates`).add({ candidate: 'b', sdpMid: '0', sdpMLineIndex: 0 }));
+    await assertFails(db(ALICE).collection(`${L}/fromCandidates`).get());
+  });
+
+  it('blocked pairs cannot connect inside a group call', async () => {
+    await db(ALICE).doc(GC).set(groupCall());
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await ctx.firestore().doc(`blocks/${DAN}_${BOB}`).set({ blockerId: DAN, blockedId: BOB });
+    });
+    await assertFails(db(BOB).doc(`${GC}/links/${BOB}_${DAN}_s1`).set(link(BOB, DAN)));
+  });
+});
+
 describe('editing and deleting messages', () => {
   beforeEach(async () => { await seedPendingRequest(); await acceptBob(); });
   const msg = (uid, text = 'hello') => ({ senderId: uid, senderName: uid, text, type: 'TEXT', createdAt: FieldValue.serverTimestamp() });

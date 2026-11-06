@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.example.ridealong.data.model.AppNotification;
 import com.example.ridealong.data.model.CallSession;
+import com.example.ridealong.data.model.GroupCall;
 import com.example.ridealong.data.remote.FirebaseProvider;
 import com.example.ridealong.data.remote.FirestorePaths;
 import com.example.ridealong.domain.config.AppConfig;
@@ -39,6 +40,7 @@ public class RideAlongMessagingService extends FirebaseMessagingService {
         String kind = d.get("kind");
         try {
             if ("call".equals(kind)) onCall(d.get("callId"));
+            else if ("groupCall".equals(kind)) onGroupCall(d.get("callId"));
             else if ("notification".equals(kind)) onNotification(d.get("notificationId"));
         } catch (Exception e) {
             Log.w(TAG, "push handling failed", e);
@@ -55,6 +57,16 @@ public class RideAlongMessagingService extends FirebaseMessagingService {
         long age = s.createdAt == null ? 0 : System.currentTimeMillis() - s.createdAt.toDate().getTime();
         if (age > AppConfig.get().callStaleAfterMs) return;
         AppExecutors.main(() -> IncomingCallWatcher.deliver(getApplicationContext(), s));
+    }
+
+    private void onGroupCall(String callId) throws Exception {
+        if (callId == null) return;
+        DocumentSnapshot snap = Tasks.await(FirebaseProvider.db().collection(FirestorePaths.GROUP_CALLS).document(callId).get(),
+                8, TimeUnit.SECONDS);
+        GroupCall g = snap.toObject(GroupCall.class);
+        if (g == null || !g.isActive() || g.createdAt == null) return;
+        if (System.currentTimeMillis() - g.createdAt.toDate().getTime() > AppConfig.get().callStaleAfterMs) return;
+        AppExecutors.main(() -> IncomingCallWatcher.deliverGroup(getApplicationContext(), g));
     }
 
     private void onNotification(String id) throws Exception {

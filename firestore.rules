@@ -368,6 +368,78 @@ service cloud.firestore {
       }
     }
 
+    // ---------- group video calls (mesh WebRTC signaling, ride members only) ----------
+    // groupCalls/{id}: started by a ride member; `invited` is a snapshot of ride members (max 8).
+    //   members/{uid}: who is in the call right now (each user writes only their own doc, heartbeat seenAt).
+    //   links/{from}_{to}_{session}: one peer connection; `from` writes the offer, `to` writes the answer.
+    //   (session = the offerer's join session, so leaving and re-joining creates fresh links.)
+    match /groupCalls/{callId} {
+      function gc() { return get(docPath('groupCalls', callId)); }
+      function invitedToCall() { return signedIn() && uid() in gc().data.invited; }
+
+      allow read: if signedIn() && uid() in resource.data.invited;
+
+      allow create: if signedIn()
+        && newData().hostId == uid()
+        && isStr(newData().hostName, 80)
+        && newData().status == 'ACTIVE'
+        && newData().video is bool
+        && newData().invited is list && newData().invited.size() >= 2 && newData().invited.size() <= 8
+        && uid() in newData().invited
+        && rideDoc(newData().rideId).data.memberIds.hasAll(newData().invited)
+        && rideDoc(newData().rideId).data.status in ['OPEN', 'FULL', 'IN_PROGRESS']
+        && newData().createdAt == request.time;
+
+      // Any invited member may mark the call ENDED (the last one to leave does it).
+      allow update: if signedIn() && uid() in resource.data.invited
+        && resource.data.status == 'ACTIVE' && newData().status == 'ENDED'
+        && changed().hasOnly(['status', 'endedAt']);
+      allow delete: if false;
+
+      match /members/{memberId} {
+        allow read: if invitedToCall();
+        allow create, update: if invitedToCall() && memberId == uid()
+          && gc().data.status == 'ACTIVE'
+          && isStr(newData().name, 80)
+          && isStr(newData().session, 40)
+          && newData().seenAt == request.time;
+        allow delete: if signedIn() && memberId == uid();
+      }
+
+      match /links/{linkId} {
+        function link() { return get(/databases/$(database)/documents/groupCalls/$(callId)/links/$(linkId)); }
+        function inLink() { return signedIn() && (uid() == link().data.from || uid() == link().data.to); }
+
+        allow read: if signedIn() && (uid() == resource.data.from || uid() == resource.data.to);
+        allow create: if invitedToCall()
+          && gc().data.status == 'ACTIVE'
+          && newData().from == uid()
+          && newData().to != uid()
+          && newData().to in gc().data.invited
+          && isStr(newData().session, 40) && isStr(newData().toSession, 40)
+          && linkId == uid() + '_' + newData().to + '_' + newData().session
+          && newData().offer is map
+          && !('answer' in newData())
+          && !isBlockedBetween(uid(), newData().to);
+        allow update: if signedIn() && uid() == resource.data.to
+          && changed().hasOnly(['answer'])
+          && !('answer' in resource.data)
+          && newData().answer is map;
+        allow delete: if false;
+
+        match /fromCandidates/{candidateId} {
+          allow read: if inLink();
+          allow create: if signedIn() && uid() == link().data.from;
+          allow update, delete: if false;
+        }
+        match /toCandidates/{candidateId} {
+          allow read: if inLink();
+          allow create: if signedIn() && uid() == link().data.to;
+          allow update, delete: if false;
+        }
+      }
+    }
+
     // ---------- live locations: members of the ride only ----------
     match /liveLocations/{rideId}/members/{userId} {
       allow read: if isRideMember(rideId);

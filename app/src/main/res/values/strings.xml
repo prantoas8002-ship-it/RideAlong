@@ -537,6 +537,28 @@
     <string name="call_camera_denied">Camera not allowed: joining with voice only. You can still see the other person.</string>
     <string name="call_log_video">Video call · %1$s</string>
     <string name="call_log_missed_video">Missed video call</string>
+    <!-- Group video calls (ride members) -->
+    <string name="action_group_call">Group video call</string>
+    <string name="group_call_label">RideAlong group call · end-to-end encrypted</string>
+    <string name="group_call_title">Group video call</string>
+    <string name="group_call_incoming_title">Group video call</string>
+    <string name="group_call_incoming_body">%1$s started a group video call for your ride</string>
+    <string name="group_call_join">Join</string>
+    <string name="group_call_leave">Leave</string>
+    <string name="group_call_joining">Joining…</string>
+    <string name="group_call_waiting">Waiting for others to join…</string>
+    <string name="group_call_connecting_peer">Connecting…</string>
+    <string name="group_call_you">You</string>
+    <string name="group_call_muted">Muted</string>
+    <string name="group_call_ongoing_title">Group video call in progress</string>
+    <string name="group_call_banner">Group video call in progress</string>
+    <string name="group_call_end_left">You left the call</string>
+    <string name="group_call_end_full">This call is full</string>
+    <string name="group_call_end_missed">Missed group call</string>
+    <string name="group_call_busy">You\'re already on a call</string>
+    <string name="group_call_no_members">No other members in this ride yet</string>
+    <string name="group_call_log_started">%1$s started a group video call</string>
+    <string name="group_call_log_ended">Group video call ended · %1$s</string>
     <string name="photo_camera_denied">Camera permission is needed to take a photo</string>
     <!-- Message actions -->
     <string name="msg_deleted">This message was deleted</string>

@@ -25,6 +25,42 @@
         android:layout_height="1dp"
         android:background="@color/ra_outline" />
 
+    <!-- A group video call is running for this ride: tap to join -->
+    <LinearLayout
+        android:id="@+id/group_call_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/ra_primary"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/screen_padding"
+        android:paddingVertical="@dimen/space_xs"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawablePadding="@dimen/space_s"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:text="@string/group_call_banner"
+            android:textAppearance="@style/TextAppearance.RideAlong.BodyLarge"
+            android:textColor="@color/ra_white"
+            app:drawableStartCompat="@drawable/ic_videocam"
+            app:drawableTint="@color/ra_white" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/group_call_join"
+            style="@style/Widget.RideAlong.Button.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#16A34A"
+            android:text="@string/group_call_join"
+            android:textColor="@color/ra_white" />
+    </LinearLayout>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"

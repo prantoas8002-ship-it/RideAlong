@@ -2,11 +2,12 @@
  * RideAlong push relay (Cloudflare Worker).
  *
  * POST /  with  Authorization: Bearer <Firebase ID token>
- *           body {"kind": "call" | "notification", "id": "<document id>"}
+ *           body {"kind": "call" | "groupCall" | "notification", "id": "<document id>"}
  *
  * The relay never trusts the request body: it verifies the caller's Firebase ID token, then reads
  * the referenced Firestore document with the service account and only pushes if the signed-in user
- * is that document's sender (calls/{id}.callerId or notifications/{id}.senderId). The push is a
+ * is that document's sender (calls/{id}.callerId, groupCalls/{id}.hostId or notifications/{id}.senderId).
+ * A group call rings every invited ride member except the host. The push is a
  * data-only FCM message holding ids, never message text; the app fetches and renders it itself.
  */
 
@@ -48,7 +49,7 @@ export default {
     if (!ID_RE.test(id || '')) return json({ error: 'bad id' }, 400);
 
     const access = await accessToken(sa);
-    let recipient;
+    let recipients;
     let data;
     let ttl;
     if (kind === 'call') {
@@ -56,32 +57,53 @@ export default {
       if (!f) return json({ error: 'not found' }, 404);
       if (f.callerId !== uid) return json({ error: 'forbidden' }, 403);
       if (f.status !== 'RINGING') return json({ sent: false, reason: 'not ringing' });
-      recipient = f.calleeId;
+      recipients = [f.calleeId];
       data = { kind: 'call', callId: id };
       ttl = '45s'; // a call push that arrives later than this is useless
+    } else if (kind === 'groupCall') {
+      const f = await getDoc(projectId, access, `groupCalls/${id}`);
+      if (!f) return json({ error: 'not found' }, 404);
+      if (f.hostId !== uid) return json({ error: 'forbidden' }, 403);
+      if (f.status !== 'ACTIVE') return json({ sent: false, reason: 'not active' });
+      recipients = groupRecipients(f, uid);
+      data = { kind: 'groupCall', callId: id };
+      ttl = '45s';
     } else if (kind === 'notification') {
       const f = await getDoc(projectId, access, `notifications/${id}`);
       if (!f) return json({ error: 'not found' }, 404);
       if (f.senderId !== uid) return json({ error: 'forbidden' }, 403);
-      recipient = f.userId;
+      recipients = [f.userId];
       data = { kind: 'notification', notificationId: id };
       ttl = '86400s';
     } else {
       return json({ error: 'bad kind' }, 400);
     }
 
-    const tokenDoc = recipient ? await getDoc(projectId, access, `pushTokens/${recipient}`) : null;
-    if (!tokenDoc || !tokenDoc.token) return json({ sent: false, reason: 'recipient has no device token' });
-
-    const res = await fetch(`https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${access}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: { token: tokenDoc.token, data, android: { priority: 'HIGH', ttl } } }),
-    });
-    if (!res.ok) return json({ sent: false, reason: `fcm ${res.status}` }, 502);
-    return json({ sent: true });
+    let sent = 0;
+    let failed = 0;
+    for (const recipient of recipients) {
+      if (!recipient || !ID_RE.test(recipient)) continue;
+      const tokenDoc = await getDoc(projectId, access, `pushTokens/${recipient}`);
+      if (!tokenDoc || !tokenDoc.token) continue;
+      const res = await fetch(`https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${access}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: { token: tokenDoc.token, data, android: { priority: 'HIGH', ttl } } }),
+      });
+      if (res.ok) sent++;
+      else failed++;
+    }
+    if (sent === 0 && failed > 0) return json({ sent: false, reason: 'fcm error' }, 502);
+    if (sent === 0) return json({ sent: false, reason: 'recipient has no device token' });
+    return json({ sent: true, count: sent });
   },
 };
+
+/** Who a group call rings: invited ride members minus the host, de-duplicated, at most 8 (rules cap). */
+export function groupRecipients(callDoc, hostUid) {
+  const list = Array.isArray(callDoc.invited) ? callDoc.invited : [];
+  return [...new Set(list.filter((u) => typeof u === 'string' && u !== hostUid))].slice(0, 8);
+}
 
 function json(obj, status = 200) {
   return new Response(JSON.stringify(obj), { status, headers: { 'Content-Type': 'application/json' } });
@@ -179,6 +201,10 @@ async function getDoc(projectId, access, path) {
   const doc = await res.json();
   const out = {};
   for (const [k, v] of Object.entries(doc.fields || {})) {
+    if (v.arrayValue) {
+      out[k] = (v.arrayValue.values || []).map((x) => x.stringValue ?? null);
+      continue;
+    }
     out[k] = v.stringValue ?? v.booleanValue ?? v.integerValue ?? v.timestampValue ?? null;
   }
   return out;
