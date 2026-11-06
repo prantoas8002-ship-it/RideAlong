@@ -145,6 +145,7 @@ public final class GroupCallManager {
         PeerConnection pc;
         boolean remoteSet;
         boolean offerWritten;
+        boolean answerApplied;
         boolean connected;
         final List<IceCandidate> pendingRemote = new ArrayList<>();
         final List<IceCandidate> pendingLocal = new ArrayList<>();
@@ -539,9 +540,14 @@ public final class GroupCallManager {
                                 if (links.get(uid) != l) return;
                                 repo.offer(id, me, uid, session, toSession, sdp.type.canonicalForm(), sdp.description)
                                         .addOnSuccessListener(v -> {
+                                            if (links.get(uid) != l) return;
                                             l.offerWritten = true;
                                             for (IceCandidate c : l.pendingLocal) sendCandidate(l, c);
                                             l.pendingLocal.clear();
+                                            // Only now: the rules let me read the link (and its candidates)
+                                            // once it exists. Listening earlier is denied and the listener dies.
+                                            listenForAnswer(l, id);
+                                            l.candidateReg = listenCandidates(l, false);
                                         })
                                         .addOnFailureListener(e -> {
                                             Log.w(TAG, "offer failed", e);
@@ -553,19 +559,33 @@ public final class GroupCallManager {
                 });
             }
         }, offerConstraints());
+        republish();
+    }
+
+    /** Offerer: wait for the answer on my link, then apply it once. */
+    private void listenForAnswer(Link l, String id) {
         l.linkReg = repo.links(id).document(l.linkId).addSnapshotListener((snap, err) -> {
-            if (err != null || snap == null || !snap.exists() || links.get(uid) != l || l.remoteSet) return;
+            if (err != null) {
+                Log.w(TAG, "answer listener failed", err);
+                closeLink(l.uid);
+                return;
+            }
+            if (snap == null || !snap.exists() || links.get(l.uid) != l || l.answerApplied) return;
             Object ans = snap.get("answer");
             if (!(ans instanceof Map)) return;
             @SuppressWarnings("unchecked") Map<String, String> a = (Map<String, String>) ans;
-            l.remoteSet = true;
+            l.answerApplied = true;
             l.pc.setRemoteDescription(new SimpleSdp() {
                 @Override
-                public void onSetSuccess() { AppExecutors.main(() -> drainPending(l)); }
+                public void onSetSuccess() {
+                    AppExecutors.main(() -> {
+                        // Candidates that arrived before this point were queued; add them now.
+                        l.remoteSet = true;
+                        drainPending(l);
+                    });
+                }
             }, new SessionDescription(SessionDescription.Type.fromCanonicalForm(a.get("type")), a.get("sdp")));
         });
-        l.candidateReg = listenCandidates(l, false);
-        republish();
     }
 
     /** Listens to the OTHER side's ICE candidates of one link. */
