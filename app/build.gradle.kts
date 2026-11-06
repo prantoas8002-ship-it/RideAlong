@@ -45,6 +45,8 @@ android {
         buildConfigField("String", "TURN_URLS", "\"${localProp("TURN_URLS")}\"")
         buildConfigField("String", "TURN_USERNAME", "\"${localProp("TURN_USERNAME")}\"")
         buildConfigField("String", "TURN_PASSWORD", "\"${localProp("TURN_PASSWORD")}\"")
+        // Realtime Database URL (presence). Empty = google-services.json value, else <project>-default-rtdb.
+        buildConfigField("String", "FIREBASE_DATABASE_URL", "\"${localProp("FIREBASE_DATABASE_URL")}\"")
         buildConfigField("boolean", "USE_FIREBASE_EMULATOR", localProp("USE_FIREBASE_EMULATOR", "false").ifEmpty { "false" })
         buildConfigField("String", "FIREBASE_EMULATOR_HOST", "\"${localProp("FIREBASE_EMULATOR_HOST", "10.0.2.2")}\"")
         // Must start with "demo-" (emulator-only project) when no google-services.json is present.
@@ -105,6 +107,7 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
+    implementation(libs.firebase.database)
     implementation(libs.firebase.messaging)
     implementation(libs.play.services.auth)
     implementation(libs.play.services.location)

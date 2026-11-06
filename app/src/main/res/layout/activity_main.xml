@@ -33,6 +33,21 @@
             app:drawableStartCompat="@drawable/ic_wifi_off"
             app:drawableTint="@color/ra_inverse_on_surface" />
 
+        <!-- Driven by SystemEventReceiver: battery low, Battery Saver, airplane mode. -->
+        <TextView
+            android:id="@+id/system_banner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_offline_banner"
+            android:drawablePadding="@dimen/space_s"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="@dimen/screen_padding"
+            android:paddingVertical="@dimen/space_s"
+            android:textAppearance="@style/TextAppearance.RideAlong.Caption"
+            android:textColor="@color/ra_inverse_on_surface"
+            android:visibility="gone"
+            app:drawableTint="@color/ra_inverse_on_surface" />
+
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/nav_host"
             android:name="androidx.navigation.fragment.NavHostFragment"

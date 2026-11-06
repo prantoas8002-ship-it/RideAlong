@@ -1,6 +1,7 @@
 package com.example.ridealong.ui.chat;
 
 import android.os.Bundle;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
@@ -18,6 +20,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.ridealong.R;
+import com.example.ridealong.ServiceLocator;
 import com.example.ridealong.data.model.ChatMessage;
 import com.example.ridealong.data.model.DirectChat;
 import com.example.ridealong.data.repository.Resource;
@@ -42,6 +45,7 @@ public class DirectChatFragment extends Fragment {
     private DirectChatViewModel vm;
     private MessagesAdapter adapter;
     private String chatId;
+    private String presenceUid;
 
     @Nullable
     @Override
@@ -125,6 +129,7 @@ public class DirectChatFragment extends Fragment {
                 ((AppCompatActivity) requireActivity()).getSupportActionBar().setTitle(other);
             }
             b.banner.setText(getString(R.string.direct_chat_note, other, c.rideDropAddress));
+            observePresence(c.otherId(me));
             boolean member = c.participants.contains(me);
             b.inputBar.setVisibility(member ? View.VISIBLE : View.GONE);
             renderMessages(vm.messages().getValue());
@@ -134,6 +139,26 @@ public class DirectChatFragment extends Fragment {
             Throwable t = e.consume();
             if (t != null) Ui.error(b.getRoot(), t);
         });
+    }
+
+    /** Toolbar subtitle "Online" / "Last seen 5 min ago" from the Realtime Database. */
+    private void observePresence(@Nullable String otherUid) {
+        if (otherUid == null || otherUid.equals(presenceUid)) return;
+        presenceUid = otherUid;
+        ServiceLocator.get().presence().observe(otherUid).observe(getViewLifecycleOwner(), p -> {
+            ActionBar bar = actionBar();
+            if (bar == null) return;
+            if (p == null) bar.setSubtitle(null);
+            else if (p.online) bar.setSubtitle(R.string.presence_online);
+            else if (p.lastChanged > 0) bar.setSubtitle(getString(R.string.presence_last_seen,
+                    DateUtils.getRelativeTimeSpanString(p.lastChanged, System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS)));
+            else bar.setSubtitle(null);
+        });
+    }
+
+    @Nullable
+    private ActionBar actionBar() {
+        return requireActivity() instanceof AppCompatActivity ? ((AppCompatActivity) requireActivity()).getSupportActionBar() : null;
     }
 
     private void renderMessages(@Nullable Resource<List<ChatMessage>> r) {
@@ -184,6 +209,9 @@ public class DirectChatFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
+        ActionBar bar = actionBar();
+        if (bar != null) bar.setSubtitle(null); // the toolbar is shared with other screens
+        presenceUid = null;
         super.onDestroyView();
         b = null;
     }

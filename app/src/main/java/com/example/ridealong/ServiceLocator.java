@@ -10,6 +10,7 @@ import com.example.ridealong.data.repository.DirectChatRepository;
 import com.example.ridealong.data.repository.EmergencyRepository;
 import com.example.ridealong.data.repository.LiveLocationRepository;
 import com.example.ridealong.data.repository.NotificationRepository;
+import com.example.ridealong.data.repository.PresenceRepository;
 import com.example.ridealong.data.repository.RequestRepository;
 import com.example.ridealong.data.repository.ReviewRepository;
 import com.example.ridealong.data.repository.RideRepository;
@@ -45,6 +46,7 @@ public final class ServiceLocator {
     private SafetyRepository safety;
     private ConfigRepository config;
     private MapProviderFactory maps;
+    private PresenceRepository presence;
 
     private ServiceLocator(Context app) { this.app = app.getApplicationContext(); }
 
@@ -72,6 +74,12 @@ public final class ServiceLocator {
     public synchronized SettingsRepository settings() {
         if (settings == null) settings = new SettingsRepository(app);
         return settings;
+    }
+
+    /** Online / last-seen presence on the Firebase Realtime Database. */
+    public synchronized PresenceRepository presence() {
+        if (presence == null) presence = new PresenceRepository();
+        return presence;
     }
 
     public synchronized AuthRepository auth() {

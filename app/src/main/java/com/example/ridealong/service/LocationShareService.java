@@ -2,6 +2,7 @@ package com.example.ridealong.service;
 
 import android.annotation.SuppressLint;
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -59,6 +60,10 @@ public class LocationShareService extends LifecycleService {
     private Ride ride;
     private long lastWriteAt;
     private Location lastWritten;
+    /** Battery broadcasts update the ongoing notification while sharing. */
+    private SystemEventReceiver systemEvents;
+    private boolean batteryLow;
+    private int batteryPercent;
 
     public static void start(Context c, String rideId) {
         Intent i = new Intent(c, LocationShareService.class).putExtra(EXTRA_RIDE_ID, rideId);
@@ -84,6 +89,17 @@ public class LocationShareService extends LifecycleService {
     public void onCreate() {
         super.onCreate();
         fused = LocationServices.getFusedLocationProviderClient(this);
+        systemEvents = new SystemEventReceiver(this::onSystemStateChanged);
+    }
+
+    /** ACTION_BATTERY_LOW / ACTION_BATTERY_OKAY: refresh the notification-tray text. */
+    private void onSystemStateChanged(@NonNull SystemEventReceiver.State s, @Nullable String action) {
+        boolean changed = s.batteryLow != batteryLow;
+        batteryLow = s.batteryLow;
+        batteryPercent = Math.max(s.batteryPercent, 0);
+        if (!changed || rideId == null) return;
+        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if (nm != null) nm.notify(Constants.NOTIF_ID_LOCATION_SERVICE, buildNotification(rideId));
     }
 
     @Override
@@ -110,27 +126,36 @@ public class LocationShareService extends LifecycleService {
     }
 
     private boolean startInForeground(String forRide) {
-        PendingIntent stop = PendingIntent.getService(this, 1,
-                new Intent(this, LocationShareService.class).setAction(Constants.ACTION_STOP_SHARING),
-                PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
-        Notification n = new NotificationCompat.Builder(this, Constants.CHANNEL_LOCATION)
-                .setSmallIcon(R.drawable.ic_navigation)
-                .setColor(getColor(R.color.ra_primary))
-                .setContentTitle(getString(R.string.notif_sharing_title))
-                .setContentText(getString(R.string.notif_sharing_body))
-                .setOngoing(true)
-                .setContentIntent(NotificationHelper.openRideIntent(this, forRide, false, 3))
-                .addAction(R.drawable.ic_stop, getString(R.string.action_stop_sharing), stop)
-                .build();
+        systemEvents.register(this); // reports the current battery state before the first notification
+        Notification n = buildNotification(forRide);
         int type = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q ? ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION : 0;
         try {
             ForegroundCompat.start(this, Constants.NOTIF_ID_LOCATION_SERVICE, n, type);
             return true;
         } catch (Exception e) {
             // e.g. ForegroundServiceStartNotAllowedException or missing permission on Android 14
+            systemEvents.unregister(this);
             stopSelf();
             return false;
         }
+    }
+
+    private Notification buildNotification(String forRide) {
+        PendingIntent stop = PendingIntent.getService(this, 1,
+                new Intent(this, LocationShareService.class).setAction(Constants.ACTION_STOP_SHARING),
+                PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+        return new NotificationCompat.Builder(this, Constants.CHANNEL_LOCATION)
+                .setSmallIcon(R.drawable.ic_navigation)
+                .setColor(getColor(R.color.ra_primary))
+                .setContentTitle(getString(R.string.notif_sharing_title))
+                .setContentText(batteryLow
+                        ? getString(R.string.notif_sharing_battery_low, batteryPercent)
+                        : getString(R.string.notif_sharing_body))
+                .setOngoing(true)
+                .setOnlyAlertOnce(true)
+                .setContentIntent(NotificationHelper.openRideIntent(this, forRide, false, 3))
+                .addAction(R.drawable.ic_stop, getString(R.string.action_stop_sharing), stop)
+                .build();
     }
 
     private void loadName() {
@@ -210,6 +235,7 @@ public class LocationShareService extends LifecycleService {
         if (rideId != null) removeMyLocation(rideId);
         rideId = null;
         SHARING_RIDE.setValue(null);
+        systemEvents.unregister(this);
         ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE);
         stopSelf();
     }
@@ -222,6 +248,7 @@ public class LocationShareService extends LifecycleService {
     public void onDestroy() {
         if (fused != null) fused.removeLocationUpdates(callback);
         if (rideListener != null) rideListener.remove();
+        if (systemEvents != null) systemEvents.unregister(this);
         SHARING_RIDE.setValue(null);
         super.onDestroy();
     }

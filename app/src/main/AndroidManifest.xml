@@ -21,6 +21,8 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
+    <!-- Emergency contacts: read the ONE contact the user picks (Contacts Content Provider). -->
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
     <!-- No CALL_PHONE / SEND_SMS: phone calls and SMS open the user's own apps (ACTION_DIAL / ACTION_SENDTO). -->
 
     <uses-feature android:name="android.hardware.camera" android:required="false" />

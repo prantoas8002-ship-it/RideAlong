@@ -8,6 +8,7 @@ import android.view.View;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
@@ -20,6 +21,7 @@ import com.example.ridealong.data.remote.FirebaseProvider;
 import com.example.ridealong.databinding.ActivityMainBinding;
 import com.example.ridealong.service.RealtimeNotificationListener;
 import com.example.ridealong.service.RealtimeSyncService;
+import com.example.ridealong.service.SystemEventReceiver;
 import com.example.ridealong.ui.auth.AuthActivity;
 import com.example.ridealong.ui.common.Nav;
 import com.example.ridealong.utils.Constants;
@@ -46,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private NavController nav;
     private AppBarConfiguration appBar;
     private Boolean wasOnline;
+    private SystemEventReceiver systemEvents;
 
     private final ActivityResultLauncher<String> notificationPermission =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> { });
@@ -72,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
                 b.bottomNav.setVisibility(TOP_LEVEL.contains(dest.getId()) ? View.VISIBLE : View.GONE));
 
         observeConnectivity();
+        systemEvents = new SystemEventReceiver(this::onSystemStateChanged);
         observeBadge();
         // Keep the block list listener alive so feeds and requests are filtered.
         ServiceLocator.get().safety().observeHiddenUserIds(FirebaseProvider.uidOrNull()).observe(this, ids -> { });
@@ -90,6 +94,43 @@ public class MainActivity extends AppCompatActivity {
             }
             wasOnline = on;
         });
+    }
+
+    /** Registered only while visible: the banner is UI, so there is nothing to do in the background. */
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (systemEvents != null) systemEvents.register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        if (systemEvents != null) systemEvents.unregister(this);
+        super.onStop();
+    }
+
+    private void onSystemStateChanged(@NonNull SystemEventReceiver.State s, @Nullable String action) {
+        if (b == null) return;
+        // Most important first: no connection at all > low battery > Battery Saver.
+        if (s.airplaneMode) showSystemBanner(R.drawable.ic_airplane, getString(R.string.system_airplane_on));
+        else if (s.batteryLow) showSystemBanner(R.drawable.ic_battery_alert, getString(R.string.system_battery_low, Math.max(s.batteryPercent, 0)));
+        else if (s.powerSave) showSystemBanner(R.drawable.ic_battery_alert, getString(R.string.system_power_save));
+        else b.systemBanner.setVisibility(View.GONE);
+
+        if (action == null) return; // initial state: banner only, no snackbar
+        int msg = 0;
+        if (Intent.ACTION_AIRPLANE_MODE_CHANGED.equals(action)) {
+            msg = s.airplaneMode ? R.string.system_airplane_on : R.string.system_airplane_off;
+        } else if (Intent.ACTION_BATTERY_OKAY.equals(action)) {
+            msg = R.string.system_battery_okay;
+        }
+        if (msg != 0) Snackbar.make(b.mainRoot, msg, Snackbar.LENGTH_SHORT).setAnchorView(b.bottomNav).show();
+    }
+
+    private void showSystemBanner(int icon, String text) {
+        b.systemBanner.setText(text);
+        b.systemBanner.setCompoundDrawablesRelativeWithIntrinsicBounds(icon, 0, 0, 0);
+        b.systemBanner.setVisibility(View.VISIBLE);
     }
 
     private void observeBadge() {

@@ -27,3 +27,9 @@ USE_FIREBASE_EMULATOR=false
 FIREBASE_EMULATOR_HOST=10.0.2.2
 # Used only when app/google-services.json is absent: a "demo-" project works with the emulators alone.
 FIREBASE_EMULATOR_PROJECT_ID=demo-ridealong
+
+# Firebase Realtime Database URL (online / last-seen presence). Leave empty to use the default
+# instance https://<project-id>-default-rtdb.firebaseio.com. If you created the database in another
+# region, copy its URL from Firebase console > Realtime Database, e.g.
+# https://<project-id>-default-rtdb.asia-southeast1.firebasedatabase.app
+FIREBASE_DATABASE_URL=

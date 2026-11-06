@@ -135,4 +135,19 @@
     <string name="group_call_no_members">এই রাইডে এখনও অন্য কোনো সদস্য নেই</string>
     <string name="group_call_log_started">%1$s একটি গ্রুপ ভিডিও কল শুরু করেছেন</string>
     <string name="group_call_log_ended">গ্রুপ ভিডিও কল শেষ · %1$s</string>
+    <string name="system_airplane_on">এয়ারপ্লেন মোড চালু। রাইড, চ্যাট ও কলের জন্য সংযোগ প্রয়োজন।</string>
+    <string name="system_battery_low">ব্যাটারি কম (%1$d%%)। লাইভ লোকেশন শেয়ারিং বেশি চার্জ খরচ করে।</string>
+    <string name="system_power_save">ব্যাটারি সেভার চালু। লাইভ লোকেশন আপডেট দেরি হতে পারে।</string>
+    <string name="system_airplane_off">এয়ারপ্লেন মোড বন্ধ। আবার সংযোগ হচ্ছে…</string>
+    <string name="system_battery_okay">ব্যাটারি আবার ঠিক আছে</string>
+    <string name="notif_sharing_battery_low">ব্যাটারি কম (%1$d%%)। চার্জ বাঁচাতে থামান চাপুন।</string>
+    <string name="action_import_contact">ফোনের কন্টাক্ট থেকে</string>
+    <string name="contacts_permission_rationale">RideAlong শুধু আপনার বাছাই করা কন্টাক্টের নাম ও নম্বর পড়ে। ঠিকানা বইয়ের অন্য কিছু পড়া বা আপলোড করা হয় না।</string>
+    <string name="contacts_permission_denied">কন্টাক্ট অনুমতি দেওয়া হয়নি। আপনি নিজে টাইপ করতে পারেন।</string>
+    <string name="contacts_no_phone">এই কন্টাক্টে কোনো ফোন নম্বর নেই</string>
+    <string name="contacts_imported">কন্টাক্ট থেকে %1$s যোগ করা হয়েছে</string>
+    <string name="contacts_pick_number">একটি নম্বর বাছুন</string>
+    <string name="presence_online">অনলাইন</string>
+    <string name="presence_last_seen">সর্বশেষ দেখা %1$s</string>
+    <string name="contacts_no_app">এই ডিভাইসে কোনো কন্টাক্ট অ্যাপ নেই</string>
 </resources>

@@ -573,4 +573,24 @@
     <string name="msg_delete_title">Delete this message?</string>
     <string name="msg_delete_body">It will be removed for everyone in this chat. This can\'t be undone.</string>
     <string name="msg_edit_expired">Messages can only be edited within 15 minutes of sending</string>
+    <!-- System broadcast events (battery / Battery Saver / airplane mode) -->
+    <string name="system_airplane_on">Airplane mode is on. Rides, chat and calls need a connection.</string>
+    <string name="system_battery_low">Battery low (%1$d%%). Live location sharing uses extra power.</string>
+    <string name="system_power_save">Battery Saver is on. Live location updates may be delayed.</string>
+    <string name="system_airplane_off">Airplane mode off. Reconnecting…</string>
+    <string name="system_battery_okay">Battery level is OK again</string>
+    <string name="notif_sharing_battery_low">Battery low (%1$d%%). Tap Stop to save power.</string>
+
+    <!-- Contacts content provider -->
+    <string name="action_import_contact">From phone contacts</string>
+    <string name="contacts_permission_rationale">RideAlong reads only the contact you pick, to fill in your emergency contact\'s name and number. Nothing else from your address book is read or uploaded.</string>
+    <string name="contacts_permission_denied">Contacts permission denied. You can still type the contact in.</string>
+    <string name="contacts_no_phone">That contact has no phone number</string>
+    <string name="contacts_imported">Added %1$s from your contacts</string>
+    <string name="contacts_pick_number">Choose a number</string>
+
+    <!-- Realtime Database presence -->
+    <string name="presence_online">Online</string>
+    <string name="presence_last_seen">Last seen %1$s</string>
+    <string name="contacts_no_app">No contacts app found on this device</string>
 </resources>

@@ -1,5 +1,9 @@
 package com.example.ridealong.ui.profile;
 
+import android.Manifest;
+import android.content.ActivityNotFoundException;
+import android.content.ContentResolver;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,12 +17,14 @@ import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.ridealong.R;
 import com.example.ridealong.ServiceLocator;
+import com.example.ridealong.data.local.DeviceContactsReader;
 import com.example.ridealong.data.model.EmergencyContact;
 import com.example.ridealong.data.repository.UserRepository;
 import com.example.ridealong.databinding.FragmentEditProfileBinding;
@@ -29,6 +35,7 @@ import com.example.ridealong.ui.auth.AuthActivity;
 import com.example.ridealong.ui.common.Avatars;
 import com.example.ridealong.ui.common.Nav;
 import com.example.ridealong.ui.common.Ui;
+import com.example.ridealong.utils.AppExecutors;
 import com.example.ridealong.utils.Constants;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseUser;
@@ -55,6 +62,16 @@ public class EditProfileFragment extends Fragment {
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> {
                 if (Boolean.TRUE.equals(granted)) launchCamera();
                 else Ui.snack(b.getRoot(), R.string.photo_camera_denied);
+            });
+    // Contacts Content Provider: ask for READ_CONTACTS, then let the user pick one contact.
+    private final ActivityResultLauncher<String> contactsPermission =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> {
+                if (Boolean.TRUE.equals(granted)) launchContactPicker();
+                else if (b != null) Ui.snack(b.getRoot(), R.string.contacts_permission_denied);
+            });
+    private final ActivityResultLauncher<Void> pickContact =
+            registerForActivityResult(new ActivityResultContracts.PickContact(), uri -> {
+                if (uri != null) importContact(uri);
             });
     private final ActivityResultLauncher<Uri> takePhoto =
             registerForActivityResult(new ActivityResultContracts.TakePicture(), ok -> {
@@ -90,6 +107,7 @@ public class EditProfileFragment extends Fragment {
         b.changePhoto.setOnClickListener(v -> choosePhoto());
         b.avatar.setOnClickListener(v -> choosePhoto());
         b.addContact.setOnClickListener(v -> addContactRow(null));
+        b.importContact.setOnClickListener(v -> onImportContactClicked());
         b.save.setOnClickListener(v -> save());
 
         vm.photo().observe(getViewLifecycleOwner(), p -> Avatars.load(b.avatar, p));
@@ -161,6 +179,77 @@ public class EditProfileFragment extends Fragment {
         b.contactsContainer.addView(row.getRoot());
         contactRows.add(row);
         b.addContact.setEnabled(contactRows.size() < AppConfig.get().maxEmergencyContacts);
+    }
+
+    private void onImportContactClicked() {
+        String perm = Manifest.permission.READ_CONTACTS;
+        if (ContextCompat.checkSelfPermission(requireContext(), perm) == PackageManager.PERMISSION_GRANTED) {
+            launchContactPicker();
+        } else if (shouldShowRequestPermissionRationale(perm)) {
+            new MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(R.string.action_import_contact)
+                    .setMessage(R.string.contacts_permission_rationale)
+                    .setPositiveButton(android.R.string.ok, (d, w) -> contactsPermission.launch(perm))
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show();
+        } else {
+            contactsPermission.launch(perm);
+        }
+    }
+
+    private void launchContactPicker() {
+        try {
+            pickContact.launch(null);
+        } catch (ActivityNotFoundException e) {
+            Ui.snack(b.getRoot(), R.string.contacts_no_app);
+        }
+    }
+
+    /** ContentResolver queries run off the main thread; the result fills an emergency-contact row. */
+    private void importContact(Uri uri) {
+        ContentResolver cr = requireContext().getContentResolver();
+        AppExecutors.io().execute(() -> {
+            DeviceContactsReader.PickedContact pc;
+            try {
+                pc = DeviceContactsReader.read(cr, uri);
+            } catch (SecurityException e) {
+                pc = null;
+            }
+            DeviceContactsReader.PickedContact result = pc;
+            AppExecutors.main(() -> {
+                if (b == null) return;
+                if (result == null) {
+                    Ui.snack(b.getRoot(), R.string.contacts_permission_denied);
+                } else if (result.phones.isEmpty()) {
+                    Ui.snack(b.getRoot(), R.string.contacts_no_phone);
+                } else if (result.phones.size() == 1) {
+                    fillImportedContact(result.name, result.phones.get(0));
+                } else {
+                    String[] numbers = result.phones.toArray(new String[0]);
+                    new MaterialAlertDialogBuilder(requireContext())
+                            .setTitle(R.string.contacts_pick_number)
+                            .setItems(numbers, (d, which) -> fillImportedContact(result.name, numbers[which]))
+                            .show();
+                }
+            });
+        });
+    }
+
+    private void fillImportedContact(String name, String phone) {
+        String normalized = ProfileValidator.normalizePhone(phone);
+        for (ItemEmergencyContactEditBinding row : contactRows) {
+            boolean empty = String.valueOf(row.contactName.getText()).trim().isEmpty()
+                    && String.valueOf(row.contactPhone.getText()).trim().isEmpty();
+            if (empty) {
+                row.contactName.setText(name);
+                row.contactPhone.setText(normalized);
+                Ui.snack(b.getRoot(), getString(R.string.contacts_imported, name));
+                return;
+            }
+        }
+        int before = contactRows.size();
+        addContactRow(new EmergencyContact(name, normalized));
+        if (contactRows.size() > before) Ui.snack(b.getRoot(), getString(R.string.contacts_imported, name));
     }
 
     private void choosePhoto() {

@@ -117,6 +117,8 @@ public class AuthRepository {
 
     public void signOut() {
         stopServices();
+        // Mark offline while still signed in (RTDB rules only let a user write their own status).
+        com.example.ridealong.ServiceLocator.get().presence().goOffline();
         com.example.ridealong.service.push.PushTokens.unregisterCurrentDevice();
         FirebaseUser u = currentUser();
         if (u != null) {
