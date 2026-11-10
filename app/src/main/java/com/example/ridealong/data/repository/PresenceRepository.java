@@ -1,5 +1,7 @@
 package com.example.ridealong.data.repository;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
@@ -25,6 +27,7 @@ import java.util.Map;
  */
 public class PresenceRepository {
     public static final String STATUS = "status";
+    private static final String TAG = "Presence";
 
     public static final class Presence {
         public final boolean online;
@@ -57,11 +60,16 @@ public class PresenceRepository {
                 if (!Boolean.TRUE.equals(snap.getValue(Boolean.class))) return;
                 // Register the server-side "offline" write first, then mark online.
                 ref.onDisconnect().setValue(status(false))
-                        .addOnSuccessListener(v -> ref.setValue(status(true)));
+                        .addOnSuccessListener(v -> ref.setValue(status(true))
+                                .addOnFailureListener(e -> Log.w(TAG, "Could not write online status", e)))
+                        // Usually "Permission denied": database.rules.json is not published in the console.
+                        .addOnFailureListener(e -> Log.w(TAG, "Could not register onDisconnect", e));
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) { }
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.w(TAG, ".info/connected cancelled: " + error.getMessage());
+            }
         };
         connectedRef.addValueEventListener(connectedListener);
     }
@@ -110,6 +118,7 @@ public class PresenceRepository {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                Log.w(TAG, "Presence read denied: " + error.getMessage());
                 setValue(null);
             }
         };
